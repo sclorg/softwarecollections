@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load cms_tags menu_tags %}
+
+{% block title %}{% page_attribute page_title %}{% endblock %}
+
+{% block content %}
+    <div class='container content' id='content'>
+        <!--[if lt IE 7]>
+        <p class="chromeframe">You are using an outdated browser.
+        <a href="http://browsehappy.com/">Upgrade your browser today</a> or
+        <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-1">
+                {% placeholder content %}
+            </div>
+            <div class="col-sm-3 hidden-print docbrowser-fixed">
+                {% show_menu 1 100 0 100 "submenu.html" %}
+                <nav role="navigation">
+                    <ul class="docbrowser nav nav-vertical">
+                        <li class="disabled">
+                            <a>Overview</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div id='root-footer'></div>
+    </div>
+{% endblock %}

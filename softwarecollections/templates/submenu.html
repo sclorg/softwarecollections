@@ -1,0 +1,13 @@
+<nav role='navigation'>
+    <ul class='docbrowser nav nav-vertical'>
+        <li class="disabled">
+            <a>Overview</a>
+        </li>
+        {% for child in children %}
+        <li class='{% if child.selected %}active{% endif %}' role='menuitem'>
+            <a href='{{ child.get_absolute_url }}'>{{ child.get_menu_title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+

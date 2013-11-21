@@ -1,0 +1,10 @@
+<nav role='navigation'>
+    <ul class='nav nav-justified'>
+        {% for child in children %}
+        <li class='{% if child.selected %}active{% endif %}' role='menuitem'>
+            <a href='{{ child.get_absolute_url }}'>{{ child.get_menu_title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+
