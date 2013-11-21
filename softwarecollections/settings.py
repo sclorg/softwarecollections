@@ -1,14 +1,13 @@
 # Django settings for softwarecollections project.
 # encoding: utf-8
 
-import os
-from os.path import dirname, join, realpath
+from os.path import join
+
+# import ugettext_lazy to avoid circular module import
 from django.utils.translation import ugettext_lazy as _
 
 # localsettings is used to store site depandant settings
-from .localsettings import SITE_ID, DEBUG, DATABASES, ALLOWED_HOSTS, TIME_ZONE
-
-BASE_DIR = dirname(dirname(realpath(__file__)))
+from .localsettings import BASE_DIR, SITE_ID, DEBUG, DATABASES, ALLOWED_HOSTS, TIME_ZONE
 
 TEMPLATE_DEBUG = DEBUG
 

@@ -1,6 +1,10 @@
 # Django settings for local instance of softwarecollections project.
 # encoding: utf-8
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
 SITE_ID = 1
 
 DEBUG = True
@@ -14,7 +18,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'data.db',                      # Or path to database file if using sqlite3.
+        'NAME': os.path.join(BASE_DIR, 'data.db'), # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
