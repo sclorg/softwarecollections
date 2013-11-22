@@ -195,6 +195,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 CMS_TEMPLATES = (
     ('default.html', _('Default')),
     ('with_submenu.html', _('With Submenu')),
+    ('home.html', _('Home')),
 )
 
 CMS_PLACEHOLDER_CONF = {
