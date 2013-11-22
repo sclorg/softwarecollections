@@ -7,7 +7,7 @@ Before=nginx.service
 Type=forking
 PIDFile=/var/lib/softwarecollections/sclsweb.pid
 ExecStartPre=/usr/bin/softwarecollections collectstatic --link --noinput
-ExecStart=/usr/bin/softwarecollections runfcgi method=threaded socket=/var/lib/softwarecollections/sclweb.socket pidfile=/var/lib/softwarecollections/sclsweb.pid proctitle=sclsweb user=sclsweb umask=07
+ExecStart=/usr/bin/softwarecollections runfcgi method=threaded socket=/var/lib/softwarecollections/sclsweb.socket pidfile=/var/lib/softwarecollections/sclsweb.pid proctitle=sclsweb user=sclsweb umask=07
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
 
