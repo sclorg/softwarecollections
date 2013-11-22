@@ -13,7 +13,7 @@ TEMPLATE_DEBUG = DEBUG
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -158,7 +158,7 @@ APPEND_SLASH = True
 
 LANGUAGES = (
     ('en', _('English')),
-    ('cs', _('Czech')),
+    #('cs', _('Czech')),
 )
 
 CMS_LANGUAGES = {
@@ -167,11 +167,11 @@ CMS_LANGUAGES = {
             'code': 'en',
             'name': _('English'),
         },
-        {
-            'code': 'cs',
-            'name': _('Czech'),
-            'public': False,
-        },
+        #{
+        #    'code': 'cs',
+        #    'name': _('Czech'),
+        #    'public': False,
+        #},
     ],
     'default': {
         'public': True,
