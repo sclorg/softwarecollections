@@ -5,7 +5,7 @@
 %global  nginx_confdir %{_sysconfdir}/nginx/sites-available
 
 Name:              softwarecollections
-Version:           0.2
+Version:           0.3
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -114,6 +114,9 @@ exit 0
 
 
 %changelog
+* Wed Nov 27 2013 Jakub Dorňák <jdornak@redhat.com> 0.3-1
+- new package built with tito
+
 * Tue Nov 26 2013 Jakub Dorňák <jdornak@redhat.com> - 0.1-2
 - use python3 and django-1.6
 - use static pages instead of django-cms

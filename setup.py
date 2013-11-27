@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name         = "softwarecollections",
-    version      = '.'.join(map(str, softwarecollections.VERSION)),
+    version      = '0.3'.join(map(str, softwarecollections.VERSION)),
     description  = "Software Collection Management Website and Utils",
     author       = "Jakub Dorňák",
     author_email = "jdornak@redhat.com",
