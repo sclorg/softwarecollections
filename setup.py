@@ -2,7 +2,8 @@
 # encoding: utf-8
 
 import softwarecollections
-from distutils.core import setup
+#from distutils.core import setup
+from setuptools import setup
 
 setup(
     name         = "softwarecollections",
@@ -16,4 +17,5 @@ setup(
         "softwarecollections.management",
         "softwarecollections.management.commands",
     ],
+    include_package_data = True,
 )

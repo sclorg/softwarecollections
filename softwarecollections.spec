@@ -5,7 +5,7 @@
 %global  nginx_confdir %{_sysconfdir}/nginx/sites-available
 
 Name:              softwarecollections
-Version:           0.1
+Version:           0.2
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -13,20 +13,15 @@ Group:             System Environment/Daemons
 License:           TODO
 URL:               http://softwarecollections.org/
 
-Source0:           https://github.com/misli/%{name}/archive/%{version}.zip?filename=%{name}-%{version}.zip
+Source0:           https://codeload.github.com/misli/%{name}/tar.gz/%{version}?filename=%{name}-%{version}.tar.gz
 
 BuildArch:         noarch
 
 Requires:          nginx
-Requires:          python-django
-Requires:          python-django-mptt
-Requires:          python-django-south
-Requires:          python-flup
-Requires:          python-html5lib
-Requires:          python-pillow
-Requires:          python-setproctitle
-Requires:          python-simplejson
-Requires:          python-six
+Requires:          python3-django
+Requires:          python3-django-sekizai
+Requires:          python3-flup
+Requires:          python3-setproctitle
 
 BuildRequires:     systemd
 Requires(post):    systemd
@@ -44,16 +39,16 @@ Software Collections Management Website and Utils
 %build
 rm %{name}/localsettings-development.py
 mv %{name}/localsettings-production.py localsettings
-%{__python} setup.py build
+%{__python3} setup.py build
 
 
 %install
-%{__python} setup.py install --skip-build --root %{buildroot}
+%{__python3} setup.py install --skip-build --root %{buildroot}
 
 install -p -D -m 0644 localsettings \
     %{buildroot}%{scls_confdir}/localsettings
 ln -s %{scls_confdir}/localsettings \
-    %{buildroot}%{python_sitelib}/%{name}/localsettings.py
+    %{buildroot}%{python3_sitelib}/%{name}/localsettings.py
 
 install -p -D -m 0755 manage.py %{buildroot}%{_bindir}/%{name}
 
@@ -69,11 +64,20 @@ install -p -d -m 0755 htdocs/static \
 install -p -d -m 0755 htdocs/media \
     %{buildroot}%{scls_statedir}/htdocs/media
 
-cp -a %{name}/static %{name}/templates \
-    %{buildroot}%{python_sitelib}/%{name}/
 
-find %{name}/static %{name}/templates -type f \
-    | sed 's|^|%{python_sitelib}/|' > files
+# remove .po files
+find %{buildroot} -name "*.po" | xargs rm -f
+
+# create file list
+(cd %{buildroot}; find *) | egrep -v '\.mo$' | sed -r 's/\.py[co]?$/.py*/' | sort -u | \
+while read FILE; do
+    [ -d "%{buildroot}/$FILE" ] && echo "%dir /$FILE" || echo "/$FILE"
+done | grep %{python3_sitelib} > %{name}.files
+
+# add language files
+%find_lang django
+cat django.lang >> %{name}.files
+
 
 %pre
 getent group  %{scls_group} > /dev/null || \
@@ -98,25 +102,22 @@ exit 0
 %systemd_postun softwarecollections.service
 
 
-%files -f files
+%files -f %{name}.files
 %doc LICENSE README.md
 %{_bindir}/%{name}
 %{_unitdir}/%{name}.service
 %{nginx_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
-%dir %{python_sitelib}/%{name}
-%{python_sitelib}/%{name}/*.py*
-%dir %{python_sitelib}/%{name}/management
-%{python_sitelib}/%{name}/management/*.py*
-%dir %{python_sitelib}/%{name}/management/commands
-%{python_sitelib}/%{name}/management/commands/*.py*
-%{python_sitelib}/*.egg-info
 %attr(770,root,%{scls_group}) %dir %{scls_statedir}
-%dir %{scls_statedir}/htdocs/static
 %attr(770,root,%{scls_group}) %dir %{scls_statedir}/htdocs/media
+%attr(750,root,%{scls_group}) %dir %{scls_statedir}/htdocs/static
 
 
 %changelog
+* Tue Nov 26 2013 Jakub Dorňák <jdornak@redhat.com> - 0.1-2
+- use python3 and django-1.6
+- use static pages instead of django-cms
+
 * Thu Nov 21 2013 Jakub Dorňák <jdornak@redhat.com> - 0.1-1
 - Initial commit
 

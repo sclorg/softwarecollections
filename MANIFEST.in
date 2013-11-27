@@ -1,0 +1,5 @@
+include LICENSE
+include README.md
+recursive-include softwarecollections/locale *
+recursive-include softwarecollections/templates *
+recursive-include softwarecollections/static *

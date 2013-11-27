@@ -1,0 +1,36 @@
+{% extends "with_submenu.html" %}
+
+{% block title %}About the Site{% endblock %}
+
+{% block content %}
+<h2></h2>
+<h1>About the Site</h1>
+
+<p>SoftwareCollections.org is the home for projects creating Software Collections (SCLs) for Red Hat Enterprise Linux, Fedora, CentOS, and Scientific Linux. This is where you create and host Software Collections, as well as connect with other developers working on collections.</p>
+
+<p>SoftwareCollections.org is also the central repository for users to find third-party SCLs for their systems.</p>
+
+<h2>Key Concepts</h2>
+
+<p>Software Collections give you the power to build and concurrently install multiple versions of the same components on your system, without affecting the system versions of the packages installed from your distribution.</p>
+
+<p>The intent of SoftwareCollections.org is to give projects and third parties the ability to:</p>
+
+<ul>
+<li>Create and distribute multiple versions of software for major, RPM-based Linux distributions.</li>
+<li>Package software that may not be easy to distribute in upstream distributions.</li>
+<li>Allow projects to move at a different pace than the upstream distribution release cycle.</li>
+<li>Give users more flexibility and choice in software selection for their chosen distributions.</li>
+<li>Provide a flexible format for admins and users to package their own software.</li>
+</ul>
+
+<h3>Software Collections and Distributions</h3>
+
+<p>Note that collections obtained here are not necessarily supported by the distribution. For example, a Software Collections that you can install on Fedora Linux may not be supported by the Fedora Project itself.</p>
+
+<p>SoftwareCollections.org does <em>not</em> verify or audit software packaged and distributed here for security, licensing, or technical correctness. In other words, please treat software here as you would from any third party: verify the identity of the publisher before installing, and only install from publishers or projects that you trust.</p>
+
+<h3>Who Runs SoftwareCollections.org?</h3>
+
+<p>SoftwareCollections.org is a community project that takes input from a number of stakeholders. If you have any questions about the site, its content, or software hosted here, please contact <a href="mailto:admin@softwarecollections.org">admin@softwarecollections.org</a>.</p>
+{% endblock %}

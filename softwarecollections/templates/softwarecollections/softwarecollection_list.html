@@ -1,0 +1,14 @@
+{% extends "default.html" %}
+
+{% block title %}Directory{% endblock %}
+
+{% block content %}
+<h1>Directory</h1>
+{% for scl in object_list %}
+    <h1>{{ scl.name }} &mdash; {{ scl.version }}</h1>
+    <p><summary>{{ scl.summary }}</summary></p>
+    <p><description>{{ scl.description }}</description></p>
+{% empty %}
+    <p>No Software Collections yet.</p>
+{% endfor %}
+{% endblock %}

@@ -1,19 +1,14 @@
 from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
-
-# Uncomment the next two lines to enable the admin:
+from django.views.generic.base import RedirectView
 from django.contrib import admin
 admin.autodiscover()
 
+from .views import SCLsList, page
+
 urlpatterns = i18n_patterns('',
-    # Examples:
-    # url(r'^$', 'softwarecollections.views.home', name='home'),
-    # url(r'^softwarecollections/', include('softwarecollections.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('cms.urls')),
+    url(r'^faq/$', RedirectView.as_view(url='/en/docs/faq/')),
+    url(r'^directory/$', SCLsList.as_view(), name='SCLsList'),
+    url(r'^((?P<path>.*)/|)$', page, name='page'),
 )

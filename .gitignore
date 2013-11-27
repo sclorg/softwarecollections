@@ -1,4 +1,4 @@
 localsettings.py
-data.db
+db.sqlite3
 *.pyc
 *.pyo

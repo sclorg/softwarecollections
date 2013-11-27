@@ -1,10 +1,16 @@
 <nav role='navigation'>
     <ul class='nav nav-justified'>
-        {% for child in children %}
-        <li class='{% if child.selected %}active{% endif %}' role='menuitem'>
-            <a href='{{ child.get_absolute_url }}'>{{ child.get_menu_title }}</a>
+        <li class='{% if request.path == "/en/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/'>home</a>
         </li>
-        {% endfor %}
+        <li class='{% if request.path == "/en/docs/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/'>docs</a>
+        </li>
+        <li class='{% if request.path == "/en/faq/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/faq/'>faq</a>
+        </li>
+        <li class='{% if request.path == "/en/directory/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/directory/'>directory</a>
+        </li>
     </ul>
 </nav>
-

@@ -1,4 +1,4 @@
-{% load cms_tags menu_tags sekizai_tags %}
+{% load sekizai_tags %}
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7" lang="en-us"> <![endif]-->
 <!--[if IE 7]> <html class="no-js lt-ie10 lt-ie9 lt-ie8" lang="en-us"> <![endif]-->
@@ -10,7 +10,7 @@
 <!-- <![endif] -->
     <head>
         <title>
-        {% block title %}{% endblock %} – Software Collections
+        {% block title %}{% endblock %} &mdash; Software Collections
         </title>
         <meta charset='utf-8' />
         <meta content='' name='description' />
@@ -25,7 +25,6 @@
         {% render_block "css" %}
     </head>
     <body class='index source-haml'>
-        {% cms_toolbar %}
         <!-- Blurry sunset picture by Garrett LeSage -->
         <!-- Original (non-blurry) @ http://flickr.com/photos/garrett/4252583981/ -->
         <div class='masthead-wrap'>
@@ -36,14 +35,14 @@
                             <h1><a href="/"><img class="logo" alt="" width="94" height="39" src="/static/images/logo.png?1381949006" /></a></h1>
                         </div>
                         <div class='col-md-9'>
-                            {% show_menu 0 1 0 0 "menu.html" %}
+                            {% include "menu.html" %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        {% block content %}{% endblock %}
+        {% block base_content %}{% endblock %}
 
         <div class='text-center' id='footer'>
             &copy; 2013 Red Hat, Inc.

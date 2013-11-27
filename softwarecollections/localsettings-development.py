@@ -1,39 +1,72 @@
-# Django settings for local instance of softwarecollections project.
-# encoding: utf-8
+"""
+Django settings for softwarecollections project.
 
+For more information on this file, see
+https://docs.djangoproject.com/en/1.6/topics/settings/
+
+For the full list of settings and their values, see
+https://docs.djangoproject.com/en/1.6/ref/settings/
+"""
+# -*- coding: utf-8 -*-
+
+# import ugettext_lazy to avoid circular module import
+from django.utils.translation import ugettext_lazy as _
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-SITE_ID = 1
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'm0zn_p7x*o(xvk^9p8_$6n7o)dn$bh-*_*xu*b!mg9$ihh0xu+'
+
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
+ALLOWED_HOSTS = []
 
-MANAGERS = ADMINS
+
+# Database
+# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(BASE_DIR, 'data.db'), # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+# Internationalization
+# https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+LANGUAGE_CODE = 'en'
+
+TIME_ZONE = 'UTC'
+
+LANGUAGES = (
+    ('en', 'English'),
+    #('cs', 'Čeština'),
+)
+
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Example: "/var/www/example.com/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'htdocs', 'media')
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash.
+# Examples: "http://example.com/media/", "http://media.example.com/"
+MEDIA_URL = '/media/'
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/var/www/example.com/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'htdocs', 'static')
+
+# URL prefix for static files.
+# Example: "http://example.com/static/", "http://static.example.com/"
+STATIC_URL = '/static/'
 

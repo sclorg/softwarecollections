@@ -3,11 +3,20 @@
         <li class="disabled">
             <a>Overview</a>
         </li>
-        {% for child in children %}
-        <li class='{% if child.selected %}active{% endif %}' role='menuitem'>
-            <a href='{{ child.get_absolute_url }}'>{{ child.get_menu_title }}</a>
+        <li class='{% if request.path == "/en/docs/quick-start/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/quick-start/'>Quick Start</a>
         </li>
-        {% endfor %}
+        <li class='{% if request.path == "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/faq/'>FAQ</a>
+        </li>
+        <li class='{% if request.path == "/en/docs/users/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/users/'>For Users</a>
+        </li>
+        <li class='{% if request.path == "/en/docs/developers/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/developers/'>For Developers</a>
+        </li>
+        <li class='{% if request.path == "/en/docs/distros/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/distros/'>For Distros</a>
+        </li>
     </ul>
 </nav>
-
