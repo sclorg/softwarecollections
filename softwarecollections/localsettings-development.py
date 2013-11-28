@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for softwarecollections project.
 
@@ -7,7 +8,6 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
-# -*- coding: utf-8 -*-
 
 # import ugettext_lazy to avoid circular module import
 from django.utils.translation import ugettext_lazy as _

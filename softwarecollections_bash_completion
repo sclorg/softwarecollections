@@ -1,0 +1,1 @@
+complete -F _django_completion -o default softwarecollections

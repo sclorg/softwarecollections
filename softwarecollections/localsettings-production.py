@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for softwarecollections project.
 
@@ -7,7 +8,6 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
-# -*- coding: utf-8 -*-
 
 # import ugettext_lazy to avoid circular module import
 from django.utils.translation import ugettext_lazy as _
@@ -27,7 +27,7 @@ SECRET_KEY = 'm0zn_p7x*o(xvk^9p8_$6n7o)dn$bh-*_*xu*b!mg9$ihh0xu+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www.softwarecollections.org']
 
 
 # Database
@@ -36,7 +36,7 @@ ALLOWED_HOSTS = []
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'data', 'db.sqlite3'),
     }
 }
 

@@ -2,3 +2,4 @@ localsettings.py
 db.sqlite3
 *.pyc
 *.pyo
+softwarecollections-*.tar.gz

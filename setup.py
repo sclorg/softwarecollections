@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding: utf-8
 
 import softwarecollections
@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name         = "softwarecollections",
-    version      = '0.3'.join(map(str, softwarecollections.VERSION)),
+    version      = '.'.join(map(str, softwarecollections.VERSION)),
     description  = "Software Collection Management Website and Utils",
     author       = "Jakub Dorňák",
     author_email = "jdornak@redhat.com",

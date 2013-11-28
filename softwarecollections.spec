@@ -1,8 +1,7 @@
-%global  scls_user     sclsweb
-%global  scls_group    %{scls_user}
 %global  scls_statedir %{_localstatedir}/lib/softwarecollections
 %global  scls_confdir  %{_sysconfdir}/softwarecollections
-%global  nginx_confdir %{_sysconfdir}/nginx/sites-available
+%global  httpd_confdir %{_sysconfdir}/httpd/conf.d
+%global  httpd_group   apache
 
 Name:              softwarecollections
 Version:           0.3
@@ -17,7 +16,9 @@ Source0:           https://codeload.github.com/misli/%{name}/tar.gz/%{version}?f
 
 BuildArch:         noarch
 
-Requires:          nginx
+Requires:          httpd
+Requires:          mod_ssl
+Requires:          mod_wsgi-python3
 Requires:          python3-django
 Requires:          python3-django-sekizai
 Requires:          python3-flup
@@ -39,31 +40,41 @@ Software Collections Management Website and Utils
 %build
 rm %{name}/localsettings-development.py
 mv %{name}/localsettings-production.py localsettings
+mv %{name}/wsgi.py htdocs/
 %{__python3} setup.py build
+mkdir data
 
 
 %install
+# install python package
 %{__python3} setup.py install --skip-build --root %{buildroot}
 
+# install conf file as target of localsettings.py symlink
 install -p -D -m 0644 localsettings \
     %{buildroot}%{scls_confdir}/localsettings
 ln -s %{scls_confdir}/localsettings \
     %{buildroot}%{python3_sitelib}/%{name}/localsettings.py
 
+# install commandline interface with bash completion
 install -p -D -m 0755 manage.py %{buildroot}%{_bindir}/%{name}
+install -p -D -m 0644 %{name}_bash_completion \
+    %{buildroot}%{_sysconfdir}/bash_completion.d/%{name}_bash_completion
 
-install -p -D -m 0644 conf/systemd/%{name}.service \
-    %{buildroot}%{_unitdir}/%{name}.service
+# install httpd config file and wsgi config file
+install -p -D -m 0644 conf/httpd/%{name}.conf \
+    %{buildroot}%{httpd_confdir}/%{name}.conf
+install -p -D -m 0644 htdocs/wsgi.py \
+    %{buildroot}%{scls_statedir}/htdocs/wsgi.py
 
-install -p -D -m 0644 conf/nginx/%{name}.conf \
-    %{buildroot}%{nginx_confdir}/%{name}.conf
-
+# install directories for static content and site media
 install -p -d -m 0755 htdocs/static \
     %{buildroot}%{scls_statedir}/htdocs/static
-
-install -p -d -m 0755 htdocs/media \
+install -p -d -m 0775 htdocs/media \
     %{buildroot}%{scls_statedir}/htdocs/media
 
+# install separate directory for sqlite db
+install -p -d -m 0775 data \
+     %{buildroot}%{scls_statedir}/data
 
 # remove .po files
 find %{buildroot} -name "*.po" | xargs rm -f
@@ -79,38 +90,16 @@ done | grep %{python3_sitelib} > %{name}.files
 cat django.lang >> %{name}.files
 
 
-%pre
-getent group  %{scls_group} > /dev/null || \
-    groupadd -r %{scls_group}
-getent passwd %{scls_user}  > /dev/null || \
-    useradd -r -d %{scls_statedir} -g %{scls_group} \
-    -s /sbin/nologin -c "Software Collections Management Website" %{scls_user}
-groups nginx | grep -q '\b%{scls_group}\b' || \
-    usermod nginx -a -G %{scls_group}
-exit 0
-
-
-%post
-%systemd_post softwarecollections.service
-
-
-%preun
-%systemd_preun softwarecollections.service
-
-
-%postun
-%systemd_postun softwarecollections.service
-
-
 %files -f %{name}.files
 %doc LICENSE README.md
 %{_bindir}/%{name}
-%{_unitdir}/%{name}.service
-%{nginx_confdir}/%{name}.conf
+%{_sysconfdir}/bash_completion.d/%{name}_bash_completion
+%config(noreplace) %{httpd_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
-%attr(770,root,%{scls_group}) %dir %{scls_statedir}
-%attr(770,root,%{scls_group}) %dir %{scls_statedir}/htdocs/media
-%attr(750,root,%{scls_group}) %dir %{scls_statedir}/htdocs/static
+%{scls_statedir}/htdocs/wsgi.py*
+%dir %{scls_statedir}/htdocs/static
+%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/media
+%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/data
 
 
 %changelog
