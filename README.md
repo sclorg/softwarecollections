@@ -1,36 +1,84 @@
 softwarecollections
 ===================
 
-Software Collections Website
+Software Collections Management Website
 
 Installation
 ------------
 
-### Requirements
+  1. Enable yum repository from copr
 
-* [python3](http://python.org/download/releases/3.0/)
-* [django16](https://www.djangoproject.com/download/)
-* [django-sekizai](https://pypi.python.org/pypi/django-sekizai/0.7)
+    wget -O /etc/yum.repos.d/SoftwareCollections.repo http://copr-fe.cloud.fedoraproject.org/coprs/mstuchli/SoftwareCollections/repo/fedora-19-x86_64/
 
-### Configuration
+  2. Install package softwarecollections
 
-Create local settings file (no changes needed for development instance):
+    yum -y install softwarecollections
 
-    cp softwarecollections/localsettings-template.py cp softwarecollections/localsettings.py
 
-Initialize the database:
+Configuration
+-------------
+
+  1. Check the configuration in config files:
+
+    vim /etc/softwarecollections/localsettings
+    vim /etc/httpd/conf.d/softwarecollections.conf
+
+  2. Initialize database
+
+    softwarecollections syncdb
+
+  3. If using sqlite, make sure httpd has write access to it
+
+    chgrp apache /var/lib/softwarecollections/data/db.sqlite3
+    chmod g+w    /var/lib/softwarecollections/data/db.sqlite3
+
+  4. Prepare static content
+
+    softwarecollections collectstatic
+
+  5. Reload httpd configuration
+
+    service httpd reload
+
+
+Development instance
+--------------------
+
+  1. Clone the git repository
+
+    git clone git@github.com:misli/softwarecollections.git
+    cd softwarecollections
+
+  2. Create local configuration
+
+    cp softwarecollections/localsettings{-development,}.py
+
+  3. Initialize development database
 
     ./manage.py syncdb
 
-Usage
------
+  4. Run development server
 
-To start the development instance, just type:
+    ./manate.py runserver
 
-    ./manage.py runserver
 
-For more information type:
+RPM build
+---------
 
-    ./manage.py
+To create RPM from the latest tagged release type:
 
-or visit Django documentation at https://docs.djangoproject.com/en/1.6/.
+    tito build --rpm
+
+To create RPM from the last commit (it does not have to be pushed to the repo) type:
+
+    tito build --rpm --test
+
+
+Help
+----
+
+For more information about using commandline interface just type
+
+    ./manage.py help
+
+or visit [Django Documentation](https://docs.djangoproject.com/en/1.6/).
