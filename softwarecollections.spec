@@ -18,11 +18,8 @@ BuildArch:         noarch
 
 Requires:          httpd
 Requires:          mod_ssl
-Requires:          mod_wsgi-python3
+Requires:          python3-mod_wsgi
 Requires:          python3-django
-Requires:          python3-django-sekizai
-Requires:          python3-flup
-Requires:          python3-setproctitle
 
 BuildRequires:     systemd
 Requires(post):    systemd
