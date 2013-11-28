@@ -4,7 +4,7 @@
 %global  httpd_group   apache
 
 Name:              softwarecollections
-Version:           0.3
+Version:           0.4
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -103,6 +103,10 @@ cat django.lang >> %{name}.files
 
 
 %changelog
+* Thu Nov 28 2013 Jakub Dorňák <jdornak@redhat.com> 0.4-1
+- changed deployment to httpd and mod_wsgi-python3 (jdornak@redhat.com)
+- rel-eng releasers (jdornak@redhat.com)
+
 * Wed Nov 27 2013 Jakub Dorňák <jdornak@redhat.com> 0.3-1
 - new package built with tito
 
