@@ -16,15 +16,13 @@ Source0:           https://codeload.github.com/misli/%{name}/tar.gz/%{version}?f
 
 BuildArch:         noarch
 
+BuildRequires:     python3-devel
+BuildRequires:     python3-setuptools
+
 Requires:          httpd
 Requires:          mod_ssl
 Requires:          python3-mod_wsgi
 Requires:          python3-django
-
-BuildRequires:     systemd
-Requires(post):    systemd
-Requires(preun):   systemd
-Requires(postun):  systemd
 
 %description
 Software Collections Management Website and Utils
