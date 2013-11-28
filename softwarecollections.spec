@@ -4,7 +4,7 @@
 %global  httpd_group   apache
 
 Name:              softwarecollections
-Version:           0.4
+Version:           0.5
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -98,6 +98,13 @@ cat django.lang >> %{name}.files
 
 
 %changelog
+* Thu Nov 28 2013 Jakub Dorňák <jdornak@redhat.com> 0.5-1
+- fixed BuildRequires to build in copr (mock) (jdornak@redhat.com)
+- minimized dependencies (jdornak@redhat.com)
+- fix README format (jdornak@redhat.com)
+- updated README (jdornak@redhat.com)
+- use version in setup.py directly (msuchy@redhat.com)
+
 * Thu Nov 28 2013 Jakub Dorňák <jdornak@redhat.com> 0.4-1
 - changed deployment to httpd and mod_wsgi-python3 (jdornak@redhat.com)
 - rel-eng releasers (jdornak@redhat.com)
