@@ -76,7 +76,8 @@ install -p -d -m 0775 data \
 find %{buildroot} -name "*.po" | xargs rm -f
 
 # create file list
-(cd %{buildroot}; find *) | egrep -v '\.mo$' | sed -r 's/\.py[co]?$/.py*/' | sort -u | \
+(cd %{buildroot}; find *) | egrep -v '\.mo$' | \
+sed -r -e 's|\.py[co]?$|.py*|' -e 's|__pycache__.*$|__pycache__/*|' | sort -u | \
 while read FILE; do
     [ -d "%{buildroot}/$FILE" ] && echo "%dir /$FILE" || echo "/$FILE"
 done | grep %{python3_sitelib} > %{name}.files

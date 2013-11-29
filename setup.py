@@ -3,7 +3,7 @@
 
 import softwarecollections
 #from distutils.core import setup
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name         = "softwarecollections",
@@ -12,10 +12,6 @@ setup(
     author       = "Jakub Dorňák",
     author_email = "jdornak@redhat.com",
     url          = "https://github.com/misli/softwarecollections",
-    packages     = [
-        "softwarecollections",
-        "softwarecollections.management",
-        "softwarecollections.management.commands",
-    ],
+    packages     = find_packages(),
     include_package_data = True,
 )
