@@ -4,7 +4,7 @@
 %global  httpd_group   apache
 
 Name:              softwarecollections
-Version:           0.5
+Version:           0.6
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -100,6 +100,11 @@ cat django.lang >> %{name}.files
 
 
 %changelog
+* Fri Nov 29 2013 Jakub Dorňák <jdornak@redhat.com> 0.6-1
+- Document definition of _scl_prefix in For Developers and link it from Quick
+  start. (mmaslano@redhat.com)
+- fas authentication (jdornak@redhat.com)
+
 * Thu Nov 28 2013 Jakub Dorňák <jdornak@redhat.com> 0.5-1
 - fixed BuildRequires to build in copr (mock) (jdornak@redhat.com)
 - minimized dependencies (jdornak@redhat.com)
