@@ -46,7 +46,7 @@
 
 <h2>Naming the SCL</h2>
 
-<p>Every SCL <strong>must</strong> have a name which does not match name of any other package. This is implied by the fact that the SCL metapackage&rsquo;s name is the same as name of the whole SCL. It is therefore not a good idea to name an SCL &ldquo;ruby&rdquo;, when there is a &ldquo;ruby&rdquo; package - the name has to be altered. Packager should include something specific to the SCL (usually a specific version of included library) into it&rsquo;s name. Therefore &ldquo;ruby193&rdquo; is a good name for a collection that contains Ruby 1.9.3, etc.</p>
+<p>Every SCL <strong>must</strong> have a name which does not match name of any other package. This is implied by the fact that the SCL metapackage&rsquo;s name is the same as name of the whole SCL. It is therefore not a good idea to name an SCL &ldquo;ruby&rdquo;, when there is a &ldquo;ruby&rdquo; package - the name has to be altered. Packager should include something specific to the SCL (usually a specific version of included library) into it&rsquo;s name. Therefore &ldquo;ruby193&rdquo; is a good name for a collection that contains Ruby 1.9.3, etc. Although more developers might use the name ruby193, which is reason why collections on copr are created with <strong>additional prefix</strong> based on a username e.g. the package's name will be ruby193-username-packagename. </p>
 
 <h2>SCL Metapackage</h2>
 
@@ -55,6 +55,7 @@
 <p>An example SCL metapackage follows:</p>
 <pre class="highlight yaml"><span class="err">%</span><span class="s">global scl ruby193</span>
 <span class="err">%</span><span class="s">scl_package %scl</span>
+<span class="s">#_scl_prefix is not recommended for builds on copr, see information for <a href="../developers/#collection_prefix">developers</a>.</span>
 <span class="err">%</span><span class="s">_scl_prefix /opt/myorganization</span>
 
 <span class="err">%</span><span class="s">global install_scl 1</span>

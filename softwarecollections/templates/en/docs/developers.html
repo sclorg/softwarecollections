@@ -5,5 +5,8 @@
 {% block content %}
 <h2></h2>
 <h1>Software Collections for Developers</h1>
-
+<h3 id="collection_prefix">Collection prefix</h3>
+<p>
+The collection prefix is defined by the macro <code>_scl_prefix</code>. In copr must be the prefix unique, therefore it's based on name of a project and a username e.g. <code>ruby193-username</code>. Copr has preset of the installation path into <code>/opt/sclo</code>. The installation path and the collection prefix can be overriden. In case of local builds can be macros redefined in <code>/etc/rpm/macros.scl</code>, namely <code>scl_basedir</code> and <code>scl_vendor</code>, or define in every specfile. The new definition of intallation path is not recommended in scl.org repositories.
+</p>
 {% endblock %}
