@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social.apps.django_app.default',
     'softwarecollections',
 )
 
@@ -39,6 +40,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    #'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -53,6 +55,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    #'social.apps.django_app.context_processors.backends',
+    #'social.apps.django_app.context_processors.login_redirect',
 )
 
 ROOT_URLCONF = 'softwarecollections.urls'
@@ -69,3 +73,24 @@ USE_L10N = True
 
 USE_TZ = True
 
+##################
+# AUTHENTICATION #
+##################
+
+AUTH_USER_MODEL = 'auth.User'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social.backends.open_id.OpenIdAuth',
+)
+
+LOGIN_URL = '/login/'
+
+LOGOUT_URL = '/logout/'
+
+LOGIN_REDIRECT_URL = '/'
+
+# The number of days a password reset link is valid for
+PASSWORD_RESET_TIMEOUT_DAYS = 3
+
+#SOCIAL_AUTH_LOGIN_ERROR_URL = '/'

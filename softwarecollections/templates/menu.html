@@ -1,3 +1,4 @@
+{% load url from future %}
 <nav role='navigation'>
     <ul class='nav nav-justified'>
         <li class='{% if request.path == "/en/" %}active{% endif %}' role='menuitem'>
@@ -12,5 +13,14 @@
         <li class='{% if request.path == "/en/directory/" %}active{% endif %}' role='menuitem'>
             <a href='/en/directory/'>directory</a>
         </li>
+        {% if request.user.is_authenticated %}
+        <li class='' role='menuitem'>
+            <a>{{ request.user.first_name }} {{ request.user.last_name }}</a>
+        </li>
+        {% else %}
+        <li class='' role='menuitem'>
+            <a href='{% url 'fas:login' %}'>login</a>
+        </li>
+        {% endif %}
     </ul>
 </nav>
