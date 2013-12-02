@@ -82,7 +82,7 @@ AUTH_USER_MODEL = 'auth.User'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'social.backends.open_id.OpenIdAuth',
+    'softwarecollections.fas.backend.FasOpenId',
 )
 
 LOGIN_URL = '/login/'

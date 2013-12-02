@@ -11,21 +11,21 @@ from social.actions import do_auth, do_complete, do_disconnect
 from django.core.urlresolvers import reverse
 from social.apps.django_app.utils import BACKENDS, STORAGE, STRATEGY
 
-Backend  = get_backend(BACKENDS, 'openid')
-Backend.URL = 'id.fedoraproject.org'
+from .backend import FasOpenId
+
 Storage  = module_member(STORAGE)
 Strategy = module_member(STRATEGY)
 
 
 def login(request, *args, **kwargs):
-    strategy = Strategy(Backend, Storage, request, backends=BACKENDS,
+    strategy = Strategy(FasOpenId, Storage, request, backends=BACKENDS,
                     redirect_uri=reverse('fas:complete'), *args, **kwargs)
     return do_auth(strategy, redirect_name=REDIRECT_FIELD_NAME)
 
 
 @csrf_exempt
 def complete(request, *args, **kwargs):
-    strategy = Strategy(Backend, Storage, request, backends=BACKENDS,
+    strategy = Strategy(FasOpenId, Storage, request, backends=BACKENDS,
                     redirect_uri=reverse('fas:complete'), *args, **kwargs)
     return do_complete(strategy, _do_login, request.user,
                        redirect_name=REDIRECT_FIELD_NAME, *args, **kwargs)
@@ -33,7 +33,7 @@ def complete(request, *args, **kwargs):
 
 @login_required
 def logout(request, association_id=None):
-    strategy = Strategy(Backend, Storage, request, backends=BACKENDS,
+    strategy = Strategy(FasOpenId, Storage, request, backends=BACKENDS,
                     redirect_uri=None)
     return do_disconnect(strategy, request.user, association_id,
                          redirect_name=REDIRECT_FIELD_NAME)
