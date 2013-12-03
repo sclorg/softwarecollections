@@ -61,6 +61,15 @@ Run development server:
 
     ./manage.py runserver
 
+Login at http://127.0.0.1:8000/login (login uses FAS) and make yourself a superuser:
+
+    ./manage.py makesuperuser $USER
+
+Now You may visit backend admin at http://127.0.0.1:8000/admin/.
+You may also create a set of sample collections maintained by you:
+
+    ./manage.py createsamplecollections $USER
+
 
 RPM build
 ---------
