@@ -9,6 +9,7 @@ from .models import SoftwareCollection
 
 class SCLsList(ListView):
     model = SoftwareCollection
+    paginate_by = 10
 
 
 def page(request, path, template_dir=None):
