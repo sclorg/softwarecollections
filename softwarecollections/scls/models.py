@@ -2,6 +2,7 @@ import re
 from django.db import models
 from django.db.models import Avg
 from tagging.fields import TagField
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from django.contrib.auth import get_user_model
@@ -37,6 +38,7 @@ validate_version = RegexValidator(version_re, _("Enter a valid 'version' consist
 
 
 class SoftwareCollection(models.Model):
+    slug            = models.SlugField(max_length=150, editable=False)
     name            = models.CharField(_('Name'), max_length=200)
     version         = models.CharField(_('Version'), max_length=10, validators=[validate_version])
     summary         = models.CharField(_('Summary'), max_length=200)
@@ -56,6 +58,10 @@ class SoftwareCollection(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = '%s/%s' % (slugify(self.name), self.version)
+        super(SoftwareCollection, self).save(*args, **kwargs)
 
 
 class Score(models.Model):
