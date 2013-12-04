@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 
-UserModel = get_user_model()
+User = get_user_model()
 
 
 UPDATE_FREQ_CHOICES = (
@@ -51,9 +51,9 @@ class SoftwareCollection(models.Model):
     maturity        = models.CharField(_('Maturity'), max_length=2,
                         choices=MATURITY_CHOICES)
     score           = models.SmallIntegerField(null=True, editable=False)
-    maintainer      = models.ForeignKey(UserModel, verbose_name=_('Maintainer'),
+    maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
-    collaborators   = models.ManyToManyField(UserModel,
+    collaborators   = models.ManyToManyField(User,
                         verbose_name=_('Collaborators'), blank=True)
     tags            = TagField(_('Tags'))
 
@@ -70,7 +70,7 @@ class SoftwareCollection(models.Model):
 
 class Score(models.Model):
     scl  = models.ForeignKey(SoftwareCollection, related_name='scores')
-    user = models.ForeignKey(UserModel)
+    user = models.ForeignKey(User)
     score = models.SmallIntegerField()
 
     # store average score on each change
