@@ -1,0 +1,12 @@
+{% extends "with_submenu.html" %}
+{% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
+
+{% block title %}Directory{% endblock %}
+
+{% block content %}
+<h1>New Collection</h1>
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create" />
+</form>
+{% endblock %}

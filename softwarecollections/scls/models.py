@@ -5,6 +5,7 @@ from tagging.fields import TagField
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
+from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 
 UserModel = get_user_model()
@@ -58,6 +59,9 @@ class SoftwareCollection(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('scls:detail', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         self.slug = '%s/%s' % (slugify(self.name), self.version)

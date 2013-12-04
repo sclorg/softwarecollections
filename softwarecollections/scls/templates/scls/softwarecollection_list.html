@@ -6,7 +6,7 @@
 {% block content %}
 <h1>Directory</h1>
 {% for scl in object_list %}
-    <h1>{{ scl.name }} &mdash; {{ scl.version }}</h1>
+    <h1><a href="{{ scl.get_absolute_url }}">{{ scl.name }} &mdash; {{ scl.version }}</a></h1>
     <p><summary>{{ scl.summary }}</summary></p>
     <p><description>{{ scl.description }}</description></p>
 {% empty %}

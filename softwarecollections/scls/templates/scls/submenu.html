@@ -5,6 +5,7 @@
         <li class='{% if request.path == url_scls_all %}active{% endif %}' role='menuitem'>
             <a href='{{ url_scls_all }}'>All Software Collections</a>
         </li>
+        {% if request.user.is_authenticated %}
         {% url 'scls:my' as url_scls_my %}
         <li class='{% if request.path == url_scls_my %}active{% endif %}' role='menuitem'>
             <a href='{{ url_scls_my }}'>My Software Collections</a>
@@ -13,5 +14,6 @@
         <li class='{% if request.path == url_scls_new %}active{% endif %}' role='menuitem'>
             <a href='{{ url_scls_new }}'>Import New</a>
         </li>
+        {% endif %}
     </ul>
 </nav>
