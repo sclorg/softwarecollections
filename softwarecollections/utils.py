@@ -5,8 +5,7 @@ import tempfile
 import os
 
 class CoprSyncException(Exception):
-    def __init__(self, message):
-        self.args = message
+    pass
 
 def get_copr(username, coprname, apiurl):
     """ return JSON information about given copr. """
