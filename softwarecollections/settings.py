@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'tagging',
     'softwarecollections',
+    'softwarecollections.scls',
 )
 
 MIDDLEWARE_CLASSES = (

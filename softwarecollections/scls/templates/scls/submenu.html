@@ -1,0 +1,17 @@
+{% load url from future %}
+<nav role='navigation'>
+    <ul class='docbrowser nav nav-vertical'>
+        {% url 'scls:all' as url_scls_all %}
+        <li class='{% if request.path == url_scls_all %}active{% endif %}' role='menuitem'>
+            <a href='{{ url_scls_all }}'>All Software Collections</a>
+        </li>
+        {% url 'scls:my' as url_scls_my %}
+        <li class='{% if request.path == url_scls_my %}active{% endif %}' role='menuitem'>
+            <a href='{{ url_scls_my }}'>My Software Collections</a>
+        </li>
+        {% url 'scls:new' as url_scls_new %}
+        <li class='{% if request.path == url_scls_new %}active{% endif %}' role='menuitem'>
+            <a href='{{ url_scls_new }}'>Import New</a>
+        </li>
+    </ul>
+</nav>

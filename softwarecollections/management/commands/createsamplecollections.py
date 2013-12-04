@@ -2,7 +2,7 @@ from optparse import make_option
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
-from softwarecollections.models import SoftwareCollection, Score, MATURITY, REBASE_POLICY, UPDATE_FREQ
+from softwarecollections.scls.models import SoftwareCollection, Score, MATURITY, REBASE_POLICY, UPDATE_FREQ
 from random import randint, sample, choice
 
 class Command(BaseCommand):
