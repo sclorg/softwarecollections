@@ -1,10 +1,10 @@
 {% extends "with_submenu.html" %}
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}{{ object.name }} &mdash; {{ object.version }}{% endblock %}
+{% block title %}{{ scl.name }} &mdash; {{ scl.version }}{% endblock %}
 
 {% block content %}
-<h1>{{ object.name }} &mdash; {{ object.version }}</h1>
-<p><summary>{{ object.summary }}</summary></p>
-<p><description>{{ object.description }}</description></p>
+<h1>{{ scl.name }} &mdash; {{ scl.version }}</h1>
+<p><summary>{{ scl.summary }}</summary></p>
+<p><description>{{ scl.description }}</description></p>
 {% endblock %}
