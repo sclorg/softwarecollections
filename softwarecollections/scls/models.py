@@ -1,8 +1,9 @@
+import re
 from django.db import models
 from django.db.models import Avg
 from tagging.fields import TagField
 from django.utils.translation import ugettext_lazy as _
-
+from django.core.validators import RegexValidator
 from django.contrib.auth import get_user_model
 
 UserModel = get_user_model()
@@ -31,9 +32,13 @@ MATURITY_CHOICES = (
 MATURITY = dict(MATURITY_CHOICES)
 
 
+version_re = re.compile(r'^[-_.a-zA-Z0-9]+$')
+validate_version = RegexValidator(version_re, _("Enter a valid 'version' consisting of numbers, dots, letters, underscores or hyphens."), 'invalid')
+
+
 class SoftwareCollection(models.Model):
     name            = models.CharField(_('Name'), max_length=200)
-    version         = models.CharField(_('Version'), max_length=10)
+    version         = models.CharField(_('Version'), max_length=10, validators=[validate_version])
     summary         = models.CharField(_('Summary'), max_length=200)
     description     = models.TextField(_('Description'), blank=True)
     update_freq     = models.CharField(_('Update frequency'), max_length=2,
