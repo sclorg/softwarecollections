@@ -1,0 +1,14 @@
+{% extends "scls/base.html" %}
+{% load i18n %}
+
+{% block title %}{% blocktrans with name=tag.name %}Collections tagged with "{{ name }}"{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<h1>{% blocktrans with name=tag.name %}Collections tagged with "{{ name }}"{% endblocktrans %}</h1>
+{% for scl in collections %}
+    {% include "scls/preview.html" %}
+{% empty %}
+    <p>{% blocktrans with name=tag.name %}No collection has been tagged with "{{ name }}".{% endblocktrans %}</p>
+{% endfor %}
+{% include "scls/pagination.html" %}
+{% endblock %}

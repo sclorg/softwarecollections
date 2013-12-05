@@ -1,12 +1,12 @@
 {% load url from future %}
 <nav role='navigation'>
     <ul class='docbrowser nav nav-vertical'>
-        {% url 'scls:all' as url_scls_all %}
+        {% url 'scls:list_all' as url_scls_all %}
         <li class='{% if request.path == url_scls_all %}active{% endif %}' role='menuitem'>
             <a href='{{ url_scls_all }}'>All Software Collections</a>
         </li>
         {% if request.user.is_authenticated %}
-        {% url 'scls:my' as url_scls_my %}
+        {% url 'scls:list_my' as url_scls_my %}
         <li class='{% if request.path == url_scls_my %}active{% endif %}' role='menuitem'>
             <a href='{{ url_scls_my }}'>My Software Collections</a>
         </li>

@@ -1,0 +1,17 @@
+{% extends "scls/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Collections" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "My Collections" %}</h1>
+{% for scl in collections %}
+    {% include "scls/preview.html" %}
+{% empty %}
+    <p>
+        You have not imported any collection yet.
+        You may want to <a href="{% url "scls:new" %}">import one</a>.
+    </p>
+{% endfor %}
+{% include "scls/pagination.html" %}
+{% endblock %}

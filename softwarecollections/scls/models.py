@@ -1,7 +1,8 @@
 import re
 from django.db import models
 from django.db.models import Avg
-from tagging.fields import TagField
+import tagging
+from tagging.models import Tag
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
@@ -55,10 +56,9 @@ class SoftwareCollection(models.Model):
                         related_name='maintained_softwarecollection_set')
     collaborators   = models.ManyToManyField(User,
                         verbose_name=_('Collaborators'), blank=True)
-    tags            = TagField(_('Tags'))
 
     def __str__(self):
-        return self.name
+        return self.slug
 
     def get_absolute_url(self):
         return reverse('scls:detail', kwargs={'slug': self.slug})
@@ -66,6 +66,8 @@ class SoftwareCollection(models.Model):
     def save(self, *args, **kwargs):
         self.slug = '%s/%s' % (slugify(self.name), self.version)
         super(SoftwareCollection, self).save(*args, **kwargs)
+
+tagging.register(SoftwareCollection)
 
 
 class Score(models.Model):

@@ -1,17 +1,3 @@
-{% extends "with_submenu.html" %}
-{% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
-
-{% block title %}Directory{% endblock %}
-
-{% block content %}
-<h1>Directory</h1>
-{% for scl in object_list %}
-    <h1><a href="{{ scl.get_absolute_url }}">{{ scl.name }} &mdash; {{ scl.version }}</a></h1>
-    <p><summary>{{ scl.summary }}</summary></p>
-    <p><description>{{ scl.description }}</description></p>
-{% empty %}
-    <p>No Software Collections yet.</p>
-{% endfor %}
 {% if is_paginated %}
     <div class="pagination">
         <span class="page-links">
@@ -27,4 +13,3 @@
         </span>
     </div>
 {% endif %}
-{% endblock %}

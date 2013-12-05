@@ -6,21 +6,15 @@ from softwarecollections.scls.models import SoftwareCollection, Score, MATURITY,
 from random import randint, sample, choice
 
 class Command(BaseCommand):
-    args = '[ <username> ]'
     help = 'Used to make user a superuser.'
 
-    requires_model_validation = False
-
     def handle(self, *args, **options):
-        if len(args) != 1:
-            raise CommandError("need exactly one argument for username")
-        username, = args
-        UserModel = get_user_model()
-        try:
-            maintainer = UserModel.objects.get(**{UserModel.USERNAME_FIELD: username})
-        except UserModel.DoesNotExist:
-            raise CommandError("user '%s' does not exist" % username)
-        self.stdout.write("Creating set of sample collections maintained by user '%s'\n" % maintainer)
+        User = get_user_model()
+        users = User.objects.all()
+        
+        if len(users) == 0:
+            raise CommandError('need at least one user')
+        self.stdout.write('Creating set of sample collections')
         for name in [
             'flexmock', 'rake', 'minitest', 'mocha', 'i18n', 'tzinfo', 'builder',
             'rack', 'thor', 'sepx_processor', 'ruby_parser', 'ruby2ruby', 'ZenTest',
@@ -30,7 +24,7 @@ class Command(BaseCommand):
             'mime-types', 'treetop', 'mail', 'bundler', 'actionmailer']:
             scl_name = 'stack_rails_3.0_rubygem-%s' % name
             for version in sample(['0.9.3', '0.11'], randint(1,2)):
-                self.stdout.write("Creating sample collection: %s %s\n" % (scl_name, version))
+                self.stdout.write('Creating sample collection: %s %s' % (scl_name, version))
                 scl              = SoftwareCollection()
                 scl.name         = scl_name
                 scl.version      = version
@@ -38,10 +32,11 @@ class Command(BaseCommand):
                 scl.description  = ', '.join([scl.summary for i in range(3)])
                 scl.update_freq  = choice(list(UPDATE_FREQ))
                 scl.rebase_policy= choice(list(REBASE_POLICY))
-                scl.maturity     = choice(list(UPDATE_FREQ))
-                scl.maintainer   = maintainer
+                scl.maturity     = choice(list(MATURITY))
+                scl.maintainer   = choice(users)
                 scl.save()
-                for user in UserModel.objects.all():
+                scl.tags         = 'rails rubygem %s' % name
+                for user in users:
                     s = Score()
                     s.user  = user
                     s.scl   = scl

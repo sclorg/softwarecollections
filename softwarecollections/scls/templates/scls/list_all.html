@@ -1,0 +1,14 @@
+{% extends "scls/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Directory" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Directory" %}</h1>
+{% for scl in collections %}
+    {% include "scls/preview.html" %}
+{% empty %}
+    <p>{% trans "No Software Collections yet." %}</p>
+{% endfor %}
+{% include "scls/pagination.html" %}
+{% endblock %}
