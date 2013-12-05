@@ -1,16 +1,16 @@
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 from softwarecollections.utils import get_copr, generate_repo_config, run_reposync
-
-DEFAULT_COPR_API_URL = "http://copr-fe-dev.cloud.fedoraproject.org/api"
 
 class Command(BaseCommand):
     args = '<username> <coprname> <destdir>'
     help = 'Synces COPR repo to specified directory.'
 
     option_list = BaseCommand.option_list + (
-            make_option('--apiurl', help='Override COPR API URL', default=DEFAULT_COPR_API_URL),
+            make_option('--apiurl', help='Override COPR API URL',
+                        default=settings.DEFAULT_COPR_API_URL),
             )
 
     def handle(self, *args, **options):
