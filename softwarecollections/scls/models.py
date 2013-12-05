@@ -81,3 +81,6 @@ class Score(models.Model):
         self.scl.score = self.scl.scores.aggregate(Avg('score'))['score__avg']
         self.scl.save()
 
+    class Meta:
+        unique_together = (('scl', 'user'),)
+
