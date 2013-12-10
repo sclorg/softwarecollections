@@ -35,14 +35,10 @@ MATURITY_CHOICES = (
 MATURITY = dict(MATURITY_CHOICES)
 
 
-version_re = re.compile(r'^[-_.a-zA-Z0-9]+$')
-validate_version = RegexValidator(version_re, _("Enter a valid 'version' consisting of numbers, dots, letters, underscores or hyphens."), 'invalid')
-
-
 class SoftwareCollection(models.Model):
     slug            = models.SlugField(max_length=150, editable=False)
-    name            = models.CharField(_('Name'), max_length=200)
-    version         = models.CharField(_('Version'), max_length=10, validators=[validate_version])
+    copr_user       = models.CharField(_('User'), max_length=100)
+    copr_project    = models.CharField(_('Project'), max_length=200)
     summary         = models.CharField(_('Summary'), max_length=200)
     description     = models.TextField(_('Description'), blank=True)
     update_freq     = models.CharField(_('Update frequency'), max_length=2,
