@@ -31,7 +31,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social.apps.django_app.default',
     'tagging',
     'softwarecollections',
     'softwarecollections.scls',
@@ -42,7 +41,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    #'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -57,8 +55,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
-    #'social.apps.django_app.context_processors.backends',
-    #'social.apps.django_app.context_processors.login_redirect',
 )
 
 ROOT_URLCONF = 'softwarecollections.urls'
@@ -87,7 +83,7 @@ AUTH_USER_MODEL = 'auth.User'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'softwarecollections.fas.backend.FasOpenId',
+    'softwarecollections.fas.backend.FasBackend',
 )
 
 LOGIN_URL = '/login/'

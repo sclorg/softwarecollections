@@ -1,60 +1,58 @@
 from django.conf import settings
-from django.contrib.auth import login as auth_login, REDIRECT_FIELD_NAME
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.views.decorators.http import require_POST
+from django.contrib import messages
+from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, REDIRECT_FIELD_NAME
+from django.core.urlresolvers import resolve
+from django.http import HttpResponseRedirect
+from django.shortcuts import resolve_url, redirect
+from django.utils.translation import ugettext_lazy as _
+from urllib.parse import urlsplit, parse_qs, urlencode, urlunsplit
 
-from social.utils import module_member
-from social.backends.utils import get_backend
-from social.actions import do_auth, do_complete, do_disconnect
-
-from django.core.urlresolvers import reverse
-from social.apps.django_app.utils import BACKENDS, STORAGE, STRATEGY
-
-from .backend import FasOpenId
-
-Storage  = module_member(STORAGE)
-Strategy = module_member(STRATEGY)
+from .consumer import Consumer, SUCCESS, CANCEL, FAILURE, SETUP_NEEDED
 
 
-def login(request, *args, **kwargs):
-    strategy = Strategy(FasOpenId, Storage, request, backends=BACKENDS,
-                    redirect_uri=reverse('fas:complete'), *args, **kwargs)
-    return do_auth(strategy, redirect_name=REDIRECT_FIELD_NAME)
+STATUS_MESSAGES = {
+    SUCCESS:      _('Login successful.'),
+    CANCEL:       _('Login canceled.'),
+    FAILURE:      _('Login failed.'),
+    SETUP_NEEDED: _('Login needs setup.'),
+}
 
 
-@csrf_exempt
-def complete(request, *args, **kwargs):
-    strategy = Strategy(FasOpenId, Storage, request, backends=BACKENDS,
-                    redirect_uri=reverse('fas:complete'), *args, **kwargs)
-    return do_complete(strategy, _do_login, request.user,
-                       redirect_name=REDIRECT_FIELD_NAME, *args, **kwargs)
+def redirect_next(request, field_name, settings_name):
+    try:
+        # get safe url from user input
+        url = request.REQUEST[field_name]
+        url = urlunsplit(('','')+urlsplit(url)[2:])
+    except:
+        url = resolve_url(getattr(settings, settings_name, '/'))
+    return HttpResponseRedirect(url)
 
 
-@login_required
-def logout(request, association_id=None):
-    strategy = Strategy(FasOpenId, Storage, request, backends=BACKENDS,
-                    redirect_uri=None)
-    return do_disconnect(strategy, request.user, association_id,
-                         redirect_name=REDIRECT_FIELD_NAME)
+def login(request, redirect_field_name=REDIRECT_FIELD_NAME,
+          complete_view='fas:complete'):
+    complete_url = resolve_url(complete_view)
+    if redirect_field_name in request.REQUEST:
+        (scheme, netloc, path, query_string, fragment) = urlsplit(complete_url)
+        fields = parse_qs(query_string)
+        fields[redirect_field_name] = request.REQUEST[redirect_field_name]
+        complete_url = urlunsplit(('', '', path, urlencode(fields), fragment))
+    return redirect(Consumer(request).get_url(complete_url=complete_url))
 
 
-def _do_login(strategy, user):
-    auth_login(strategy.request, user)
-    # user.social_user is the used UserSocialAuth instance defined in
-    # authenticate process
-    social_user = user.social_user
-    if strategy.setting('SESSION_EXPIRATION', True):
-        # Set session expiration date if present and not disabled
-        # by setting. Use last social-auth instance for current
-        # provider, users can associate several accounts with
-        # a same provider.
-        expiration = social_user.expiration_datetime()
-        if expiration:
-            try:
-                strategy.request.session.set_expiry(
-                    expiration.seconds + expiration.days * 86400
-                )
-            except OverflowError:
-                # Handle django time zone overflow
-                strategy.request.session.set_expiry(None)
+def complete(request, redirect_field_name=REDIRECT_FIELD_NAME):
+    response = Consumer(request).complete()
+    message  = STATUS_MESSAGES[response.status]
+    user     = authenticate(response=response)
+    if user:
+        auth_login(request, user)
+        messages.success(request, message)
+        return redirect_next(request, redirect_field_name, 'LOGIN_REDIRECT_URL')
+    else:
+        messages.error(request, message)
+        return redirect_next(request, redirect_field_name, 'LOGIN_FAIL_REDIRECT_URL')
+
+
+def logout(request, redirect_field_name=REDIRECT_FIELD_NAME):
+    auth_logout(request)
+    return redirect_next(request, redirect_field_name, 'LOGOUT_REDIRECT_URL')
+

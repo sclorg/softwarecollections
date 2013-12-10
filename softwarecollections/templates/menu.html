@@ -15,11 +15,11 @@
         </li>
         {% if request.user.is_authenticated %}
         <li class='' role='menuitem'>
-            <a>{{ request.user.first_name }} {{ request.user.last_name }}</a>
+            <a href='{% url "fas:logout" %}'>{{ request.user.get_username }} logout</a>
         </li>
         {% else %}
         <li class='' role='menuitem'>
-            <a href='{% url 'fas:login' %}'>login</a>
+            <a href='{% url "fas:login" %}?next={{ request.path }}'>login</a>
         </li>
         {% endif %}
     </ul>
