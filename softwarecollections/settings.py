@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'tagging',
     'softwarecollections',
     'softwarecollections.scls',
+    'south',
 )
 
 MIDDLEWARE_CLASSES = (
