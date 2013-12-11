@@ -3,10 +3,10 @@
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}{{ scl.name }} &mdash; {{ scl.version }}{% endblock %}
+{% block title %}{{ scl.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ scl.name }} &mdash; {{ scl.version }}</h1>
+<h1>{{ scl.title }}</h1>
 <p><summary>{{ scl.summary }}</summary></p>
 <p><description>{{ scl.description }}</description></p>
 <p><maintainer><a href="{% url "scls:list_user" scl.maintainer.username %}">{{ scl.maintainer.get_full_name }}</a></p>

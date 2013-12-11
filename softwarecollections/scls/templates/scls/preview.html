@@ -1,5 +1,5 @@
 {% load url from future %}
-<h1><a href="{{ scl.get_absolute_url }}">{{ scl.name }} &mdash; {{ scl.version }}</a></h1>
+<h1><a href="{{ scl.get_absolute_url }}">{{ scl.title }}</a></h1>
 <p><summary>{{ scl.summary }}</summary></p>
 <p><description>{{ scl.description }}</description></p>
 <p><maintainer><a href="{% url "scls:list_user" scl.maintainer.username %}">{{ scl.maintainer.get_full_name }}</a></p>

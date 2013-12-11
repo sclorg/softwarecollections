@@ -34,18 +34,9 @@ class Copr(object):
     def __repr__(self):
         return 'Copr({})'.format(', '.join(['{} = {}'.format(field, repr(getattr(self, field))) for field in self._fields]))
 
-
-    def repo_configs(self):
-        """ Generate temporary config for mrepo."""
-
-
-        # generate repo configs
-        repo_configs = {}
-        for repo in self.yum_repos:
-            repo_configs[repo] = config.format(reponame=repo, username=self.username,
-                                               url=self.yum_repos[repo])
-        return repo_configs
-
+    @property
+    def slug(self):
+        return '/'.join([self.username, self.name])
 
     def reposync(self, destdir):
         """ Run reposync and createrepo. """
