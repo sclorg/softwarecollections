@@ -76,30 +76,31 @@ class SoftwareCollection(models.Model):
     def get_absolute_url(self):
         return reverse('scls:detail', kwargs={'slug': self.slug})
 
-    def _get_copr(self):
-        self._copr = CoprProxy().copr(self.username, self.name)
+    @property
+    def copr(self):
+        if not self._copr and self.username and self.name:
+            self._copr = CoprProxy().copr(self.username, self.name)
         return self._copr
 
     @property
-    def copr(self):
-        if not self._copr:
-            # try to refresh copr, but suppress exception
-            try:
-                return self._get_copr()
-            except:
-                pass
-        return self._copr
+    def yum_repos(self):
+        return self.copr.yum_repos
+
+    @property
+    def additional_repos(self):
+        return self.copr.additional_repos
 
     @property
     def title(self):
         return ' / '.join([self.username, self.name])
 
     def save(self, *args, **kwargs):
-        # refresh copr and posibly raise exception
-        self._get_copr()
-        self.slug         = self._copr.slug
-        self.description  = self._copr.description
-        self.instructions = self._copr.instructions
+        # refresh copr
+        self._copr = None
+        # update attributes
+        self.slug         = self.copr.slug
+        self.description  = self.copr.description
+        self.instructions = self.copr.instructions
         super(SoftwareCollection, self).save(*args, **kwargs)
 
 tagging.register(SoftwareCollection)
