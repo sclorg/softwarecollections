@@ -49,6 +49,7 @@ class SoftwareCollection(models.Model):
     maturity        = models.CharField(_('Maturity'), max_length=2,
                         choices=MATURITY_CHOICES)
     score           = models.SmallIntegerField(null=True, editable=False)
+    need_sync       = models.BooleanField(_('Needs sync with copr'), default=False)
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
     collaborators   = models.ManyToManyField(User,
