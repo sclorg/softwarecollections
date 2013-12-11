@@ -1,0 +1,3 @@
+# Sync SCLs with copr repos every 10 minutes
+
+*/10 * * * * root /usr/bin/softwarecollections /var/scl-repos

@@ -74,6 +74,10 @@ install -p -d -m 0775 htdocs/media \
 install -p -d -m 0775 data \
      %{buildroot}%{scls_statedir}/data
 
+# install crontab
+install -p -D -m 0644 sclsync-cron \
+    %{buildroot}%{_sysconfdir}/cron.d/sclsync
+
 # remove .po files
 find %{buildroot} -name "*.po" | xargs rm -f
 
@@ -95,6 +99,7 @@ cat django.lang >> %{name}.files
 %{_sysconfdir}/bash_completion.d/%{name}_bash_completion
 %config(noreplace) %{httpd_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
+%config(noreplace) %{_sysconfdir}/cron.d/sclsync
 %{scls_statedir}/htdocs/wsgi.py*
 %dir %{scls_statedir}/htdocs/static
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/media
