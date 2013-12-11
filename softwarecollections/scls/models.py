@@ -103,6 +103,12 @@ class SoftwareCollection(models.Model):
         self.instructions = self.copr.instructions
         super(SoftwareCollection, self).save(*args, **kwargs)
 
+    class Meta:
+        # in fact, since slug is made of those and slug is unique,
+        # this is not necessarry, but as a side effect, it create index,
+        # which may be useful
+        unique_together = (('username', 'name'),)
+
 tagging.register(SoftwareCollection)
 
 
