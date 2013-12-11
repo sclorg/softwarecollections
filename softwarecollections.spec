@@ -24,6 +24,8 @@ Requires:          mod_ssl
 Requires:          python3-mod_wsgi
 Requires:          python3-django
 Requires:          python3-django-tagging
+Requires:          createrepo
+Requires:          yum-utils
 
 %description
 Software Collections Management Website and Utils
