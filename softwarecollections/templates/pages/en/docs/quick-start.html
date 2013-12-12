@@ -51,13 +51,16 @@
 
 <h2>SCL Metapackage</h2>
 
-<p>Every SCL must have a so called metapackage. This metapackage <strong>must</strong> have a runtime and build subpackages (the build subpackage is needed for Koji builds, but may be left out for local builds).</p>
+<p>Every SCL must have a so called metapackage. This metapackage <strong>must</strong> have a runtime and build subpackages (the build subpackage is needed for Koji builds, but may be left out for local builds). For more details see complete <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Creating_a_Meta_Package.html">documentation.</a></p>
 
-<p>An example SCL metapackage follows:</p>
-<pre class="highlight yaml"><span class="err">%</span><span class="s">global scl ruby193</span>
-<span class="err">%</span><span class="s">scl_package %scl</span>
-<span class="s">#_scl_prefix is not recommended for builds on copr, see information for <a href="../developers/#collection_prefix">developers</a>.</span>
-<span class="err">%</span><span class="s">_scl_prefix /opt/myorganization</span>
+<p>An example SCL metapackage for COPR builds follows:</p>
+<pre class="highlight yaml">
+<span class="err">%</span><span class="s">if 0<span class="err">%</span>{?copr_username:1}</span>
+<span class="err">%</span><span class="s">global scl <span class="err">%</span>{copr_username}-<span class="err">%</span>{copr_projectname}</span>
+<span class="err">%</span><span class="s">else</span>
+<span class="err">%</span><span class="s">global scl ruby193</span>
+<span class="err">%</span><span class="s">endif</span>
+<span class="err">%</span><span class="s">scl_package <span class="err">%</span>scl</span>
 
 <span class="err">%</span><span class="s">global install_scl 1</span>
 
@@ -116,6 +119,7 @@
 <span class="err">*</span> <span class="s">Fri Mar 30 2012 Bohuslav Kabrda &lt;bkabrda@redhat.com&gt; - 1-1</span>
 <span class="p">-</span> <span class="s">Initial package.</span>
 </pre>
+
 <p>Things to note here:</p>
 
 <ul>
