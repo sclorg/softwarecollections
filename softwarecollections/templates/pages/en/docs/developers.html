@@ -8,7 +8,7 @@
 <h1>Software Collections for Developers</h1>
 <h3 id="collection_prefix">Collection prefix</h3>
 <p>
-Collection prefix must be set to /opt/sclo, because hosted packages on scl.org will be installed into this location only. Users have possibility to redefine the path by using these macros:
+Collection prefix must be set to /opt/sclo if hosting on scl.org is requrested. All packages from scl.org will be installed into /opt/sclo. Users have possibility to redefine the path by using these macros:
 <ul>
 <li><strong>_scl_prefix</strong> in EL-5,6,7. It is set to /opt/rh by default in /etc/rpm/macros.scl. It can be redefined there for local builds, but it can be also redefined in all specfiles.</li>
 <li>In Fedora are used new macros, which are defining <strong>_scl_prefix</strong>. User is able to redefine <strong>_scl_basedir</strong> (preset to /opt) and _scl_vendor (preset to rh by upstream).</li>
