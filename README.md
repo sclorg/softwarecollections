@@ -14,6 +14,9 @@ Install package softwarecollections:
 
     yum -y install softwarecollections
 
+Install these python3 packages:
+
+    yum -y install python3-django-tagging python3-requests python3-django-openid python3-openid
 
 Configuration
 -------------
