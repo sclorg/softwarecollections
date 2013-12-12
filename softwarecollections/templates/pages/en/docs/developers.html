@@ -8,6 +8,45 @@
 <h1>Software Collections for Developers</h1>
 <h3 id="collection_prefix">Collection prefix</h3>
 <p>
-The collection prefix is defined by the macro <code>_scl_prefix</code>. In copr must be the prefix unique, therefore it's based on name of a project and a username e.g. <code>ruby193-username</code>. Copr has preset of the installation path into <code>/opt/sclo</code>. The installation path and the collection prefix can be overriden. In case of local builds can be macros redefined in <code>/etc/rpm/macros.scl</code>, namely <code>scl_basedir</code> and <code>scl_vendor</code>, or define in every specfile. The new definition of intallation path is not recommended in scl.org repositories.
+Collection prefix must be set to /opt/sclo, because hosted packages on scl.org will be installed into this location only. Users have possibility to redefine the path by using these macros:
+<ul>
+<li><strong>_scl_prefix</strong> in EL-5,6,7. It is set to /opt/rh by default in /etc/rpm/macros.scl. It can be redefined there for local builds, but it can be also redefined in all specfiles.</li>
+<li>In Fedora are used new macros, which are defining <strong>_scl_prefix</strong>. User is able to redefine <strong>_scl_basedir</strong> (preset to /opt) and _scl_vendor (preset to rh by upstream).</li>
+</ul>
+Other vendors must redefine it to their own vendor string. 
+Macros are defined in /etc/rpm/macros.scl. It can be redefined there for local builds, but for COPR builds can be redefined only in specfiles.
 </p>
+
+<p>An example SCL metapackage with redefinition of installation path for local builds:</p>
+<pre class="highlight yaml">
+<span class="err">%</span><span class="s">global <span class="err">%</span><span class="s">_scl_prefix /opt/sclo</span>
+</pre>
+or
+<pre class="highlight yaml">
+<span class="s"># define special directory if /opt is not sufficient</span>
+<span class="err">%</span><span class="s">global <span class="err">%</span><span class="s">_scl_basedir /mydir</span>
+# define vendor string. The string should be registered in FHS.
+<span class="err">%</span><span class="s">global <span class="err">%</span><span class="s">_scl_vendor mycompany</span>
+</pre>
+and continue as usual</span>
+<pre class="highlight yaml">
+<span class="err">%</span><span class="s">global scl ruby193</span>
+<span class="err">%</span><span class="s">scl_package <span class="err">%</span>scl</span>
+...
+</pre>
+
+<p>An example SCL metapackage with explanation of macros:</p>
+<pre class="highlight yaml">
+<span class="s"># check if builds are done on COPR</span>
+<span class="err">%</span><span class="s">if 0<span class="err">%</span>{?copr_username:1}</span>
+<span class="s"># username and projectname will create unique prefix of project for COPR</span>
+<span class="err">%</span><span class="s">global scl <span class="err">%</span>{copr_username}-<span class="err">%</span>{copr_projectname}</span>
+<span class="err">%</span><span class="s">else</span>
+<span class="s"># name of the collection e.g. ruby193</span>
+<span class="err">%</span><span class="s">global scl ruby193</span>
+<span class="err">%</span><span class="s">endif</span>
+<span class="err">%</span><span class="s">scl_package <span class="err">%</span>scl</span>
+...
+</pre>
+
 {% endblock %}
