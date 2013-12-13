@@ -1,5 +1,6 @@
 %global  scls_statedir %{_localstatedir}/lib/softwarecollections
 %global  scls_confdir  %{_sysconfdir}/softwarecollections
+%global  cron_confdir  %{_sysconfdir}/cron.d
 %global  httpd_confdir %{_sysconfdir}/httpd/conf.d
 %global  httpd_group   apache
 
@@ -78,8 +79,8 @@ install -p -d -m 0775 data \
      %{buildroot}%{scls_statedir}/data
 
 # install crontab
-install -p -D -m 0644 sclsync-cron \
-    %{buildroot}%{_sysconfdir}/cron.d/sclsync
+install -p -D -m 0644 conf/cron/%{name} \
+    %{buildroot}%{cron_confdir}/%{name}
 
 # remove .po files
 find %{buildroot} -name "*.po" | xargs rm -f
@@ -102,9 +103,9 @@ service httpd condrestart
 %doc LICENSE README.md
 %{_bindir}/%{name}
 %{_sysconfdir}/bash_completion.d/%{name}_bash_completion
+%config(noreplace) %{cron_confdir}/%{name}
 %config(noreplace) %{httpd_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
-%config(noreplace) %{_sysconfdir}/cron.d/sclsync
 %{scls_statedir}/htdocs/wsgi.py*
 %dir %{scls_statedir}/htdocs/repos
 %dir %{scls_statedir}/htdocs/static
