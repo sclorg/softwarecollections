@@ -19,12 +19,14 @@ BuildArch:         noarch
 BuildRequires:     python3-devel
 BuildRequires:     python3-setuptools
 
+Requires:          createrepo
 Requires:          httpd
 Requires:          mod_ssl
-Requires:          python3-mod_wsgi
 Requires:          python3-django
 Requires:          python3-django-tagging
-Requires:          createrepo
+Requires:          python3-mod_wsgi
+Requires:          python3-openid
+Requires:          python3-requests
 Requires:          yum-utils
 
 %description
