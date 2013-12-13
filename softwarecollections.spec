@@ -93,6 +93,8 @@ done | grep %{python3_sitelib} > %{name}.files
 %find_lang django
 cat django.lang >> %{name}.files
 
+%post
+service httpd condrestart
 
 %files -f %{name}.files
 %doc LICENSE README.md
