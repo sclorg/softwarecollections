@@ -54,5 +54,6 @@ def complete(request, redirect_field_name=REDIRECT_FIELD_NAME):
 
 def logout(request, redirect_field_name=REDIRECT_FIELD_NAME):
     auth_logout(request)
+    messages.success(request, _('Successfully logged out.'))
     return redirect_next(request, redirect_field_name, 'LOGOUT_REDIRECT_URL')
 
