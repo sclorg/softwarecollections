@@ -42,7 +42,6 @@ rm %{name}/localsettings-development.py
 mv %{name}/localsettings-production.py localsettings
 mv %{name}/wsgi.py htdocs/
 %{__python3} setup.py build
-mkdir data
 
 
 %install
