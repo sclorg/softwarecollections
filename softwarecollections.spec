@@ -24,6 +24,7 @@ Requires:          createrepo
 Requires:          httpd
 Requires:          mod_ssl
 Requires:          python3-django
+Requires:          python3-django-south
 Requires:          python3-django-tagging
 Requires:          python3-mod_wsgi
 Requires:          python3-openid
