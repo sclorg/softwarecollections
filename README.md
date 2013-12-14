@@ -73,9 +73,9 @@ Login at http://127.0.0.1:8000/login (login uses FAS) and make yourself a superu
     ./manage.py makesuperuser $USER
 
 Now You may visit backend admin at http://127.0.0.1:8000/admin/.
-You may also create a set of sample collections maintained by you:
+You may also create a set of sample collections:
 
-    ./manage.py createsamplecollections $USER
+    ./manage.py createsamplecollections
 
 To update your code and database to tha last available version run:
 
