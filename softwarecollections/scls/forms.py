@@ -19,6 +19,7 @@ as possible.
     ''',
 ])
 
+
 class CreateForm(ModelForm):
 
     class Meta:
@@ -27,4 +28,11 @@ class CreateForm(ModelForm):
         widgets = {
             'policy': RadioSelect(choices=POLICY_CHOICES),
         }
+
+
+class UpdateForm(ModelForm):
+
+    class Meta:
+        model = SoftwareCollection
+        fields = ['username', 'name', 'policy']
 

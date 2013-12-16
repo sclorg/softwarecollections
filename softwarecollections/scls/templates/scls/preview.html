@@ -1,10 +1,17 @@
+{% load auth %}
 {% load url from future %}
 <h1><a href="{{ scl.get_absolute_url }}">{{ scl.title }}</a></h1>
 <p><summary>{{ scl.summary }}</summary></p>
 <p><description>{{ scl.description }}</description></p>
+<p><policy>{{ scl.policy }}</policy></p>
 <p><maintainer><a href="{% url "scls:list_user" scl.maintainer.username %}">{{ scl.maintainer.get_full_name }}</a></p>
 <p class="scl-tags">
     {% for tag in scl.tags %}
         <a href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
     {% endfor %}
 </p>
+{% allowed 'edit' obj=scl %}
+<p><a href="{{ scl.get_edit_url }}">edit</a></p>
+{% notallowed %}
+<p>You are not allowed to edit this collection.</p>
+{% endallowed %}

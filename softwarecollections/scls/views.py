@@ -1,15 +1,17 @@
 from django.conf import settings
 from django.http.response import Http404
 from django.shortcuts import render_to_response, get_object_or_404
+from django.utils.decorators import method_decorator
 
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 from .models import SoftwareCollection
-from .forms import CreateForm
+from .forms import CreateForm, UpdateForm
 
 from django.template import RequestContext
 
 from tagging.models import Tag
 
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
@@ -64,6 +66,7 @@ detail = Detail.as_view()
 
 class New(CreateView):
     model = SoftwareCollection
+    template_name_suffix = '_new'
 
     def get_form_class(self):
         return CreateForm
@@ -77,5 +80,26 @@ class New(CreateView):
         self.object.save()
         return super(New, self).form_valid(form)
 
-new = login_required(New.as_view())
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ProtectedView, self).dispatch(*args, **kwargs)
+
+new = New.as_view()
+
+
+class Edit(UpdateView):
+    model = SoftwareCollection
+    template_name_suffix = '_edit'
+
+    def get_object(self, *args, **kwargs):
+        scl = super(Edit, self).get_object(*args, **kwargs)
+        if scl.has_perm(self.request.user, 'edit'):
+            return scl
+        else:
+            raise PermissionDenied()
+
+    def get_form_class(self):
+        return UpdateForm
+
+edit = Edit.as_view()
 

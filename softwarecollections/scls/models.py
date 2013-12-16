@@ -26,7 +26,7 @@ class SoftwareCollection(models.Model):
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
     collaborators   = models.ManyToManyField(User,
-                        verbose_name=_('Collaborators'), blank=True)
+                        verbose_name=_('Collaborators'), related_name='softwarecollection_set', blank=True)
 
     _copr           = None
 
@@ -49,6 +49,9 @@ class SoftwareCollection(models.Model):
     def get_absolute_url(self):
         return reverse('scls:detail', kwargs={'slug': self.slug})
 
+    def get_edit_url(self):
+        return reverse('scls:edit', kwargs={'slug': self.slug})
+
     @property
     def copr(self):
         if not self._copr and self.username and self.name:
@@ -66,6 +69,13 @@ class SoftwareCollection(models.Model):
     @property
     def title(self):
         return ' / '.join([self.username, self.name])
+
+    def has_perm(self, user, perm):
+        if perm in ['edit', 'delete']:
+            return user.id == self.maintainer_id \
+                or self in user.softwarecollection_set.all()
+        else:
+            return False
 
     def save(self, *args, **kwargs):
         # refresh copr

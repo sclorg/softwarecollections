@@ -7,5 +7,6 @@ urlpatterns = patterns('softwarecollections.scls.views',
     url(r'^tag/(?P<name>.*)/$',         'list_tag',     name='list_tag'),
     url(r'^new/$',                      'new',          name='new'),
     url(r'^detail/(?P<slug>.*)/$',      'detail',       name='detail'),
+    url(r'^edit/(?P<slug>.*)/$',        'edit',         name='edit'),
 )
 urls = (urlpatterns, 'scls', 'scls')
