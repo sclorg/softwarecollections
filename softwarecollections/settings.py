@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'tagging',
     'softwarecollections',
     'softwarecollections.scls',
+    'softwarecollections.auth',
     'south',
 )
 
@@ -83,7 +84,7 @@ COPR_API_URL = 'http://copr-fe.cloud.fedoraproject.org/api/'
 AUTH_USER_MODEL = 'auth.User'
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
+    'softwarecollections.auth.backend.PerObjectModelBackend',
     'softwarecollections.fas.backend.FasBackend',
 )
 
