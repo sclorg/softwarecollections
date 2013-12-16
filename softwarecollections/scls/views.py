@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from django.views.generic import CreateView, DetailView
 from .models import SoftwareCollection
+from .forms import CreateForm
 
 from django.template import RequestContext
 
@@ -63,6 +64,18 @@ detail = Detail.as_view()
 
 class New(CreateView):
     model = SoftwareCollection
+
+    def get_form_class(self):
+        return CreateForm
+
+    def form_valid(self, form):
+        """
+        If the form is valid, save the associated model.
+        """
+        self.object = form.save(commit=False)
+        self.object.maintainer = self.request.user
+        self.object.save()
+        return super(New, self).form_valid(form)
 
 new = login_required(New.as_view())
 
