@@ -13,43 +13,16 @@ from softwarecollections.copr import CoprProxy
 User = get_user_model()
 
 
-UPDATE_FREQ_CHOICES = (
-    ('OS', _('one shot')),
-    ('RU', _('random updates, just make it work')),
-    ('SU', _('security updates')),
-)
-UPDATE_FREQ = dict(UPDATE_FREQ_CHOICES)
-
-
-REBASE_POLICY_CHOICES = (
-    ('BP', _('backport bugfixes (stable, enterprise collections)')),
-    ('RB', _('rebase')),
-)
-REBASE_POLICY = dict(REBASE_POLICY_CHOICES)
-
-
-MATURITY_CHOICES = (
-    ('D', _('development')),
-    ('T', _('testing')),
-    ('P', _('production')),
-)
-MATURITY = dict(MATURITY_CHOICES)
-
-
 class SoftwareCollection(models.Model):
     slug            = models.SlugField(max_length=150, editable=False)
     username        = models.CharField(_('User'), max_length=100)
     name            = models.CharField(_('Project'), max_length=200)
-    description     = models.TextField(_('Description'),  blank=True, editable=False)
-    instructions    = models.TextField(_('Instructions'), blank=True, editable=False)
-    update_freq     = models.CharField(_('Update frequency'), max_length=2,
-                        choices=UPDATE_FREQ_CHOICES)
-    rebase_policy   = models.CharField(_('Rebase policy'), max_length=2,
-                        choices=REBASE_POLICY_CHOICES)
-    maturity        = models.CharField(_('Maturity'), max_length=2,
-                        choices=MATURITY_CHOICES)
+    description     = models.TextField(_('Description'),  blank=True)
+    instructions    = models.TextField(_('Instructions'), blank=True)
+    policy          = models.TextField(_('Policy'))
     score           = models.SmallIntegerField(null=True, editable=False)
-    need_sync       = models.BooleanField(_('Needs sync with copr'), default=False)
+    approved        = models.BooleanField(_('Approved'), default=False)
+    need_sync       = models.BooleanField(_('Needs sync with copr'), default=True)
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
     collaborators   = models.ManyToManyField(User,
