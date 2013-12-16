@@ -9,7 +9,7 @@ from softwarecollections import fas, scls
 urlpatterns = i18n_patterns('',
     url(r'^admin/',     include(admin.site.urls)),
     url(r'^faq/$',      RedirectView.as_view(url='/en/docs/faq/')),
-    url(r'^directory/', include(scls.urls)),
+    url(r'^scls/',      include(scls.urls)),
     url('',             include(fas.urls)),
     url(r'^((?P<path>.*)/|)$', 'softwarecollections.pages.views.page', name='page',
                         kwargs={'template_dir':'pages'}),

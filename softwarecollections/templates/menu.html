@@ -10,8 +10,9 @@
         <li class='{% if request.path == "/en/faq/" %}active{% endif %}' role='menuitem'>
             <a href='/en/faq/'>faq</a>
         </li>
-        <li class='{% if request.path == "/en/directory/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/directory/'>directory</a>
+        {% url "scls:list_all" as scls_list_all %}
+        <li class='{% if request.path == scls_list_all %}active{% endif %}' role='menuitem'>
+            <a href='{{ scls_list_all }}'>collections</a>
         </li>
         {% if request.user.is_authenticated %}
         <li class='' role='menuitem'>
