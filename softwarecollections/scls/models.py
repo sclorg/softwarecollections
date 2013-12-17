@@ -85,6 +85,7 @@ class SoftwareCollection(models.Model):
         self.description  = self.copr.description
         self.instructions = self.copr.instructions
         super(SoftwareCollection, self).save(*args, **kwargs)
+        self.collaborators.add(self.maintainer)
 
     class Meta:
         # in fact, since slug is made of those and slug is unique,

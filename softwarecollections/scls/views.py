@@ -19,9 +19,7 @@ from django.contrib.auth import get_user_model
 
 def _list(request, template, queryset, dictionary, **kwargs):
     filter_params = {}
-    for key in ['maturity', 'rebase_policy', 'update_freq']:
-        if key in kwargs:
-            filter_params[key] = kwargs[key]
+    # TODO add filtering
     dictionary['collections'] = queryset.filter(**filter_params)
     return render_to_response(template, dictionary,
         context_instance = RequestContext(request))
@@ -34,14 +32,14 @@ def list_all(request, **kwargs):
 
 @login_required
 def list_my(request, **kwargs):
-    queryset = SoftwareCollection.objects.filter(maintainer = request.user)
+    queryset = request.user.softwarecollection_set
     return _list(request, 'scls/list_my.html', queryset, {}, **kwargs)
 
 
 def list_user(request, username, **kwargs):
     User = get_user_model()
     user = get_object_or_404(User, **{User.USERNAME_FIELD: username})
-    queryset = SoftwareCollection.objects.filter(maintainer = user)
+    queryset = user.softwarecollection_set
     dictionary = {'user': user}
     return _list(request, 'scls/list_user.html', queryset, dictionary, **kwargs)
 
