@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.http.response import Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.decorators import method_decorator
 
 from django.views.generic import CreateView, DetailView, UpdateView
-from .models import SoftwareCollection
+from .models import SoftwareCollection, Score, User
 from .forms import CreateForm, UpdateForm
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.template import RequestContext
 
@@ -59,6 +61,16 @@ class Detail(DetailView):
     model = SoftwareCollection
     context_object_name = 'scl'
 
+    def get_context_data(self, **kwargs):
+        context = dict(super(Detail, self).get_context_data(**kwargs))
+        username = self.request.user.get_username()
+        user_ratings = Score.objects.filter(user__username=username, scl_id=context['scl'].pk);
+        if user_ratings and user_ratings[0]:
+            context['user_rating'] = user_ratings[0].score
+        ratings = Score.objects.filter(scl_id=context['scl'].pk)
+        context['times_rated'] = len(ratings)
+        return context
+
 detail = Detail.as_view()
 
 
@@ -100,4 +112,25 @@ class Edit(UpdateView):
         return UpdateForm
 
 edit = Edit.as_view()
+
+def rate(request, **kwargs):
+    score = request.POST['score']
+    scl_id = request.POST['scl_id']
+    redir = request.POST['redir']
+    username = request.user.get_username()
+    scl = SoftwareCollection.objects.get(pk=int(scl_id))
+    user = User.objects.get(username=username)
+    if not user or not scl or scl.maintainer == user:
+        raise Http404
+    try:
+        prev_score = Score.objects.get(scl=scl, user=request.user)
+        prev_score.score = score
+        prev_score.save()
+    except ObjectDoesNotExist:
+        new_score = Score(scl=scl, user=user, score=score)
+        new_score.save()
+    return HttpResponseRedirect(redir)
+
+rate = login_required(rate)
+
 

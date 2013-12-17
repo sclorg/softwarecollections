@@ -1,0 +1,36 @@
+<div>
+    {% if active %}
+    <form name="stars-{{scl.pk}}" method="POST"
+        action="{% url "scls:rate" %}">
+        {% csrf_token %}
+    {% endif %}
+        {% for i in "12345" %}
+        <img
+    {% if active %}
+        onclick="scl_rate('{{scl.pk}}','{{i}}');"
+        onmouseover="stars_show('{{scl.pk}}', {{i}})"
+        onmouseout="stars_revert('{{scl.pk}}')"
+        style="cursor: pointer"
+        id="star-{{scl.pk}}-{{i}}"
+    {% endif %}
+        alt="{{i}}"
+        {% if forloop.counter <= score %}
+        src="/static/images/star.png"
+        class="star"
+        {% else %}
+        src="/static/images/star_empty.png"
+        class="star_empty"
+        {% endif %}
+        />
+        {% endfor %}
+    {% if active %}
+        <input type="hidden" name="score"
+            value="{{score}}"/>
+        <input type="hidden" name="scl_id"
+            value="{{scl.pk}}"/>
+        <input type="hidden" name="redir"
+            value="{{request.path}}"/>
+    </form>
+    {% endif %}
+    <br/>
+</div>
