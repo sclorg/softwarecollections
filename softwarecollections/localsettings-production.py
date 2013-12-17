@@ -72,7 +72,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'htdocs', 'static')
 STATIC_URL = '/static/'
 
 # Absolute path to the directory repos should be synced to.
-REPOS_ROOT = os.path.join(BASE_DIR, 'htdocs', 'repos')
+REPOS_ROOT = "/var/scl-repos"
 
 # URL prefix for repo.
 REPOS_URL  = '/repos/'
