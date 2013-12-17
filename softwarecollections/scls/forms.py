@@ -1,5 +1,5 @@
 import markdown2
-from django.forms import ModelForm, RadioSelect
+from django.forms import ModelForm, RadioSelect, CharField
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -33,6 +33,7 @@ class CreateForm(ModelForm):
 
 
 class UpdateForm(ModelForm):
+    tags = CharField(max_length=200, required=False)
 
     class Meta:
         model = SoftwareCollection

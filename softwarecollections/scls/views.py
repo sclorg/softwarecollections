@@ -119,6 +119,14 @@ class Edit(UpdateView):
     def get_form_class(self):
         return UpdateForm
 
+    def form_valid(self, form):
+        """
+        If the form is valid, save the associated model.
+        """
+        self.object = form.save()
+        self.object.tags = form.cleaned_data['tags']
+        return super(Edit, self).form_valid(form)
+
 edit = Edit.as_view()
 
 
