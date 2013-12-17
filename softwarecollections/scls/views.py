@@ -80,7 +80,7 @@ class New(CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ProtectedView, self).dispatch(*args, **kwargs)
+        return super(New, self).dispatch(*args, **kwargs)
 
 new = New.as_view()
 
