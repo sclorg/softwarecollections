@@ -17,6 +17,9 @@
         <a href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
     {% endfor %}
 </p>
+<p>
+    <a href="/repos/root-{{ scl.name }}/">Yum repository</a>
+</p>
 {% allowed 'edit' obj=scl %}
 <p><a href="{{ scl.get_edit_url }}">edit</a></p>
 {% notallowed %}
