@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_markdown2',
     'tagging',
     'softwarecollections',
     'softwarecollections.scls',

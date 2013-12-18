@@ -1,11 +1,17 @@
 {% load auth %}
+{% load md2 %}
 {% load rating_stars %}
 {% load url from future %}
 <h1><a href="{{ scl.get_absolute_url }}">{{ scl.title }}</a></h1>
-<p><summary>{{ scl.summary }}</summary></p>
-<p><description>{{ scl.description }}</description></p>
-<p><policy>{{ scl.policy }}</policy></p>
-<p><maintainer><a href="{% url "scls:list_user" scl.maintainer.username %}">{{ scl.maintainer.get_full_name }}</a></p>
+<p>
+    by
+    <maintainer>
+        <a href="{% url "scls:list_user" scl.maintainer.username %}">
+            {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
+        </a>
+    </maintainer>
+</p>
+<p><description>{{ scl.description | markdown2 }}</description></p>
 <p class="scl-tags">
     {% for tag in scl.tags %}
         <a href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>

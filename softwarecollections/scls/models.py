@@ -17,8 +17,8 @@ class SoftwareCollection(models.Model):
     slug            = models.SlugField(max_length=150, editable=False)
     username        = models.CharField(_('User'), max_length=100)
     name            = models.CharField(_('Project'), max_length=200)
-    description     = models.TextField(_('Description'),  blank=True)
-    instructions    = models.TextField(_('Instructions'), blank=True)
+    description     = models.TextField(_('Description'))
+    instructions    = models.TextField(_('Instructions'))
     policy          = models.TextField(_('Policy'))
     score           = models.SmallIntegerField(null=True, editable=False)
     score_count     = models.IntegerField(default=0, editable=False)
@@ -82,13 +82,10 @@ class SoftwareCollection(models.Model):
             return False
 
     def save(self, *args, **kwargs):
-        # refresh copr
-        self._copr = None
-        # update attributes
-        self.slug         = self.copr.slug
-        self.description  = self.copr.description
-        self.instructions = self.copr.instructions
+        # ensure slug is correct
+        self.slug = '/'.join((self.username, self.name))
         super(SoftwareCollection, self).save(*args, **kwargs)
+        # ensure maintainer is collaborator
         self.collaborators.add(self.maintainer)
 
     class Meta:
