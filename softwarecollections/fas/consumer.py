@@ -1,22 +1,8 @@
 from django.conf import settings
-from django.contrib.auth import authenticate
-from django.contrib.auth import get_user_model
-from django.contrib.auth import login as auth_login, REDIRECT_FIELD_NAME
-from django.contrib.auth.views import logout as auth_views_logout
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.views.decorators.http import require_POST
-from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render, redirect, resolve_url
-
-from django.core.urlresolvers import reverse
 
 from openid.extensions import sreg
 from openid.consumer.consumer import \
     Consumer as _Consumer, SUCCESS, CANCEL, FAILURE, SETUP_NEEDED
-
-User = get_user_model()
 
 try:
     import cPickle as pickle
