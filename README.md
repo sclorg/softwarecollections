@@ -24,24 +24,10 @@ Check the configuration in config files:
     sudo vim /etc/softwarecollections/localsettings
     sudo vim /etc/httpd/conf.d/softwarecollections.conf
 
-Initialize database:
+If you have changed the configuration of database connection
+(which is recommended for production), initialize the database with:
 
-    sudo softwarecollections syncdb --noinput
-    sudo softwarecollections migrate
-
-If using sqlite, make sure httpd has write access to it:
-
-    chgrp apache /var/lib/softwarecollections/data/db.sqlite3
-    chmod g+w    /var/lib/softwarecollections/data/db.sqlite3
-
-Prepare static content:
-
-    umask 022
-    sudo softwarecollections collectstatic
-
-Reload httpd configuration:
-
-    sudo service httpd reload
+    sudo softwarecollections syncdb --migrate --noinput
 
 
 Development instance
@@ -61,26 +47,29 @@ Create local configuration:
 
 Initialize development database:
 
-    ./manage.py syncdb --noinput
-    ./manage.py migrate
+    ./manage.py syncdb --migrate --noinput
 
 Run development server:
 
     ./manage.py runserver
 
-Login at http://127.0.0.1:8000/login (login uses FAS) and make yourself a superuser:
+Voilà!
+
+No registration of user is required.
+You may simply [login](http://127.0.0.1:8000/login) if You have
+[FAS](https://admin.fedoraproject.org/accounts/) account.
+
+If You want to access the [admin site](http://127.0.0.1:8000/admin/),
+first make Yourself a superuser:
 
     ./manage.py makesuperuser $USER
 
-Now You may visit backend admin at http://127.0.0.1:8000/admin/.
-You may also create a set of sample collections:
-
-    ./manage.py createsamplecollections
-
-To update your code and database to tha last available version run:
+To update your code and database to the last available version run:
 
     git pull --rebase
-    ./manage.py migrate
+    ./manage.py syncdb --migrate --noinput
+
+You may also need to install some new requirements (see the spec file).
 
 
 RPM build

@@ -100,6 +100,8 @@ cat django.lang >> %{name}.files
 
 %post
 service httpd condrestart
+su apache - -s /bin/bash -c "softwarecollections syncdb --migrate --noinput"
+softwarecollections collectstatic --noinput
 
 %files -f %{name}.files
 %doc LICENSE README.md
