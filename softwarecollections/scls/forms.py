@@ -1,4 +1,4 @@
-from django.forms import ModelForm, RadioSelect
+from django.forms import ModelForm, RadioSelect, CharField
 from django.utils.translation import ugettext_lazy as _
 
 from .models import SoftwareCollection, Score
@@ -21,6 +21,7 @@ as possible.
 
 
 class CreateForm(ModelForm):
+    tags = CharField(max_length=100)
 
     class Meta:
         model = SoftwareCollection
@@ -31,6 +32,7 @@ class CreateForm(ModelForm):
 
 
 class UpdateForm(ModelForm):
+    tags = CharField(max_length=100)
 
     class Meta:
         model = SoftwareCollection

@@ -84,6 +84,8 @@ class New(CreateView):
         self.object = form.save(commit=False)
         self.object.maintainer = self.request.user
         self.object.save()
+        tags = form.cleaned_data['tags']
+        Tag.objects.update_tags(self.object, tags)
         return super(New, self).form_valid(form)
 
     @method_decorator(login_required)
@@ -107,6 +109,17 @@ class Edit(UpdateView):
     def get_form_class(self):
         return UpdateForm
 
+    def form_valid(self, form):
+        tags = form.cleaned_data['tags']
+        Tag.objects.update_tags(self.object, tags)
+        return super(Edit, self).form_valid(form)
+
+    def get_initial(self):
+        orig = super(Edit, self).get_initial()
+        orig['tags']=" ".join([t.name for t in
+            Tag.objects.get_for_object(self.get_object())])
+        return orig
+        
 edit = Edit.as_view()
 
 
