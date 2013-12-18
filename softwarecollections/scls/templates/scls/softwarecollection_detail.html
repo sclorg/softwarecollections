@@ -27,19 +27,19 @@
 <p>You are not allowed to edit this collection.</p>
 {% endallowed %}
 
-{% if scl.score %}
+{% if scl.score_count %}
 <strong>Users' rating of this collection:</strong>
-{% rating_stars 'passive' scl.score %}
-<p>Rated by {{times_rated}} user{{times_rated|pluralize}}</p>
+{% rating_stars 'passive' scl %}
+<p>Rated by {{ scl.score_count }} user{{ scl.score_count|pluralize }}</p>
 {% endif %}
 
-{% if scl.maintainer != request.user %}
-{% if user_rating %}
+{% allowed 'rate' obj=scl %}
+{% if user_score %}
 <strong>Your rating:</strong>
-{% rating_stars 'active' user_rating %}
 {% else %}
 <strong>Rate this collection:</strong>
-{% rating_stars 'active' 0 %}
 {% endif %}
-{% endif %}
+{% rating_stars 'active' scl user_score %}
+{% endallowed %}
+
 {% endblock %}

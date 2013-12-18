@@ -4,15 +4,14 @@
         action="{% url "scls:rate" %}">
         {% csrf_token %}
     {% endif %}
-        {% for i in "12345" %}
-        <img
-    {% if active %}
+    {% for i in "12345" %}<img
+        {% if active %}
         onclick="scl_rate('{{scl.pk}}','{{i}}');"
         onmouseover="stars_show('{{scl.pk}}', {{i}})"
         onmouseout="stars_revert('{{scl.pk}}')"
         style="cursor: pointer"
         id="star-{{scl.pk}}-{{i}}"
-    {% endif %}
+        {% endif %}
         alt="{{i}}"
         {% if forloop.counter <= score %}
         src="/static/images/star.png"
@@ -21,14 +20,13 @@
         src="/static/images/star_empty.png"
         class="star_empty"
         {% endif %}
-        />
-        {% endfor %}
+    />{% endfor %}
     {% if active %}
         <input type="hidden" name="score"
             value="{{score}}"/>
-        <input type="hidden" name="scl_id"
+        <input type="hidden" name="scl"
             value="{{scl.pk}}"/>
-        <input type="hidden" name="redir"
+        <input type="hidden" name="next"
             value="{{request.path}}"/>
     </form>
     {% endif %}

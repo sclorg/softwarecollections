@@ -21,6 +21,7 @@ class SoftwareCollection(models.Model):
     instructions    = models.TextField(_('Instructions'), blank=True)
     policy          = models.TextField(_('Policy'))
     score           = models.SmallIntegerField(null=True, editable=False)
+    score_count     = models.IntegerField(default=0, editable=False)
     approved        = models.BooleanField(_('Approved'), default=False)
     need_sync       = models.BooleanField(_('Needs sync with copr'), default=True)
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
@@ -74,6 +75,9 @@ class SoftwareCollection(models.Model):
         if perm in ['edit', 'delete']:
             return user.id == self.maintainer_id \
                 or self in user.softwarecollection_set.all()
+        elif perm == 'rate':
+            return user.id != self.maintainer_id \
+                or self not in user.softwarecollection_set.all()
         else:
             return False
 
@@ -99,12 +103,20 @@ tagging.register(SoftwareCollection)
 class Score(models.Model):
     scl  = models.ForeignKey(SoftwareCollection, related_name='scores')
     user = models.ForeignKey(User)
-    score = models.SmallIntegerField()
+    score = models.SmallIntegerField(choices=((n, n) for n in range(1,6)))
 
     # store average score on each change
     def save(self, *args, **kwargs):
         super(Score, self).save(*args, **kwargs)
         self.scl.score = self.scl.scores.aggregate(Avg('score'))['score__avg']
+        self.scl.score_count = self.scl.scores.count()
+        self.scl.save()
+
+    # de
+    def delete(self, *args, **kwargs):
+        super(Score, self).delete(*args, **kwargs)
+        self.scl.score = self.scl.scores.aggregate(Avg('score'))['score__avg']
+        self.scl.score_count = self.scl.scores.count()
         self.scl.save()
 
     class Meta:

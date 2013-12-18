@@ -37,6 +37,6 @@ class Command(BaseCommand):
                     s = Score()
                     s.user  = user
                     s.scl   = scl
-                    s.score = randint(1, 10)
+                    s.score = randint(1, 5)
                     s.save()
 

@@ -1,7 +1,7 @@
 from django.forms import ModelForm, RadioSelect
 from django.utils.translation import ugettext_lazy as _
 
-from .models import SoftwareCollection
+from .models import SoftwareCollection, Score
 
 POLICY_CHOICES = tuple((s, s) for s in [
     '''**Developing** - this is just for my testing purposes and it probably does not work yet.
@@ -35,4 +35,11 @@ class UpdateForm(ModelForm):
     class Meta:
         model = SoftwareCollection
         fields = ['username', 'name', 'policy']
+
+
+class RateForm(ModelForm):
+
+    class Meta:
+        model = Score
+        fields = ['scl', 'score']
 

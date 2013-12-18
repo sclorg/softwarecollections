@@ -1,21 +1,18 @@
-from django.conf import settings
-from django.http.response import Http404
+from django.contrib import messages
+from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-from django.utils.decorators import method_decorator
-
-from django.views.generic import CreateView, DetailView, UpdateView
-from .models import SoftwareCollection, Score, User
-from .forms import CreateForm, UpdateForm
-from django.core.exceptions import ObjectDoesNotExist
-
 from django.template import RequestContext
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_POST
+from django.views.generic import CreateView, DetailView, UpdateView
 from tagging.models import Tag
+from urllib.parse import urlsplit, urlunsplit
 
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
+from .forms import CreateForm, UpdateForm, RateForm
+from .models import SoftwareCollection, Score
 
 
 
@@ -63,12 +60,11 @@ class Detail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = dict(super(Detail, self).get_context_data(**kwargs))
-        username = self.request.user.get_username()
-        user_ratings = Score.objects.filter(user__username=username, scl_id=context['scl'].pk);
-        if user_ratings and user_ratings[0]:
-            context['user_rating'] = user_ratings[0].score
-        ratings = Score.objects.filter(scl_id=context['scl'].pk)
-        context['times_rated'] = len(ratings)
+        if self.request.user.has_perm('rate', obj=self.object):
+            try:
+                context['user_score'] = Score.objects.get(user=self.request.user, scl=self.object).score
+            except ObjectDoesNotExist:
+                context['user_score'] = 0
         return context
 
 detail = Detail.as_view()
@@ -103,7 +99,7 @@ class Edit(UpdateView):
 
     def get_object(self, *args, **kwargs):
         scl = super(Edit, self).get_object(*args, **kwargs)
-        if scl.has_perm(self.request.user, 'edit'):
+        if self.request.user.has_perm('edit', obj=scl):
             return scl
         else:
             raise PermissionDenied()
@@ -113,24 +109,32 @@ class Edit(UpdateView):
 
 edit = Edit.as_view()
 
-def rate(request, **kwargs):
-    score = request.POST['score']
-    scl_id = request.POST['scl_id']
-    redir = request.POST['redir']
-    username = request.user.get_username()
-    scl = SoftwareCollection.objects.get(pk=int(scl_id))
-    user = User.objects.get(username=username)
-    if not user or not scl or scl.maintainer == user:
-        raise Http404
-    try:
-        prev_score = Score.objects.get(scl=scl, user=request.user)
-        prev_score.score = score
-        prev_score.save()
-    except ObjectDoesNotExist:
-        new_score = Score(scl=scl, user=user, score=score)
-        new_score.save()
-    return HttpResponseRedirect(redir)
 
-rate = login_required(rate)
+@require_POST
+def rate(request, redirect_field_name=REDIRECT_FIELD_NAME):
+    form = RateForm(data=request.POST)
+    if form.is_valid():
+        data = form.cleaned_data
+        if not request.user.has_perm('rate', obj=data['scl']):
+            raise PermissionDenied()
+        try:
+            score = Score.objects.get(user=request.user, scl=data['scl'])
+        except ObjectDoesNotExist:
+            score = Score(user=request.user, scl=data['scl'])
+        score.score = data['score']
+        score.save()
+    else:
+        for message in form.errors.values():
+            messages.error(request, message)
+    try:
+        # get safe url from user input
+        url = request.REQUEST[redirect_field_name]
+        url = urlunsplit(('','')+urlsplit(url)[2:])
+    except:
+        try:
+            url = score.scl.get_absolute_url()
+        except:
+            url = '/'
+    return HttpResponseRedirect(url)
 
 
