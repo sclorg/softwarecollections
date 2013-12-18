@@ -14,7 +14,7 @@ from urllib.parse import urlsplit, urlunsplit
 from .forms import CreateForm, UpdateForm, RateForm
 from .models import SoftwareCollection, Score
 
-
+from softwarecollections.copr import CoprProxy
 
 def _list(request, template, queryset, dictionary, **kwargs):
     filter_params = {}
@@ -90,8 +90,15 @@ class New(CreateView):
     def dispatch(self, *args, **kwargs):
         return super(New, self).dispatch(*args, **kwargs)
 
-new = New.as_view()
+    def get_context_data(self, **kwargs):
+        context = dict(super(New, self).get_context_data(**kwargs))
+        username = self.request.user.get_username()
+        copr_proxy = CoprProxy()
+        coprs = copr_proxy.coprs(username)
+        context['coprs'] = coprs
+        return context
 
+new = New.as_view()
 
 class Edit(UpdateView):
     model = SoftwareCollection
