@@ -8,13 +8,13 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, UpdateView
+from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
 from .forms import CreateForm, UpdateForm, RateForm
 from .models import SoftwareCollection, Score
 
-from softwarecollections.copr import CoprProxy
 
 def _list(request, template, queryset, dictionary, **kwargs):
     filter_params = {}
@@ -84,6 +84,7 @@ class New(CreateView):
         self.object = form.save(commit=False)
         self.object.maintainer = self.request.user
         self.object.save()
+        self.object.sync_copr_repos()
         return super(New, self).form_valid(form)
 
     @method_decorator(login_required)

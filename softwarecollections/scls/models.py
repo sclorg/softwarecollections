@@ -1,13 +1,11 @@
 import re
+import tagging
 from django.db import models
 from django.db.models import Avg
-import tagging
-from tagging.models import Tag
-from django.utils.translation import ugettext_lazy as _
-from django.core.validators import RegexValidator
-from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
-
+from django.core.urlresolvers import reverse
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from softwarecollections.copr import CoprProxy
 
 User = get_user_model()
@@ -22,12 +20,18 @@ class SoftwareCollection(models.Model):
     policy          = models.TextField(_('Policy'))
     score           = models.SmallIntegerField(null=True, editable=False)
     score_count     = models.IntegerField(default=0, editable=False)
+    download_count  = models.IntegerField(default=0, editable=False)
+    create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
+    last_sync_date  = models.DateTimeField(_('Last sync date'), null=True)
     approved        = models.BooleanField(_('Approved'), default=False)
+    approval_req    = models.BooleanField(_('Requested approval'), default=False)
+    auto_sync       = models.BooleanField(_('Auto sync'), default=True)
     need_sync       = models.BooleanField(_('Needs sync with copr'), default=True)
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
     collaborators   = models.ManyToManyField(User,
-                        verbose_name=_('Collaborators'), related_name='softwarecollection_set', blank=True)
+                        verbose_name=_('Collaborators'),
+                        related_name='softwarecollection_set', blank=True)
 
     _copr           = None
 
@@ -59,13 +63,19 @@ class SoftwareCollection(models.Model):
             self._copr = CoprProxy().copr(self.username, self.name)
         return self._copr
 
-    @property
-    def yum_repos(self):
-        return self.copr.yum_repos
-
-    @property
-    def additional_repos(self):
-        return self.copr.additional_repos
+    def sync_copr_repos(self):
+        repos = self.copr.yum_repos
+        for repo in self.repos.all():
+            if repo.name not in repos:
+                # delete old repos
+                repo.delete()
+            else:
+                # update existing repos
+                repo.copr_url = repos.pop(repo.name)
+                repo.save()
+        for name in repos:
+            # save new repos
+            Repo(scl=self, name=name, copr_url=repos[name]).save()
 
     @property
     def title(self):
@@ -95,6 +105,28 @@ class SoftwareCollection(models.Model):
         unique_together = (('username', 'name'),)
 
 tagging.register(SoftwareCollection)
+
+
+class Repo(models.Model):
+    scl             = models.ForeignKey(SoftwareCollection,
+                        verbose_name=_('Maintainer'),
+                        related_name='repos')
+    name            = models.CharField(_('Name'), max_length=50)
+    copr_url        = models.CharField(_('Copr URL'), max_length=200)
+    download_count  = models.IntegerField(default=0, editable=False)
+    create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
+    last_sync_date  = models.DateTimeField(_('Last sync date'), null=True)
+    enabled         = models.BooleanField(_('Enabled'), default=True)
+    auto_sync       = models.BooleanField(_('Auto sync'), default=True)
+    need_sync       = models.BooleanField(_('Needs sync'), default=True)
+    download_count  = models.IntegerField(default=0, editable=False)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        unique_together = (('scl', 'name'),)
+
 
 
 class Score(models.Model):
