@@ -11,30 +11,42 @@
 {% block content %}
 <h1>{{ scl.title }}</h1>
 <p>
-    by
-    <maintainer>
-        <a href="{% url "scls:list_user" scl.maintainer.username %}">
-            {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
-        </a>
-    </maintainer>
+    added by
+    <a href="{% url "scls:list_user" scl.maintainer.username %}">
+        {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
+    </a>
 </p>
-<p><description>{{ scl.description | markdown2 }}</description></p>
+{{ scl.description | markdown2 }}
+
 <h2>Instructions</h2>
-<p><instructions>{{ scl.instructions | markdown2 }}</instructions></p>
+{{ scl.instructions | markdown2 }}
+
 <h2>Policy</h2>
-<p><policy>{{ scl.policy | markdown2 }}</policy></p>
+{{ scl.policy | markdown2 }}
+
 <p class="scl-tags">
     {% for tag in scl.tags %}
         <a href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
     {% endfor %}
 </p>
-<p>
-    <a href="/repos/root-{{ scl.name }}/">Yum repository</a>
-</p>
+
+<h2>Yum Repositories</h2>
+<ul>
+{% for repo in scl.get_enabled_repos %}
+    <li>
+        {% if repo.last_sync_date %}
+            <a href="{{ repo.get_absolute_url }}">{{ repo.name }}</a>
+        {% else %}
+            {{ repo.name }} (not synced)
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>
+
 {% allowed 'edit' obj=scl %}
 <p><a href="{{ scl.get_edit_url }}">edit</a></p>
 {% notallowed %}
-<p>You are not allowed to edit this collection.</p>
+{# user is not allowed to edit this collection #}
 {% endallowed %}
 
 {% if scl.score_count %}

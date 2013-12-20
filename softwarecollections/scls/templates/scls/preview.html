@@ -4,24 +4,19 @@
 {% load url from future %}
 <h1><a href="{{ scl.get_absolute_url }}">{{ scl.title }}</a></h1>
 <p>
-    by
-    <maintainer>
-        <a href="{% url "scls:list_user" scl.maintainer.username %}">
-            {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
-        </a>
-    </maintainer>
+    added by
+    <a href="{% url "scls:list_user" scl.maintainer.username %}">
+        {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
+    </a>
 </p>
-<p><description>{{ scl.description | markdown2 }}</description></p>
+
+{{ scl.description | markdown2 }}
+
 <p class="scl-tags">
     {% for tag in scl.tags %}
         <a href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
     {% endfor %}
 </p>
-{% allowed 'edit' obj=scl %}
-<p><a href="{{ scl.get_edit_url }}">edit</a></p>
-{% notallowed %}
-<p>You are not allowed to edit this collection.</p>
-{% endallowed %}
 
 {% if scl.score_count %}
 {% rating_stars 'passive' scl %}

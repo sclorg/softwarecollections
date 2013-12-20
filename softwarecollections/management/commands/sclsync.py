@@ -12,15 +12,16 @@ class Command(BaseCommand):
     help = 'Sync SCLs with copr repos'
 
     def handle(self, *args, **options):
-        try:
-            destdir = args[0]
-        except:
-            raise CommandError('need exactly 1 argument')
-
+        failed = 0
         for scl in SoftwareCollection.objects.filter(need_sync=True):
-            scl.copr.reposync(os.path.join(destdir,
-                              "{}-{}".format(scl.maintainer, scl.name)))
-            scl.need_sync = False
-            scl.save()
-
-        self.stdout.write("Done")
+            try:
+                scl.sync()
+                if not scl.auto_sync:
+                    scl.need_sync = False
+                    scl.save()
+            except:
+                failed += 1
+        
+        if failed:
+            raise CommandError("Done ({} failed)".format(failed))
+        self.stdout.write("Done (0 failed)")

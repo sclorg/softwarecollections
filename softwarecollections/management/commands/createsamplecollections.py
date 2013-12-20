@@ -3,6 +3,8 @@ from optparse import make_option
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import IntegrityError
+from django.forms.forms import pretty_name
 from softwarecollections.copr import CoprProxy, COPR_API_URL
 from softwarecollections.scls.models import SoftwareCollection, Score
 from softwarecollections.scls.forms import POLICY_CHOICES
@@ -26,17 +28,25 @@ class Command(BaseCommand):
         self.stdout.write('Creating set of sample collections')
         for username in ['msuchy','msrb']:
             for copr in copr_proxy.coprs(username):
-                self.stdout.write('Creating sample collection: %s' % copr.slug)
-                scl = SoftwareCollection(copr=copr)
-                scl.policy       = choice(POLICY_CHOICES)[0]
-                scl.accepted     = choice((True, False))
-                scl.maintainer   = choice(users)
-                scl.save()
-                scl.tags         = ' '.join([scl.username, scl.name, scl.maintainer.get_username()])
-                for user in users:
-                    s = Score()
-                    s.user  = user
-                    s.scl   = scl
-                    s.score = randint(1, 5)
-                    s.save()
+                try:
+                    self.stdout.write('Creating sample collection: %s' % copr.slug)
+                    scl = SoftwareCollection(copr=copr)
+                    scl.maintainer   = choice(users)
+                    scl.name         = copr.name
+                    scl.title        = pretty_name(copr.name)
+                    scl.policy       = choice(POLICY_CHOICES)[0]
+                    scl.approved     = choice((True, False))
+                    scl.auto_sync    = choice((True, False))
+                    scl.sync_copr_texts()
+                    scl.save()
+                    scl.sync_copr_repos()
+                    scl.tags         = ' '.join([copr.username, copr.name])
+                    for user in users:
+                        s = Score()
+                        s.user  = user
+                        s.scl   = scl
+                        s.score = randint(1, 5)
+                        s.save()
+                except IntegrityError:
+                    pass
 

@@ -5,7 +5,6 @@ import tempfile
 import os
 
 from django.conf import settings
-from urllib.parse import urljoin
 
 COPR_API_URL = getattr(settings, 'COPR_API_URL', 'http://copr-fe.cloud.fedoraproject.org/api')
 
@@ -37,40 +36,6 @@ class Copr(object):
     @property
     def slug(self):
         return '/'.join([self.username, self.name])
-
-    def reposync(self, destdir):
-        """ Run reposync and createrepo. """
-
-        config = """
-[main]
-reposdir=
-
-[{reponame}]
-name={username}/{reponame}
-baseurl={url}
-gpgcheck=0
-    """
-
-        cmd = "reposync -c {cfg} -p {destdir} -r {repoid}" \
-              "&& createrepo --database --update {destdir}/{repoid}"
-
-        for repo in self.yum_repos:
-            fd, tempcfg = tempfile.mkstemp()
-            try:
-                cfg = False
-                cfg = os.fdopen(fd, "w+")
-                cfg.write(config.format(
-                    reponame=repo, username=self.username, url=self.yum_repos[repo]
-                ))
-                cfg.flush()
-
-                command = cmd.format(cfg=tempcfg, destdir=destdir, repoid=repo)
-
-                subprocess.check_call(command, shell=True)
-            finally:
-                if cfg:
-                    cfg.close()
-                os.remove(tempcfg)
 
 
 class CoprProxy:

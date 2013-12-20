@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.forms.forms import pretty_name
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -83,6 +84,9 @@ class New(CreateView):
         """
         self.object = form.save(commit=False)
         self.object.maintainer = self.request.user
+        self.object.name       = self.object.copr_name
+        self.object.title      = pretty_name(self.object.name)
+        self.object.sync_copr_texts()
         self.object.save()
         self.object.sync_copr_repos()
         return super(New, self).form_valid(form)
