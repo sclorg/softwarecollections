@@ -78,6 +78,22 @@ class New(CreateView):
     def get_form_class(self):
         return CreateForm
 
+    def get_form(self, form_class):
+        if 'copr_username' in self.request.REQUEST:
+            copr_username = self.request.REQUEST['copr_username']
+        else:
+            copr_username = self.request.user.get_username()
+        if copr_username:
+            coprs = CoprProxy().coprs(copr_username)
+        else:
+            coprs = []
+        copr_project_choices = tuple((copr.name, copr.slug) for copr in coprs)
+        self.initial = {'copr_username': copr_username}
+        form = super(New, self).get_form(form_class)
+        form.fields['copr_username'].is_hidden = True
+        form.fields['copr_name'].widget.choices=copr_project_choices
+        return form
+
     def form_valid(self, form):
         """
         If the form is valid, save the associated model.
@@ -86,6 +102,10 @@ class New(CreateView):
         self.object.maintainer = self.request.user
         self.object.name       = self.object.copr_name
         self.object.title      = pretty_name(self.object.name)
+        while SoftwareCollection.objects.filter(
+                maintainer=self.object.maintainer,
+                name=self.object.name).count():
+            self.object.name += '_'
         self.object.sync_copr_texts()
         self.object.save()
         self.object.sync_copr_repos()
@@ -94,14 +114,6 @@ class New(CreateView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(New, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = dict(super(New, self).get_context_data(**kwargs))
-        username = self.request.user.get_username()
-        copr_proxy = CoprProxy()
-        coprs = copr_proxy.coprs(username)
-        context['coprs'] = coprs
-        return context
 
 new = New.as_view()
 

@@ -1,5 +1,5 @@
 import markdown2
-from django.forms import ModelForm, RadioSelect, CharField
+from django.forms import ModelForm, Select, RadioSelect, CharField, HiddenInput
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -28,6 +28,8 @@ class CreateForm(ModelForm):
         model = SoftwareCollection
         fields = ['copr_username', 'copr_name', 'policy']
         widgets = {
+            'copr_username': HiddenInput(),
+            'copr_name': Select(),
             'policy': RadioSelect(choices=POLICY_CHOICES),
         }
 

@@ -5,40 +5,17 @@
 
 {% block content %}
 <h1>New Collection</h1>
-{% if coprs %}
-<h3>Choose one of your Coprs:</h3>
-<form action="" method="post">{% csrf_token %}
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-        </tr>
-        {% for copr in coprs %}
-        <tr>
-            <td style='width: 30%'>
-                <input type="radio" name="name" id="{{copr.name}}" value="{{copr.name}}"
-                {% if forloop.first %}
-                checked="checked"
-                {% endif %}
-                />&nbsp;
-                <label for="{{copr.name}}"><b>{{copr.name}}</b></label>
-            </td>
-            <td style='width: 70%'>{{copr.description}}<td>
-        </tr>
-        {% endfor %}
-    </table>
-    <div>Policy: {{form.policy}}</div>
-    <input type="hidden" name="username" value="{{request.user.get_username}}"/>
-    <input type="submit" value="Create"/>
+<form action="" method="get">
+    <p>
+        {{ form.copr_username.label_tag }}
+        <input id="id_copr_username" maxlength="100" name="copr_username" type="text" value="{{ form.copr_username.value }}" />
+        <input type="submit" value="Change Copr User" />
+    </p>
 </form>
-{% else %}
-<strong>Can't find copr for your account, you should create one first</strong>
-{% endif %}
-<h3>Or enter copr data manually:</h3>
 <form action="" method="post">{% csrf_token %}
     <table>
-        {{ form.as_p }}
+        {{ form }}
     </table>
-    <input type="submit" value="Create" />
+    <input type="submit" value="Import" />
 </form>
 {% endblock %}
