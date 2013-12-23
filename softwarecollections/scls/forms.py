@@ -1,7 +1,9 @@
 import markdown2
-from django.forms import ModelForm, Select, RadioSelect, CharField, HiddenInput
+from django.forms import ModelForm, Select, RadioSelect, HiddenInput
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from tagging.forms import TagField
+from tagging.utils import edit_string_for_tags
 
 from .models import SoftwareCollection, Score
 
@@ -35,7 +37,15 @@ class CreateForm(ModelForm):
 
 
 class UpdateForm(ModelForm):
-    tags = CharField(max_length=200, required=False)
+    tags = TagField(max_length=200, required=False, help_text=_(
+        'Enter space separated list of single word tags ' \
+        'or comma separated list of tags containing spaces. ' \
+        'Use doublequotes to enter name containing comma.'
+    ))
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateForm, self).__init__(*args, **kwargs)
+        self.initial['tags'] = edit_string_for_tags(self.instance.tags)
 
     class Meta:
         model = SoftwareCollection
