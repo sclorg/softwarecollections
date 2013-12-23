@@ -2,14 +2,12 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.forms.forms import pretty_name
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, UpdateView
-from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
@@ -73,43 +71,13 @@ detail = Detail.as_view()
 
 class New(CreateView):
     model = SoftwareCollection
+    form_class = CreateForm
     template_name_suffix = '_new'
 
-    def get_form_class(self):
-        return CreateForm
-
-    def get_form(self, form_class):
-        if 'copr_username' in self.request.REQUEST:
-            copr_username = self.request.REQUEST['copr_username']
-        else:
-            copr_username = self.request.user.get_username()
-        if copr_username:
-            coprs = CoprProxy().coprs(copr_username)
-        else:
-            coprs = []
-        copr_project_choices = tuple((copr.name, copr.slug) for copr in coprs)
-        self.initial = {'copr_username': copr_username}
-        form = super(New, self).get_form(form_class)
-        form.fields['copr_username'].is_hidden = True
-        form.fields['copr_name'].widget.choices=copr_project_choices
-        return form
-
-    def form_valid(self, form):
-        """
-        If the form is valid, save the associated model.
-        """
-        self.object = form.save(commit=False)
-        self.object.maintainer = self.request.user
-        self.object.name       = self.object.copr_name
-        self.object.title      = pretty_name(self.object.name)
-        while SoftwareCollection.objects.filter(
-                maintainer=self.object.maintainer,
-                name=self.object.name).count():
-            self.object.name += '_'
-        self.object.sync_copr_texts()
-        self.object.save()
-        self.object.sync_copr_repos()
-        return super(New, self).form_valid(form)
+    def get_form_kwargs(self):
+        kwargs = super(New, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -119,6 +87,7 @@ new = New.as_view()
 
 class Edit(UpdateView):
     model = SoftwareCollection
+    form_class = UpdateForm
     template_name_suffix = '_edit'
 
     def get_object(self, *args, **kwargs):
@@ -127,17 +96,6 @@ class Edit(UpdateView):
             return scl
         else:
             raise PermissionDenied()
-
-    def get_form_class(self):
-        return UpdateForm
-
-    def form_valid(self, form):
-        """
-        If the form is valid, save the associated model.
-        """
-        self.object = form.save()
-        self.object.tags = form.cleaned_data['tags']
-        return super(Edit, self).form_valid(form)
 
 edit = Edit.as_view()
 

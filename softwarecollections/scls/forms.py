@@ -1,7 +1,9 @@
 import markdown2
 from django.forms import ModelForm, Select, RadioSelect, HiddenInput
+from django.forms.forms import pretty_name
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from softwarecollections.copr import CoprProxy
 from tagging.forms import TagField
 from tagging.utils import edit_string_for_tags
 
@@ -26,6 +28,36 @@ as possible.
 
 class CreateForm(ModelForm):
 
+    def __init__(self, request, **kwargs):
+        self.request = request
+        if 'copr_username' in request.REQUEST:
+            copr_username = request.REQUEST['copr_username']
+        else:
+            copr_username = request.user.get_username()
+        kwargs['initial'] = {'copr_username': copr_username}
+        super(CreateForm, self).__init__(**kwargs)
+        if copr_username:
+            coprs = CoprProxy().coprs(copr_username)
+        else:
+            coprs = []
+        copr_name_choices = tuple((copr.name, copr.slug) for copr in coprs)
+        self.fields['copr_name'].widget.choices = copr_name_choices
+
+    def save(self, commit=True):
+        obj = super(CreateForm, self).save(False)
+        obj.maintainer = self.request.user
+        obj.title      = pretty_name(obj.copr_name)
+        obj.name       = obj.copr_name
+        while SoftwareCollection.objects.filter(
+                maintainer=obj.maintainer,
+                name=obj.name).count():
+            obj.name += '_'
+        obj.sync_copr_texts()
+        if commit:
+            obj.save()
+            obj.sync_copr_repos()
+        return obj
+
     class Meta:
         model = SoftwareCollection
         fields = ['copr_username', 'copr_name', 'policy']
@@ -46,6 +78,11 @@ class UpdateForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(UpdateForm, self).__init__(*args, **kwargs)
         self.initial['tags'] = edit_string_for_tags(self.instance.tags)
+
+    def save(self, commit=True):
+        obj = super(UpdateForm, self).save(commit)
+        obj.tags = self.cleaned_data['tags']
+        return obj
 
     class Meta:
         model = SoftwareCollection
