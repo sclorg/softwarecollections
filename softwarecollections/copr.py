@@ -40,7 +40,7 @@ class Copr(object):
 
 class CoprProxy:
     def __init__(self, copr_url=COPR_API_URL):
-        self.copr_url = copr_url[-1] == '/' and copr_url or copr_url + '/'
+        self.copr_url = copr_url[-1] == '/' and copr_url[:-1] or copr_url
 
     def _get(self, path):
         response = requests.get(self.copr_url + path)

@@ -76,7 +76,7 @@ USE_TZ = True
 
 # COPR
 
-COPR_API_URL = 'http://copr-fe.cloud.fedoraproject.org/api/'
+COPR_API_URL = 'http://copr-fe.cloud.fedoraproject.org/api'
 
 ##################
 # AUTHENTICATION #
