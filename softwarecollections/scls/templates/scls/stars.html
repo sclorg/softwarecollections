@@ -5,6 +5,7 @@
     <form name="stars-{{scl.pk}}" method="POST"
         action="{% url "scls:rate" %}">
         {% csrf_token %}
+        {{ form.as_p }}
     {% endif %}
     {% for i in "12345" %}<img
         {% if active %}
@@ -24,8 +25,6 @@
         {% endif %}
     />{% endfor %}
     {% if active %}
-        <input type="hidden" name="score"
-            value="{{score}}"/>
     </form>
     {% endif %}
     <br/>

@@ -93,5 +93,8 @@ class RateForm(ModelForm):
 
     class Meta:
         model = Score
-        fields = ['scl', 'score']
+        fields = ['score']
+        widgets = {
+            'score': HiddenInput(),
+        }
 

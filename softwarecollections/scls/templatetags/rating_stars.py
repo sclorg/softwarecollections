@@ -1,4 +1,5 @@
 from django import template
+from softwarecollections.scls.forms import RateForm
 
 register = template.Library()
 
@@ -6,6 +7,7 @@ register = template.Library()
 def rating_stars(context, state, scl, score=None):
     context.update({
         'active': state == 'active',
+        'form': RateForm(),
         'scl': scl,
         'score': scl.score if score is None else score,
     })
