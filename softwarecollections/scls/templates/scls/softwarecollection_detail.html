@@ -5,15 +5,15 @@
 {% load sekizai_tags %}
 {% load url from future %}
 
-{% addtoblock "css" %}
-    <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
-{% endaddtoblock %}
-
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
 {% block title %}{{ scl.title }}{% endblock %}
 
 {% block content %}
+{% addtoblock "css" %}
+    <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
+{% endaddtoblock %}
+
 {% allowed 'edit' obj=scl %}
 <div id="scl-toolbar">
     <a href="{% url "scls:edit" scl %}"><img src="/static/scls/toolbar/edit.png" alt="edit" /></a>
