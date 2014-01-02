@@ -85,6 +85,7 @@ class New(CreateView):
 
 new = New.as_view()
 
+
 class Edit(UpdateView):
     model = SoftwareCollection
     form_class = UpdateForm
@@ -101,30 +102,21 @@ edit = Edit.as_view()
 
 
 @require_POST
-def rate(request, redirect_field_name=REDIRECT_FIELD_NAME):
+def rate(request, slug):
+    scl = get_object_or_404(SoftwareCollection, slug=slug)
+    if not request.user.has_perm('rate', obj=scl):
+        raise PermissionDenied()
     form = RateForm(data=request.POST)
     if form.is_valid():
         data = form.cleaned_data
-        if not request.user.has_perm('rate', obj=data['scl']):
-            raise PermissionDenied()
         try:
-            score = Score.objects.get(user=request.user, scl=data['scl'])
+            score = Score.objects.get(user=request.user, scl=scl)
         except ObjectDoesNotExist:
-            score = Score(user=request.user, scl=data['scl'])
+            score = Score(user=request.user, scl=scl)
         score.score = data['score']
         score.save()
     else:
         for message in form.errors.values():
             messages.error(request, message)
-    try:
-        # get safe url from user input
-        url = request.REQUEST[redirect_field_name]
-        url = urlunsplit(('','')+urlsplit(url)[2:])
-    except:
-        try:
-            url = score.scl.get_absolute_url()
-        except:
-            url = '/'
-    return HttpResponseRedirect(url)
-
+    return HttpResponseRedirect(scl.get_absolute_url())
 
