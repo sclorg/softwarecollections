@@ -9,5 +9,7 @@ urlpatterns = patterns('softwarecollections.scls.views',
     url(r'^(?P<slug>[^/]+/[^/]+)/$',            'detail',       name='detail'),
     url(r'^(?P<slug>[^/]+/[^/]+)/edit/$',       'edit',         name='edit'),
     url(r'^(?P<slug>[^/]+/[^/]+)/rate/$',       'rate',         name='rate'),
+    url(r'^(?P<slug>[^/]+/[^/]+)/app_req/$',    'app_req',      name='app_req'),
+    url(r'^(?P<slug>[^/]+/[^/]+)/sync_req/$',   'sync_req',     name='sync_req'),
 )
 urls = (urlpatterns, 'scls', 'scls')

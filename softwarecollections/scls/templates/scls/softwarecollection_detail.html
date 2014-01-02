@@ -2,13 +2,38 @@
 {% load auth %}
 {% load md2 %}
 {% load rating_stars %}
+{% load sekizai_tags %}
 {% load url from future %}
+
+{% addtoblock "css" %}
+    <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
+{% endaddtoblock %}
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
 {% block title %}{{ scl.title }}{% endblock %}
 
 {% block content %}
+{% allowed 'edit' obj=scl %}
+<div id="scl-toolbar">
+    <a href="{% url "scls:edit" scl %}"><img src="/static/scls/toolbar/edit.png" alt="edit" /></a>
+    {% if scl.auto_sync %}
+    <img src="/static/scls/toolbar/auto-sync.png" alt="auto sync" title="automatic synchronization with copr repositories is enabled" />
+    {% elif scl.need_sync %}
+    <img src="/static/scls/toolbar/sync-request.png" alt="sync requested" title="synchronization with copr repositories is requested" />
+    {% else %}
+    <a href="{% url "scls:sync_req" scl %}"><img src="/static/scls/toolbar/sync-request.png" alt="request sync" /></a>
+    {% endif %}
+    {% if scl.approved %}
+    <img src="/static/scls/toolbar/approved.png" alt="approved" />
+    {% elif scl.approval_req %}
+    <img src="/static/scls/toolbar/approval-requested.png" alt="approval requested" />
+    {% else %}
+    <a href="{% url "scls:app_req" scl %}"><img src="/static/scls/toolbar/approval-request.png" alt="approval request" /></a>
+    {% endif %}
+</div>
+{% endallowed %}
+
 <h1>{{ scl.title }}</h1>
 <p>
     added by
@@ -42,12 +67,6 @@
     </li>
 {% endfor %}
 </ul>
-
-{% allowed 'edit' obj=scl %}
-<p><a href="{{ scl.get_edit_url }}">edit</a></p>
-{% notallowed %}
-{# user is not allowed to edit this collection #}
-{% endallowed %}
 
 {% if scl.score_count %}
 <strong>Users' rating of this collection:</strong>

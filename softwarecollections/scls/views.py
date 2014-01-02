@@ -101,6 +101,26 @@ class Edit(UpdateView):
 edit = Edit.as_view()
 
 
+def app_req(request, slug):
+    scl = get_object_or_404(SoftwareCollection, slug=slug)
+    if scl.approved or scl.approval_req or not request.user.has_perm('edit', obj=scl):
+        raise PermissionDenied()
+    scl.approval_req = True
+    scl.save()
+    messages.success(request, 'Approval requested.')
+    return HttpResponseRedirect(scl.get_absolute_url())
+
+
+def sync_req(request, slug):
+    scl = get_object_or_404(SoftwareCollection, slug=slug)
+    if scl.auto_sync or scl.need_sync or not request.user.has_perm('edit', obj=scl):
+        raise PermissionDenied()
+    scl.need_sync = True
+    scl.save()
+    messages.success(request, 'Synchronization with Copr repositories requested.')
+    return HttpResponseRedirect(scl.get_absolute_url())
+
+
 @require_POST
 def rate(request, slug):
     scl = get_object_or_404(SoftwareCollection, slug=slug)
