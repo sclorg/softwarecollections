@@ -1,3 +1,5 @@
+{% load sekizai_tags %}
+
 <div>
     {% if active %}
     <form name="stars-{{scl.pk}}" method="POST"
@@ -28,3 +30,44 @@
     {% endif %}
     <br/>
 </div>
+
+{% addtoblock "js" %}
+    <script type="text/javascript">
+        function scl_rate(scl_id, score) {
+            var form = document.forms["stars-" + scl_id];
+            stars_show(scl_id, score);
+            for (var i = 1; i <= 5; i++) {
+                var img = document.getElementById("star-" + scl_id + '-' + i);
+                img.onmouseover = null;
+                img.onmouseout = null;
+                if (i <= score) {
+                    img.src = '/static/images/star.png';
+                } else {
+                    img.src = '/static/images/star_empty.png';
+                }
+            }
+            form["score"].value = score;
+            form.submit();
+        }
+        function stars_show(scl_id, score) {
+            for (var i = 1; i <= 5; i++) {
+                var img = document.getElementById("star-" + scl_id + '-' + i);
+                if (i <= score) {
+                    img.src = '/static/images/star.png';
+                } else {
+                    img.src = '/static/images/star_empty.png';
+                }
+            }
+        }
+        function stars_revert(scl_id) {
+            for (var i = 1; i <= 5; i++) {
+                var img = document.getElementById("star-" + scl_id + '-' + i);
+                if (img.className == 'star') {
+                    img.src = '/static/images/star.png';
+                } else {
+                    img.src = '/static/images/star_empty.png';
+                }
+            }
+        }
+    </script>
+{% endaddtoblock %}

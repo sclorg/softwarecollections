@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_markdown2',
     'tagging',
+    'sekizai',
     'softwarecollections',
     'softwarecollections.scls',
     'softwarecollections.auth',
@@ -58,6 +59,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    'sekizai.context_processors.sekizai',
 )
 
 ROOT_URLCONF = 'softwarecollections.urls'

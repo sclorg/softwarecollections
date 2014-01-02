@@ -1,3 +1,4 @@
+{% load sekizai_tags %}
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7" lang="en-us"> <![endif]-->
 <!--[if IE 7]> <html class="no-js lt-ie10 lt-ie9 lt-ie8" lang="en-us"> <![endif]-->
@@ -21,6 +22,7 @@
         <link href='/static/images/apple-touch-icon-72x72-precomposed.png' rel='apple-touch-icon-precomposed' sizes='72x72' />
         <link href='/static/images/apple-touch-icon-114x114-precomposed.png' rel='apple-touch-icon-precomposed' sizes='114x114' />
         <link href="/static/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+        {% render_block "css" %}
     </head>
     <body class='index source-haml'>
         <!-- Blurry sunset picture by Garrett LeSage -->
@@ -59,40 +61,6 @@
 
         <script src="/static/javascripts/application.js" type="text/javascript"></script>
         <script src="/static/javascripts/production.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            function scl_rate(scl_id, score) {
-                var form = document.forms["stars-" + scl_id];
-                stars_show(scl_id, score);
-                for (var i = 1; i <= 5; i++) {
-                    var img = document.getElementById("star-" + scl_id + '-' + i);
-                    img.onmouseover = null;
-                    img.onmouseout = null;
-                    if (i <= score) {
-                        img.src = '/static/images/star.png';
-                    } else {
-                        img.src = '/static/images/star_empty.png';
-                    }
-                }
-                form["score"].value = score;
-                form.submit();
-            }
-            function stars_show(scl_id, score) {
-                for (var i = 1; i <= 5; i++) {
-                    var img = document.getElementById("star-" + scl_id + '-' + i);
-                    if (i <= score) {
-                        img.src = '/static/images/star.png';
-                    } else {
-                        img.src = '/static/images/star_empty.png';
-                    }
-                }
-            }
-            function stars_revert(scl_id) {
-                for (var i = 1; i <= 5; i++) {
-                    var img = document.getElementById("star-" + scl_id + '-' + i);
-                    var state = img.className;
-                    img.src = "/static/images/" + state + ".png";
-                }
-            }
-        </script>
+        {% render_block "js" %}
     </body>
 </html>
