@@ -2,30 +2,26 @@
 
 <div>
     {% if active %}
-    <form name="stars-{{scl.pk}}" method="POST"
-        action="{% url "scls:rate" %}">
+        <form name="stars-{{scl.pk}}" method="POST" action="{% url "scls:rate" scl %}">
         {% csrf_token %}
         {{ form.as_p }}
     {% endif %}
     {% for i in "12345" %}<img
         {% if active %}
-        onclick="scl_rate('{{scl.pk}}','{{i}}');"
-        onmouseover="stars_show('{{scl.pk}}', {{i}})"
-        onmouseout="stars_revert('{{scl.pk}}')"
-        style="cursor: pointer"
-        id="star-{{scl.pk}}-{{i}}"
+            onclick="scl_rate('{{scl.pk}}','{{i}}');"
+            onmouseover="stars_show('{{scl.pk}}', {{i}})"
+            onmouseout="stars_revert('{{scl.pk}}')"
+            style="cursor: pointer"
+            id="star-{{scl.pk}}-{{i}}"
         {% endif %}
-        alt="{{i}}"
         {% if forloop.counter <= score %}
-        src="/static/images/star.png"
-        class="star"
+            alt="*" class="star" src="/static/images/star.png"
         {% else %}
-        src="/static/images/star_empty.png"
-        class="star_empty"
+            alt="-" class="star_empty" src="/static/images/star_empty.png"
         {% endif %}
     />{% endfor %}
     {% if active %}
-    </form>
+        </form>
     {% endif %}
     <br/>
 </div>
@@ -40,8 +36,10 @@
                 img.onmouseover = null;
                 img.onmouseout = null;
                 if (i <= score) {
+                    img.alt = '*';
                     img.src = '/static/images/star.png';
                 } else {
+                    img.alt = '-';
                     img.src = '/static/images/star_empty.png';
                 }
             }
@@ -52,8 +50,10 @@
             for (var i = 1; i <= 5; i++) {
                 var img = document.getElementById("star-" + scl_id + '-' + i);
                 if (i <= score) {
+                    img.alt = '*';
                     img.src = '/static/images/star.png';
                 } else {
+                    img.alt = '-';
                     img.src = '/static/images/star_empty.png';
                 }
             }
@@ -62,8 +62,10 @@
             for (var i = 1; i <= 5; i++) {
                 var img = document.getElementById("star-" + scl_id + '-' + i);
                 if (img.className == 'star') {
+                    img.alt = '*';
                     img.src = '/static/images/star.png';
                 } else {
+                    img.alt = '-';
                     img.src = '/static/images/star_empty.png';
                 }
             }
