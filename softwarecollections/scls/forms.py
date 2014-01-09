@@ -5,7 +5,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from softwarecollections.copr import CoprProxy
 from tagging.forms import TagField
-from tagging.utils import edit_string_for_tags
 
 from .models import SoftwareCollection, Score
 
@@ -56,6 +55,7 @@ class CreateForm(ModelForm):
         if commit:
             obj.save()
             obj.sync_copr_repos()
+            obj.add_auto_tags()
         return obj
 
     class Meta:
@@ -77,11 +77,12 @@ class UpdateForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UpdateForm, self).__init__(*args, **kwargs)
-        self.initial['tags'] = edit_string_for_tags(self.instance.tags)
+        self.initial['tags'] = self.instance.tags_edit_string()
 
     def save(self, commit=True):
         obj = super(UpdateForm, self).save(commit)
         obj.tags = self.cleaned_data['tags']
+        obj.add_auto_tags()
         return obj
 
     class Meta:

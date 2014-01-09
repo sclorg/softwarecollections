@@ -10,6 +10,8 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from softwarecollections.copr import CoprProxy
+from tagging.models import Tag
+from tagging.utils import edit_string_for_tags
 
 User = get_user_model()
 
@@ -74,6 +76,21 @@ class SoftwareCollection(models.Model):
     def get_enabled_repos(self):
         return self.repos.filter(enabled=True)
 
+    def get_auto_tags(self):
+        tags = set()
+        for user in self.collaborators.all():
+            tags.update([user.get_username()])
+        for repo in self.repos.all():
+            tags.update(repo.get_auto_tags())
+        return list(tags)
+
+    def add_auto_tags(self):
+        for tag in self.get_auto_tags():
+            Tag.objects.add_tag(self, tag)
+
+    def tags_edit_string(self):
+        return edit_string_for_tags(self.tags.exclude(name__in=self.get_auto_tags()))
+
     @property
     def copr(self):
         if not hasattr(self, '_copr'):
@@ -128,9 +145,7 @@ tagging.register(SoftwareCollection)
 
 
 class Repo(models.Model):
-    scl             = models.ForeignKey(SoftwareCollection,
-                        verbose_name=_('Maintainer'),
-                        related_name='repos')
+    scl             = models.ForeignKey(SoftwareCollection, related_name='repos')
     name            = models.CharField(_('Name'), max_length=50)
     copr_url        = models.CharField(_('Copr URL'), max_length=200)
     download_count  = models.IntegerField(default=0, editable=False)
@@ -143,6 +158,25 @@ class Repo(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def distro(self):
+        return self.name.rsplit('-', 2)[0]
+
+    @property
+    def version(self):
+        return self.name.rsplit('-', 2)[1]
+
+    @property
+    def distro_version(self):
+        return self.name.rsplit('-', 1)[0]
+
+    @property
+    def arch(self):
+        return self.name.rsplit('-', 1)[1]
+
+    def get_auto_tags(self):
+        return [self.name, self.distro, self.distro_version, self.arch]
 
     def get_absolute_url(self):
         return os.path.join(self.scl.get_repos_url(), self.name)
