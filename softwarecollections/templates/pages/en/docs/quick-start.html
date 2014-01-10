@@ -51,13 +51,16 @@
 
 <h2>SCL Metapackage</h2>
 
-<p>Every SCL must have a so called metapackage. This metapackage <strong>must</strong> have a runtime and build subpackages (the build subpackage is needed for Koji builds, but may be left out for local builds). For more details see complete <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Creating_a_Meta_Package.html">documentation.</a></p>
+<p>Every SCL must have a so called metapackage. This metapackage <strong>must</strong> have a runtime and build subpackages. For more details see complete <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Creating_a_Meta_Package.html">documentation.</a></p>
 
-<p>An example SCL metapackage for COPR builds follows:</p>
+<p>There are more possibilities how to build a package, but on SCL.org are stored only packages build by copr build system (see how's copr <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">working</a>). Following example contains macros needed for proper build in copr:</p>
 <pre class="highlight yaml">
+<span class="s"># if the build is running on copr</span>
 <span class="err">%</span><span class="s">if 0<span class="err">%</span>{?copr_username:1}</span>
+<span class="s"># define your copr_username and copr_projectname</span>
 <span class="err">%</span><span class="s">global scl <span class="err">%</span>{copr_username}-<span class="err">%</span>{copr_projectname}</span>
 <span class="err">%</span><span class="s">else</span>
+<span class="s"># different build system need only name of the collection, ruby193 in this case</span>
 <span class="err">%</span><span class="s">global scl ruby193</span>
 <span class="err">%</span><span class="s">endif</span>
 <span class="err">%</span><span class="s">scl_package <span class="err">%</span>scl</span>
@@ -142,4 +145,9 @@
 <h2>Converting Packages for SCL</h2>
 
 <p>This section sums up the steps needed to take in order to convert a normal specfile to SCL specfile step by step. The resulting package should be buildable even without SCL - that means both without %{scl}-build in the buildroot and with it. Advantage of this approach is, that both non-SCL packages like rubygem-foo and SCL packages %{scl<em>prefix}rubygem</em>foo (depending on the SCL) can be built from the same SRPM, depending on the buildroot.</p>
+<p>
+How to SCL-ize package can be found in <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Converting_a_Conventional_Spec_File.html">documentation</a>. It's
+also possible to use automatic tool <a href="https://bitbucket.org/bkabrda/spec2scl/">spec2scl</a>, which can work with software like Python modules, PHP, Perl modules, ... 
+The spec2scl package can be installed by standard way (yum) or latest release from upstream (pip install --user spec2scl). It's needed to review content of the new specfile, because copr specific macros are not included.
+</p>
 {% endblock %}
