@@ -190,12 +190,13 @@ class Repo(models.Model):
             cfg = os.fdopen(fd, "w+")
             cfg.write("""[main]
 reposdir=
+cachedir=/var/cache/yum/{copr_user}/{copr}/{name}
 
 [{name}]
 name={name}
 baseurl={url}
 gpgcheck=0
-""".format(name=self.name, url=self.copr_url))
+""".format(name=self.name, url=self.copr_url, copr_user=self.scl.copr_username, copr=self.scl.copr_name))
             cfg.flush()
 
             command = "reposync -c {cfg} -p {destdir} -r {repoid} && " \
