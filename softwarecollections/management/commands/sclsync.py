@@ -19,7 +19,8 @@ class Command(BaseCommand):
                 if not scl.auto_sync:
                     scl.need_sync = False
                     scl.save()
-            except:
+            except Exception as e:
+                self.stderr.write(str(e))
                 failed += 1
         
         if failed:
