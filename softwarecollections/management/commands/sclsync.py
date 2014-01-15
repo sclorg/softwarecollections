@@ -15,6 +15,7 @@ class Command(BaseCommand):
         failed = 0
         for scl in SoftwareCollection.objects.filter(need_sync=True):
             try:
+                self.stdout.write('Syncing {}'.format(scl.slug))
                 scl.sync()
                 if not scl.auto_sync:
                     scl.need_sync = False
