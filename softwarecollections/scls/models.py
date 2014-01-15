@@ -149,6 +149,8 @@ tagging.register(SoftwareCollection)
 
 
 class Repo(models.Model):
+    # automatic value (scl.slug/name) used as unique key
+    slug            = models.SlugField(max_length=150, editable=False)
     scl             = models.ForeignKey(SoftwareCollection, related_name='repos')
     name            = models.CharField(_('Name'), max_length=50)
     copr_url        = models.CharField(_('Copr URL'), max_length=200)
@@ -160,8 +162,14 @@ class Repo(models.Model):
     need_sync       = models.BooleanField(_('Needs sync'), default=True)
     download_count  = models.IntegerField(default=0, editable=False)
 
+    class Meta:
+        # in fact, since slug is made of those and slug is unique,
+        # this is not necessarry, but as a side effect, it create index,
+        # which may be useful
+        unique_together = (('scl', 'name'),)
+
     def __str__(self):
-        return self.name
+        return self.slug
 
     @property
     def distro(self):
@@ -261,8 +269,10 @@ gpgcheck=0
             self.scl.last_sync_date = self.last_sync_date
             self.scl.save()
 
-    class Meta:
-        unique_together = (('scl', 'name'),)
+    def save(self, *args, **kwargs):
+        # ensure slug is correct
+        self.slug = '/'.join((self.scl.slug, self.name))
+        super(Repo, self).save(*args, **kwargs)
 
 
 
