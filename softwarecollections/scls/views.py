@@ -12,7 +12,7 @@ from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
 from .forms import CreateForm, UpdateForm, RateForm
-from .models import SoftwareCollection, Score
+from .models import SoftwareCollection, Repo, Score
 
 
 def _list(request, template, queryset, dictionary, **kwargs):
@@ -119,6 +119,13 @@ def sync_req(request, slug):
     scl.save()
     messages.success(request, 'Synchronization with Copr repositories requested.')
     return HttpResponseRedirect(scl.get_absolute_url())
+
+
+def download(request, slug):
+    repo = get_object_or_404(Repo, slug=slug)
+    repo.download_count+=1
+    repo.save()
+    return HttpResponseRedirect(repo.get_rpmfile_url())
 
 
 @require_POST

@@ -59,14 +59,19 @@
 <table>
     <tr>
         <th>Distribution</th>
-        <th>YUM configuration</th>
-        <th>synced</th>
+        <th>Arch</th>
+        <th>Download</th>
+        <th>Last Synced</th>
     </tr>
     {% for repo in scl.get_enabled_repos %}
     <tr>
-        <td><strong>{{ repo.name }}</strong></td>
+        <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>
+        <td>{{ repo.arch }}</td>
         {% if repo.last_sync_date %}
-        <td><a href="{{ repo.get_rpmfile_url }}">{{ repo.rpmfile }}</a></td>
+        <td>
+            <a href="{% url "scls:download" repo.slug %}" title="{{ repo.rpmfile }}">RPM</a>
+            {{ repo.download_count }}x
+        </td>
         <td>{{ repo.last_sync_date }}</td>
         {% else %}
         <td collspan="2">(not synced)</td>

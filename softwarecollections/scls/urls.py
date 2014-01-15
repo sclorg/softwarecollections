@@ -11,5 +11,7 @@ urlpatterns = patterns('softwarecollections.scls.views',
     url(r'^(?P<slug>[^/]+/[^/]+)/rate/$',       'rate',         name='rate'),
     url(r'^(?P<slug>[^/]+/[^/]+)/app_req/$',    'app_req',      name='app_req'),
     url(r'^(?P<slug>[^/]+/[^/]+)/sync_req/$',   'sync_req',     name='sync_req'),
+    url(r'^(?P<slug>[^/]+/[^/]+/[^/]+)/download/$',
+                                                'download',     name='download'),
 )
 urls = (urlpatterns, 'scls', 'scls')
