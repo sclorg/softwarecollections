@@ -1,4 +1,4 @@
-Name:		%{scl_name}-%{repo_distro}-%{repo_arch}
+Name:		%{scl_name}-%{repo_name}
 Version:	%{repo_version}
 Release:	%{repo_release}
 Summary:	%{scl_title} Repository Configuration

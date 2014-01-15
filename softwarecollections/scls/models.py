@@ -17,6 +17,7 @@ User = get_user_model()
 
 
 SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
+VERSION = '1'
 RELEASE = '1'
 
 
@@ -191,9 +192,8 @@ class Repo(models.Model):
     def rpmfile(self):
         return '-'.join([
                 self.scl.name,
-                self.distro,
-                self.arch,
-                self.version,
+                self.name,
+                VERSION,
                 RELEASE,
             ]) + '.noarch.rpm'
 
@@ -247,7 +247,7 @@ gpgcheck=0
                 'scl_title':        self.scl.title,
                 'scl_description':  self.scl.description,
                 'repo_name':        self.name,
-                'repo_version':     self.version,
+                'repo_version':     VERSION,
                 'repo_release':     RELEASE,
                 'repo_distro':      self.distro,
                 'repo_arch':        self.arch,
