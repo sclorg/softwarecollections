@@ -56,20 +56,27 @@
 </p>
 
 <h2>Yum Repositories</h2>
-<ul>
-{% for repo in scl.get_enabled_repos %}
-    <li>
+<table>
+    <tr>
+        <th>Distribution</th>
+        <th>YUM configuration</th>
+        <th>synced</th>
+    </tr>
+    {% for repo in scl.get_enabled_repos %}
+    <tr>
+        <td><strong>{{ repo.name }}</strong></td>
         {% if repo.last_sync_date %}
-            <a href="{{ repo.get_absolute_url }}">{{ repo.name }}</a>
+        <td><a href="{{ repo.get_rpmfile_url }}">{{ repo.rpmfile }}</a></td>
+        <td>{{ repo.last_sync_date }}</td>
         {% else %}
-            {{ repo.name }} (not synced)
+        <td collspan="2">(not synced)</td>
         {% endif %}
-    </li>
+    </tr>
 {% endfor %}
-</ul>
+</table>
 
 {% if scl.score_count %}
-<strong>Users' rating of this collection:</strong>
+<h2>Rating</h2>
 {% rating_stars 'passive' scl %}
 <p>Rated by {{ scl.score_count }} user{{ scl.score_count|pluralize }}</p>
 {% endif %}

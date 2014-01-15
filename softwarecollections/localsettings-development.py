@@ -76,3 +76,9 @@ REPOS_ROOT = os.path.join(BASE_DIR, 'htdocs', 'repos')
 # URL prefix for repo.
 REPOS_URL  = '/repos/'
 
+# Absolute path to the directory used by yum cache
+YUM_CACHE_ROOT = '/tmp/softwarecollections-yum-cache'
+
+# Absolute path to the directory to be used as rpm _topdir
+RPMBUILD_TOPDIR = '/tmp/softwarecollections-rpmbuild'
+

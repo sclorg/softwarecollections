@@ -16,6 +16,10 @@ from tagging.utils import edit_string_for_tags
 User = get_user_model()
 
 
+SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
+RELEASE = '1'
+
+
 class SoftwareCollection(models.Model):
     # automatic value (maintainer.username/name) used as unique key
     slug            = models.SlugField(max_length=150, editable=False)
@@ -175,39 +179,82 @@ class Repo(models.Model):
     def arch(self):
         return self.name.rsplit('-', 1)[1]
 
+    @property
+    def rpmfile(self):
+        return '-'.join([
+                self.scl.name,
+                self.distro,
+                self.arch,
+                self.version,
+                RELEASE,
+            ]) + '.noarch.rpm'
+
     def get_auto_tags(self):
         return [self.name, self.distro, self.distro_version, self.arch]
 
-    def get_absolute_url(self):
+    def get_repo_root(self):
+        return os.path.join(self.scl.get_repos_root(), self.name)
+
+    def get_repo_url(self):
         return os.path.join(self.scl.get_repos_url(), self.name)
+
+    def get_rpmfile_path(self):
+        return os.path.join(self.scl.get_repos_root(), self.name, 'noarch', self.rpmfile)
+
+    def get_rpmfile_url(self):
+        return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
 
     def sync(self, save_scl=True):
         """ Run reposync and createrepo """
 
         fd, tempcfg = tempfile.mkstemp()
         try:
-            cfg = False
+            cache_dir = os.path.join(
+                settings.YUM_CACHE_ROOT,
+                self.scl.copr_username,
+                self.scl.copr_name,
+                self.name
+            )
+            if not os.path.exists(cache_dir):
+                os.makedirs(cache_dir)
+
             cfg = os.fdopen(fd, "w+")
             cfg.write("""[main]
 reposdir=
-cachedir=/var/cache/yum/{copr_user}/{copr}/{name}
+cachedir={cache_dir}
 
 [{name}]
 name={name}
 baseurl={url}
 gpgcheck=0
-""".format(name=self.name, url=self.copr_url, copr_user=self.scl.copr_username, copr=self.scl.copr_name))
+""".format(cache_dir=cache_dir, name=self.name, url=self.copr_url))
             cfg.flush()
+            cfg.close()
 
+            definitions = ' '.join(['-D "{} {}"'.format(key, value) for key, value in {
+                '_topdir':          settings.RPMBUILD_TOPDIR,
+                '_rpmdir':          self.get_repo_root(),
+                'dist':             self.distro_version,
+                'scl_name':         self.scl.name,
+                'scl_title':        self.scl.title,
+                'scl_description':  self.scl.description,
+                'repo_name':        self.name,
+                'repo_version':     self.version,
+                'repo_release':     RELEASE,
+                'repo_distro':      self.distro,
+                'repo_arch':        self.arch,
+                'repo_baseurl':     self.get_repo_url(),
+            }.items()])
             command = "reposync -c {cfg} -p {destdir} -r {repoid} && " \
-                      "createrepo --database --update {destdir}/{repoid}"\
-                      .format(cfg=tempcfg, destdir=self.scl.get_repos_root(), repoid=self.name)
+                      "( test -e {rpmfile_path} || rpmbuild -ba {definitions} {specfile}; ) && " \
+                      "createrepo --database --update {destdir}/{repoid}" \
+                      .format(cfg=tempcfg, destdir=self.scl.get_repos_root(), repoid=self.name,
+                              definitions=definitions, rpmfile_path=self.get_rpmfile_path(), specfile=SPECFILE)
 
             subprocess.check_call(command, shell=True)
         finally:
-            if cfg:
-                cfg.close()
             os.remove(tempcfg)
+
         self.last_sync_date = timezone.now()
         self.save()
         if save_scl:
