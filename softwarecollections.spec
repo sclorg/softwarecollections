@@ -1,4 +1,4 @@
-%global  scls_statedir %{_localstatedir}/lib/softwarecollections
+%global  scls_statedir %{_localstatedir}/scls
 %global  scls_confdir  %{_sysconfdir}/softwarecollections
 %global  cron_confdir  %{_sysconfdir}/cron.d
 %global  httpd_confdir %{_sysconfdir}/httpd/conf.d

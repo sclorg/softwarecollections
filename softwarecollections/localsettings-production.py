@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = '/var/lib/softwarecollections'
+BASE_DIR = '/var/scls'
 
 
 # Quick-start development settings - unsuitable for production
@@ -72,7 +72,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'htdocs', 'static')
 STATIC_URL = '/static/'
 
 # Absolute path to the directory repos should be synced to.
-REPOS_ROOT = "/var/scl-repos"
+REPOS_ROOT = os.path.join(BASE_DIR, 'htdocs', 'repos')
 
 # URL prefix for repo.
 REPOS_URL  = '/repos/'
