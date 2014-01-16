@@ -15,7 +15,7 @@
 {% endaddtoblock %}
 
 {% allowed 'edit' obj=scl %}
-<div id="scl-toolbar">
+<div class="scl-toolbar">
     <a href="{% url "scls:edit" scl %}"><img src="/static/scls/toolbar/edit.png" alt="edit" /></a>
     {% if scl.auto_sync %}
     <img src="/static/scls/toolbar/auto-sync.png" alt="auto sync" title="automatic synchronization with copr repositories is enabled" />
@@ -56,15 +56,16 @@
 </p>
 
 <h2>Yum Repositories</h2>
-<table>
+<table class="yum-repos">
     <tr>
-        <th>Distribution</th>
-        <th>Arch</th>
+        <th colspan="2">Distribution</th>
+        <th>Architecture</th>
         <th>Download</th>
         <th>Last Synced</th>
     </tr>
     {% for repo in scl.get_enabled_repos %}
     <tr>
+        <td><img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/></td>
         <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>
         <td>{{ repo.arch }}</td>
         {% if repo.last_sync_date %}

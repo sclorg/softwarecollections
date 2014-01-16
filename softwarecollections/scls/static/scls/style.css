@@ -1,6 +1,11 @@
-#scl-toolbar {
+.scl-toolbar {
     padding: 5px;
     background-color: rgba(66, 141, 152, 0.2);
     border-left: 5px solid rgba(66, 141, 152, 0.3);
     float: right;
+}
+
+table.yum-repos th,
+table.yum-repos td {
+    padding: 5px;
 }

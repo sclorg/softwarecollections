@@ -20,6 +20,8 @@ SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
 VERSION = '1'
 RELEASE = '1'
 
+DISTRO_ICONS = ('fedora', 'epel')
+
 
 class SoftwareCollection(models.Model):
     # automatic value (maintainer.username/name) used as unique key
@@ -211,6 +213,11 @@ class Repo(models.Model):
 
     def get_rpmfile_url(self):
         return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
+
+    def get_icon_url(self):
+        return self.distro in DISTRO_ICONS \
+           and '{}/scls/icons/{}.png'.format(settings.STATIC_URL, self.distro) \
+            or '{}/scls/icons/empty.png'.format(settings.STATIC_URL)
 
     def sync(self, save_scl=True):
         """ Run reposync and createrepo """
