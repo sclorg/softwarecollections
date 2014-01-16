@@ -9,15 +9,13 @@ from softwarecollections.scls.models import Repo
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Repo.slug'
-        db.add_column('scls_repo', 'slug',
-                      self.gf('django.db.models.fields.SlugField')(max_length=150, default=''),
-                      keep_default=False)
+        # Updating values of field 'Repo.slug'
+        for repo in Repo.objects.all():
+            repo.save()
 
 
     def backwards(self, orm):
-        # Deleting field 'Repo.slug'
-        db.delete_column('scls_repo', 'slug')
+        pass
 
 
     models = {
