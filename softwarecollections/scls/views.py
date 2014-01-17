@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.db.models import Q, Manager
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -11,14 +12,26 @@ from django.views.generic import CreateView, DetailView, UpdateView
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
-from .forms import CreateForm, UpdateForm, RateForm
+from .forms import FilterForm, CreateForm, UpdateForm, RateForm
 from .models import SoftwareCollection, Repo, Score
 
 
 def _list(request, template, queryset, dictionary, **kwargs):
-    filter_params = {}
-    # TODO add filtering
-    dictionary['collections'] = queryset.filter(**filter_params)
+    filter_form   = FilterForm(data=request.GET)
+    if filter_form.is_valid():
+        if filter_form.cleaned_data['search']:
+            search = Q()
+            for word in filter_form.cleaned_data['search'].split():
+                search |= Q(name__contains=word) | Q(title__contains=word)
+                if filter_form.cleaned_data['search_desc']:
+                    search |= Q(description__contains=word)
+            queryset = queryset.filter(search)
+        if filter_form.cleaned_data['approved']:
+            queryset = queryset.filter(approved=True)
+    if isinstance(queryset, Manager):
+        queryset = queryset.all()
+    dictionary['collections'] = queryset
+    dictionary['filter_form'] = filter_form
     return render_to_response(template, dictionary,
         context_instance = RequestContext(request))
 

@@ -1,5 +1,5 @@
 import markdown2
-from django.forms import ModelForm, Select, RadioSelect, HiddenInput
+from django import forms
 from django.forms.forms import pretty_name
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -25,7 +25,7 @@ as possible.
 ])
 
 
-class CreateForm(ModelForm):
+class CreateForm(forms.ModelForm):
 
     def __init__(self, request, **kwargs):
         self.request = request
@@ -62,13 +62,13 @@ class CreateForm(ModelForm):
         model = SoftwareCollection
         fields = ['copr_username', 'copr_name', 'policy']
         widgets = {
-            'copr_username': HiddenInput(),
-            'copr_name': Select(),
-            'policy': RadioSelect(choices=POLICY_CHOICES),
+            'copr_username': forms.HiddenInput(),
+            'copr_name': forms.Select(),
+            'policy': forms.RadioSelect(choices=POLICY_CHOICES),
         }
 
 
-class UpdateForm(ModelForm):
+class UpdateForm(forms.ModelForm):
     tags = TagField(max_length=200, required=False, help_text=_(
         'Enter space separated list of single word tags ' \
         'or comma separated list of tags containing spaces. ' \
@@ -90,12 +90,18 @@ class UpdateForm(ModelForm):
         fields = ['title', 'description', 'instructions', 'policy', 'auto_sync']
 
 
-class RateForm(ModelForm):
+class RateForm(forms.ModelForm):
 
     class Meta:
         model = Score
         fields = ['score']
         widgets = {
-            'score': HiddenInput(),
+            'score': forms.HiddenInput(),
         }
+
+
+class FilterForm(forms.Form):
+    search          = forms.CharField(required=False, max_length=999)
+    search_desc     = forms.BooleanField(required=False)
+    approved        = forms.BooleanField(required=False)
 

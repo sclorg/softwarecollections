@@ -1,14 +1,8 @@
-{% extends "scls/base.html" %}
+{% extends "scls/list_base.html" %}
 {% load i18n %}
 
 {% block title %}{% blocktrans with name=user.get_full_name %}{{ name }}'s Collections{% endblocktrans %}{% endblock %}
 
-{% block content %}
-<h1>{% blocktrans with name=user.get_full_name %}{{ name }}'s Collections{% endblocktrans %}</h1>
-{% for scl in collections %}
-    {% include "scls/preview.html" %}
-{% empty %}
-    <p>{% blocktrans with name=user.get_full_name %}{{ name }} has not imported any Software Collections yet.{% endblocktrans %}</p>
-{% endfor %}
-{% include "scls/pagination.html" %}
+{% block empty %}
+    <p>{% blocktrans with name=user.get_full_name %}{{ name }} has not imported any collections matching the filter.{% endblocktrans %}</p>
 {% endblock %}

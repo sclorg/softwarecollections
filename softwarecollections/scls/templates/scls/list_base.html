@@ -1,0 +1,15 @@
+{% extends "scls/base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>{% block title %}{% endblock %}</h2>
+    {% include "scls/filter.html" %}
+    {% for scl in collections %}
+        {% include "scls/preview.html" %}
+    {% empty %}
+        {% block empty %}
+        <p>{% trans "No corresponding Software Collections." %}</p>
+        {% endblock %}
+    {% endfor %}
+    {% include "scls/pagination.html" %}
+{% endblock %}

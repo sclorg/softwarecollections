@@ -1,14 +1,8 @@
-{% extends "scls/base.html" %}
+{% extends "scls/list_base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Directory" %}{% endblock %}
 
-{% block content %}
-<h1>{% trans "All collections" %}</h1>
-{% for scl in collections %}
-    {% include "scls/preview.html" %}
-{% empty %}
-    <p>{% trans "No Software Collections yet." %}</p>
-{% endfor %}
-{% include "scls/pagination.html" %}
+{% block empty %}
+    <p>{% trans "There are no collections available matching the filter." %}</p>
 {% endblock %}

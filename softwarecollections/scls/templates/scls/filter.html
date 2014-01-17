@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<form id="filter-form">{% csrf_token %}
+    <ul>
+        {{ filter_form.as_ul }}
+        <li><input type="submit" value="{% trans "Apply filter" %}"/></li>
+    </ul>
+</form>
