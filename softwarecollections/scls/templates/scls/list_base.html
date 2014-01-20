@@ -1,7 +1,11 @@
 {% extends "scls/base.html" %}
 {% load i18n %}
+{% load sekizai_tags %}
 
 {% block content %}
+    {% addtoblock "css" %}
+        <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
+    {% endaddtoblock %}
     <h1>{% block title %}{% endblock %}</h2>
     {% include "scls/filter.html" %}
     {% for scl in collections %}
