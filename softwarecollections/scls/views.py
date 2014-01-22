@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Manager
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -28,10 +29,25 @@ def _list(request, template, queryset, dictionary, **kwargs):
             queryset = queryset.filter(search)
         if filter_form.cleaned_data['approved']:
             queryset = queryset.filter(approved=True)
+        per_page = filter_form.cleaned_data['per_page'] or \
+                   filter_form.fields['per_page'].initial
+    else:
+        per_page = filter_form.fields['per_page'].initial
     if isinstance(queryset, Manager):
         queryset = queryset.all()
-    dictionary['collections'] = queryset
+    paginator = Paginator(queryset, per_page)
+    page = request.GET.get('page')
+    try:
+        collections = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        collections = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        collections = paginator.page(paginator.num_pages)
+    dictionary['collections'] = collections
     dictionary['filter_form'] = filter_form
+    dictionary['paginator']   = paginator
     return render_to_response(template, dictionary,
         context_instance = RequestContext(request))
 

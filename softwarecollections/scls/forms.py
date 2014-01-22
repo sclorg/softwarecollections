@@ -24,6 +24,8 @@ as possible.
     ''',
 ])
 
+PER_PAGE_CHOICES = ((5, 5), (10, '10'), (25, '25'), (50, '50'))
+
 
 class CreateForm(forms.ModelForm):
 
@@ -104,4 +106,7 @@ class FilterForm(forms.Form):
     search          = forms.CharField(required=False, max_length=999)
     search_desc     = forms.BooleanField(required=False)
     approved        = forms.BooleanField(required=False)
+    per_page        = forms.ChoiceField(required=False,
+                        initial=PER_PAGE_CHOICES[0][0],
+                        choices=PER_PAGE_CHOICES)
 
