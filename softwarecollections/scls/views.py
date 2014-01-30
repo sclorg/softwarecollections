@@ -31,11 +31,12 @@ def _list(request, template, queryset, dictionary, **kwargs):
             queryset = queryset.filter(approved=True)
         per_page = filter_form.cleaned_data['per_page'] or \
                    filter_form.fields['per_page'].initial
+        order_by = filter_form.cleaned_data['order_by'] or \
+                   filter_form.fields['order_by'].initial
     else:
         per_page = filter_form.fields['per_page'].initial
-    if isinstance(queryset, Manager):
-        queryset = queryset.all()
-    paginator = Paginator(queryset, per_page)
+        order_by = filter_form.fields['order_by'].initial
+    paginator = Paginator(queryset.order_by(order_by), per_page)
     page = request.GET.get('page')
     try:
         collections = paginator.page(page)

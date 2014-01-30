@@ -26,6 +26,12 @@ as possible.
 
 PER_PAGE_CHOICES = ((5, 5), (10, '10'), (25, '25'), (50, '50'))
 
+ORDER_BY_CHOICES = (
+    ('-score',           _('by score')),
+    ('title',           _('by title')),
+    ('-download_count',  _('by download count')),
+)
+
 
 class CreateForm(forms.ModelForm):
 
@@ -109,4 +115,7 @@ class FilterForm(forms.Form):
     per_page        = forms.ChoiceField(required=False,
                         initial=PER_PAGE_CHOICES[0][0],
                         choices=PER_PAGE_CHOICES)
+    order_by        = forms.ChoiceField(required=False,
+                        initial=ORDER_BY_CHOICES[0][0],
+                        choices=ORDER_BY_CHOICES)
 
