@@ -101,4 +101,3 @@ LOGIN_REDIRECT_URL = '/'
 # The number of days a password reset link is valid for
 PASSWORD_RESET_TIMEOUT_DAYS = 3
 
-#SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
