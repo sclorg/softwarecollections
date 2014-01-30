@@ -12,8 +12,7 @@ Summary:           Software Collections Management Website and Utils
 Group:             System Environment/Daemons
 License:           TODO
 URL:               http://softwarecollections.org/
-
-Source0:           https://codeload.github.com/misli/%{name}/tar.gz/%{version}?filename=%{name}-%{version}.tar.gz
+Source0:           http://github.srcurl.net/misli/%{name}/%{version}/%{name}-%{version}.tar.gz
 
 BuildArch:         noarch
 
