@@ -126,9 +126,12 @@ class SoftwareCollection(models.Model):
             Repo(scl=self, name=name, copr_url=repos[name]).save()
 
     def sync(self):
+        download_count = 0
         for repo in self.get_enabled_repos():
             repo.sync(save_scl=False)
+            download_count += repo.download_count
         self.last_sync_date = timezone.now()
+        self.download_count = download_count
         self.save()
 
     def has_perm(self, user, perm):

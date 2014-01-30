@@ -154,6 +154,8 @@ def download(request, slug):
     repo = get_object_or_404(Repo, slug=slug)
     repo.download_count+=1
     repo.save()
+    repo.scl.download_count+=1
+    repo.scl.save()
     return HttpResponseRedirect(repo.get_rpmfile_url())
 
 
