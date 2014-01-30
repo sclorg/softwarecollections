@@ -27,9 +27,9 @@ as possible.
 PER_PAGE_CHOICES = ((5, 5), (10, '10'), (25, '25'), (50, '50'))
 
 ORDER_BY_CHOICES = (
-    ('-score',           _('by score')),
-    ('title',           _('by title')),
-    ('-download_count',  _('by download count')),
+    ('-score',          _('score')),
+    ('title',           _('title')),
+    ('-download_count', _('download count')),
 )
 
 
