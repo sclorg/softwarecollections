@@ -24,7 +24,7 @@ as possible.
     ''',
 ])
 
-PER_PAGE_CHOICES = ((5, 5), (10, '10'), (25, '25'), (50, '50'))
+PER_PAGE_CHOICES = ((10, '10'), (25, '25'), (50, '50'))
 
 ORDER_BY_CHOICES = (
     ('-score',          _('score')),
