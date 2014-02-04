@@ -20,6 +20,7 @@ BuildRequires:     python3-devel
 BuildRequires:     python3-setuptools
 
 Requires:          createrepo
+Requires:          cronie
 Requires:          httpd
 Requires:          mod_ssl
 Requires:          python3-django >= 1.6
