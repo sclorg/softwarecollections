@@ -265,7 +265,7 @@ gpgcheck=0
             }.items()])
             command = "reposync -c {cfg} -p {destdir} -r {repoid} && " \
                       "( test -e {rpmfile_path} || rpmbuild -ba {definitions} {specfile}; ) && " \
-                      "createrepo --database --update {destdir}/{repoid}" \
+                      "createrepo_c --database --update {destdir}/{repoid}" \
                       .format(cfg=tempcfg, destdir=self.scl.get_repos_root(), repoid=self.name,
                               definitions=definitions, rpmfile_path=self.get_rpmfile_path(), specfile=SPECFILE)
 

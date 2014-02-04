@@ -19,7 +19,7 @@ BuildArch:         noarch
 BuildRequires:     python3-devel
 BuildRequires:     python3-setuptools
 
-Requires:          createrepo
+Requires:          createrepo_c
 Requires:          cronie
 Requires:          httpd
 Requires:          mod_ssl
