@@ -30,6 +30,7 @@ ORDER_BY_CHOICES = (
     ('-score',          _('score')),
     ('title',           _('title')),
     ('-download_count', _('download count')),
+    ('-last_modified',  _('recently built')),
 )
 
 
@@ -44,10 +45,10 @@ class CreateForm(forms.ModelForm):
         kwargs['initial'] = {'copr_username': copr_username}
         super(CreateForm, self).__init__(**kwargs)
         if copr_username:
-            coprs = CoprProxy().coprs(copr_username)
+            coprnames = CoprProxy().coprnames(copr_username)
         else:
-            coprs = []
-        copr_name_choices = tuple((copr.name, copr.slug) for copr in coprs)
+            coprnames = []
+        copr_name_choices = tuple((name, name) for name in coprnames)
         self.fields['copr_name'].widget.choices = copr_name_choices
 
     def save(self, commit=True):

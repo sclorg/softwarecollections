@@ -21,6 +21,7 @@ class Copr(object):
         'instructions',
         'yum_repos',
         'additional_repos',
+        'last_modified',
     ]
 
     def __init__(self, **kwargs):
@@ -48,17 +49,20 @@ class CoprProxy:
             response.raise_for_status()
         return json.loads(response.text)
 
-    def coprs(self, username):
-        """ return list of coprs """
-        data = self._get('/coprs/{}/'.format(username))
-        if 'repos' in data:
-            for copr in data['repos']:
-                yield Copr(username=username, **copr)
+    def coprnames(self, username):
+        """ return list of copr names """
+        try:
+            data = self._get('/coprs/{}/'.format(username))
+            return [copr['name'] for copr in data['repos']]
+        except Exception as e:
+            raise CoprException('Failed to get copr names: {}'.format(e))
 
     def copr(self, username, coprname):
         """ return copr details """
-        for copr in self.coprs(username):
-            if copr.name == coprname:
-                return copr
-        raise CoprException('Copr {}/{} does not exist.'.format(username, coprname))
+        try:
+            data = self._get('/coprs/{}/{}/detail/'.format(username, coprname))
+            data['detail']['username'] = username
+            return Copr(**data['detail'])
+        except Exception as e:
+            raise CoprException('Failed to get copr detail: {}'.format(e))
 

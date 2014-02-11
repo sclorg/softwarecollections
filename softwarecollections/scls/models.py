@@ -2,12 +2,14 @@ import os
 import subprocess
 import tagging
 import tempfile
+from datetime import datetime
 from django.db import models
 from django.db.models import Avg
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
@@ -40,7 +42,7 @@ class SoftwareCollection(models.Model):
     score_count     = models.IntegerField(default=0, editable=False)
     download_count  = models.IntegerField(default=0, editable=False)
     create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
-    last_sync_date  = models.DateTimeField(_('Last sync date'), null=True, editable=False)
+    last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
     approved        = models.BooleanField(_('Approved'), default=False)
     approval_req    = models.BooleanField(_('Requested approval'), default=False)
     auto_sync       = models.BooleanField(_('Auto sync'), default=True)
@@ -130,8 +132,10 @@ class SoftwareCollection(models.Model):
         for repo in self.get_enabled_repos():
             repo.sync(save_scl=False)
             download_count += repo.download_count
-        self.last_sync_date = timezone.now()
         self.download_count = download_count
+        self.last_modified  = self.copr.last_modified \
+            and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
+             or None
         self.save()
 
     def has_perm(self, user, perm):
@@ -162,7 +166,6 @@ class Repo(models.Model):
     copr_url        = models.CharField(_('Copr URL'), max_length=200)
     download_count  = models.IntegerField(default=0, editable=False)
     create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
-    last_sync_date  = models.DateTimeField(_('Last sync date'), null=True)
     enabled         = models.BooleanField(_('Enabled'), default=True)
     auto_sync       = models.BooleanField(_('Auto sync'), default=True)
     need_sync       = models.BooleanField(_('Needs sync'), default=True)
@@ -273,10 +276,8 @@ gpgcheck=0
         finally:
             os.remove(tempcfg)
 
-        self.last_sync_date = timezone.now()
         self.save()
         if save_scl:
-            self.scl.last_sync_date = self.last_sync_date
             self.scl.save()
 
     def save(self, *args, **kwargs):

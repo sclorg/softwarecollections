@@ -61,19 +61,19 @@
         <th colspan="2">Distribution</th>
         <th>Architecture</th>
         <th>Download</th>
-        <th>Last Synced</th>
+        <th>Last Modified</th>
     </tr>
     {% for repo in scl.get_enabled_repos %}
     <tr>
         <td><img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/></td>
         <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>
         <td>{{ repo.arch }}</td>
-        {% if repo.last_sync_date %}
+        {% if scl.last_modified %}
         <td>
             <a href="{% url "scls:download" repo.slug %}" title="{{ repo.rpmfile }}">RPM</a>
             {{ repo.download_count }}x
         </td>
-        <td>{{ repo.last_sync_date }}</td>
+        <td>{{ scl.last_modified }}</td>
         {% else %}
         <td collspan="2">(not synced)</td>
         {% endif %}
