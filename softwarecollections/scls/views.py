@@ -3,13 +3,14 @@ from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
 from django.db.models import Q, Manager
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
@@ -129,6 +130,33 @@ class Edit(UpdateView):
             raise PermissionDenied()
 
 edit = Edit.as_view()
+
+class Delete(DeleteView):
+    model = SoftwareCollection
+    template_name_suffix = '_delete'
+
+    def get_success_url(self):
+        scl = self.get_object()
+        return reverse('scls:list_user',
+                kwargs={"username": scl.maintainer.get_username()})
+
+    def get_object(self, *args, **kwargs):
+        scl = super(Delete, self).get_object(*args, **kwargs)
+        if self.request.user.has_perm('delete', obj=scl):
+            return scl
+        else:
+            raise PermissionDenied()
+
+    def post(self, request, *args, **kwargs):
+        choice = request.POST['choice']
+        expected_name = self.get_object().name
+        actual_name = request.POST['name']
+        if choice == 'delete' and actual_name == expected_name:
+            return super(Delete, self).post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(self.get_success_url())
+
+delete = Delete.as_view()
 
 
 def app_req(request, slug):
