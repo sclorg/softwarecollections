@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
 from django.db.models import Q, Manager
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -129,6 +130,35 @@ class Edit(UpdateView):
             raise PermissionDenied()
 
 edit = Edit.as_view()
+
+class Delete(UpdateView):
+    model = SoftwareCollection
+    template_name_suffix = '_delete'
+
+    def get_object(self, *args, **kwargs):
+        scl = super(Delete, self).get_object(*args, **kwargs)
+        if self.request.user.has_perm('delete', obj=scl):
+            return scl
+        else:
+            raise PermissionDenied()
+
+    def post(self, request, *args, **kwargs):
+        scl = self.get_object()
+        choice = request.POST['choice']
+        expected_name = scl.name
+        actual_name = request.POST['name_check']
+        if choice == 'delete' and actual_name == expected_name:
+            scl.deleted = True
+            scl.save()
+            url = reverse('scls:list_user',
+                  kwargs={"username": scl.maintainer.get_username()})
+            return HttpResponseRedirect(url)
+        else:
+            url = reverse('scls:detail',
+                  kwargs={"slug": scl.slug})
+            return HttpResponseRedirect(url)
+
+delete = Delete.as_view()
 
 
 def app_req(request, slug):

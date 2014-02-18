@@ -1,0 +1,23 @@
+{% extends "with_submenu.html" %}
+{% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
+
+{% block title %}Directory{% endblock %}
+
+{% block content %}
+<h1>Delete collection</h1>
+<form action="" method="post">{% csrf_token %}
+    <h3>Do you really want to delete your collection?</h3>
+    <table>
+        <tr><td>
+            This action is permanent and cannot be reverted back.
+            To confirm that you really want to do it, type the name of your
+            collection into field below:
+        </td></tr>
+        <tr><td><input type="text" name="name_check"/></td></tr>
+        <tr><td>
+            <button type="submit" name="choice" value="delete">Delete</button>
+            <button type="submit" name="choice" value="cancel">Cancel</button>
+        </td></tr>
+    </table>
+</form>
+{% endblock %}
