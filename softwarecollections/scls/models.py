@@ -24,8 +24,15 @@ RELEASE = '1'
 
 DISTRO_ICONS = ('fedora', 'epel')
 
+class SclManager(models.Manager):
+    def get_query_set(self):
+        return super(SclManager, self).get_query_set().filter(deleted=False)
 
 class SoftwareCollection(models.Model):
+    objects = SclManager()
+
+    everything = models.Manager()
+
     # automatic value (maintainer.username/name) used as unique key
     slug            = models.SlugField(max_length=150, editable=False)
     # local name is unique per local maintainer
@@ -152,6 +159,11 @@ class SoftwareCollection(models.Model):
     def save(self, *args, **kwargs):
         # ensure slug is correct
         self.slug = '/'.join((self.maintainer.username, self.name))
+
+        #delete possible scl with the same slug that has not been really deleted yet
+        zombie = SoftwareCollection.everything.filter(deleted=True, slug=self.slug)
+        if zombie:
+            zombie[0].delete()
         super(SoftwareCollection, self).save(*args, **kwargs)
         # ensure maintainer is collaborator
         self.collaborators.add(self.maintainer)
