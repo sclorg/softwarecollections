@@ -12,9 +12,6 @@ class Command(BaseCommand):
         for scl in SoftwareCollection.everything.filter(deleted=True):
             try:
                 self.stdout.write("Deleting {}".format(scl.slug))
-                if os.path.isdir(scl.get_repos_root()):
-                    shutil.rmtree(scl.get_repos_root())
-
                 scl.delete()
             except Exception as exception:
                 self.stderr.write(str(exception))

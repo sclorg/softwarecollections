@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import tagging
 import tempfile
@@ -167,6 +168,11 @@ class SoftwareCollection(models.Model):
         super(SoftwareCollection, self).save(*args, **kwargs)
         # ensure maintainer is collaborator
         self.collaborators.add(self.maintainer)
+
+    def delete(self, *args, **kwargs):
+        if os.path.isdir(scl.get_repos_root()):
+            shutil.rmtree(scl.get_repos_root())
+        super(SoftwareCollection, self).delete(*args, **kwargs)
 
 tagging.register(SoftwareCollection)
 
