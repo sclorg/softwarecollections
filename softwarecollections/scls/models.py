@@ -1,3 +1,4 @@
+import fcntl
 import os
 import shutil
 import subprocess
@@ -24,6 +25,9 @@ VERSION = '1'
 RELEASE = '1'
 
 DISTRO_ICONS = ('fedora', 'epel')
+
+class SclReposLocked(BlockingIOError):
+    """ Repos temporarily unavailable """
 
 class SclManager(models.Manager):
     def get_query_set(self):
@@ -137,15 +141,36 @@ class SoftwareCollection(models.Model):
             Repo(scl=self, name=name, copr_url=repos[name]).save()
 
     def sync(self):
-        download_count = 0
-        for repo in self.get_enabled_repos():
-            repo.sync(save_scl=False)
-            download_count += repo.download_count
-        self.download_count = download_count
-        self.last_modified  = self.copr.last_modified \
-            and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
-             or None
-        self.save()
+        with self.repos_lock():
+            download_count = 0
+            for repo in self.get_enabled_repos():
+                repo._sync()
+                download_count += repo.download_count
+            self.download_count = download_count
+            self.last_modified  = self.copr.last_modified \
+                and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
+                 or None
+            self.save()
+
+    def repos_lock(self):
+        # lock file name does not contain self.name,
+        # for the case of scl renaming
+        lock_file  = os.path.join(
+            settings.REPOS_ROOT,
+            self.maintainer.username,
+            '{}.lock'.format(self.id)
+        )
+        try:
+            lock = open(lock_file, 'w')
+        except FileNotFoundError:
+            os.makedirs(os.path.dirname(lock_file))
+            lock = open(lock_file, 'w')
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as e:
+            lock.close()
+            raise SclReposLocked('Repos of {} temporarily unavailable'.format(self.slug))
+        return lock
 
     def has_perm(self, user, perm):
         if perm in ['edit', 'delete']:
@@ -244,8 +269,11 @@ class Repo(models.Model):
            and '{}/scls/icons/{}.png'.format(settings.STATIC_URL, self.distro) \
             or '{}/scls/icons/empty.png'.format(settings.STATIC_URL)
 
-    def sync(self, save_scl=True):
-        """ Run reposync and createrepo """
+    def _sync(self):
+        """
+        Run reposync and createrepo
+        (should not be run directly, use scl.sync() to sync all repos at the same time)
+        """
 
         fd, tempcfg = tempfile.mkstemp()
         try:
@@ -296,8 +324,6 @@ gpgcheck=0
             os.remove(tempcfg)
 
         self.save()
-        if save_scl:
-            self.scl.save()
 
     def save(self, *args, **kwargs):
         # ensure slug is correct
