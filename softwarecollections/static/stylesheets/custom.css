@@ -1,0 +1,35 @@
+.masthead .active a {
+    opacity: 1;
+    border-top: 7px solid rgba(255, 255, 255, 0.5);
+    padding-top: 15px;
+    background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) repeat scroll 0% 0% transparent;
+}
+.masthead .nav a {
+    font-size: 130%;
+    color: #FFF;
+    padding: 22px 2ex 20px;
+    display: block;
+    opacity: 0.8;
+    text-transform: lowercase;
+}
+.masthead .nav a, .demo-area h3 {
+    text-transform: lowercase;
+}
+.nav-justified > li > a, .nav-tabs.nav-justified > li > a {
+    text-align: center;
+}
+.nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+.nav a, .blam {
+    font-family: dosis;
+}
+a {
+    color: #428D98;
+    text-decoration: none;
+}
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+}
