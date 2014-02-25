@@ -1,3 +1,24 @@
+
+.demos {
+    text-align: center;
+}
+
+.jumbotron {
+    text-align: center;
+    font-weight: 500;
+    background-color: transparent
+}
+
+.masthead-wrap, .blam {
+    background-size: cover;
+    background-attachment: fixed;
+    background: url('../images/blurr4.jpg')
+}
+
+.masthead .nav a:hover {
+    background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) repeat scroll 0% 0% transparent;
+}
+
 .masthead .active a {
     opacity: 1;
     border-top: 7px solid rgba(255, 255, 255, 0.5);
@@ -12,9 +33,11 @@
     opacity: 0.8;
     text-transform: lowercase;
 }
+
 .masthead .nav a, .demo-area h3 {
     text-transform: lowercase;
 }
+
 .nav-justified > li > a, .nav-tabs.nav-justified > li > a {
     text-align: center;
 }
