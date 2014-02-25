@@ -15,20 +15,30 @@ table.yum-repos td {
     padding: 5px;
 }
 
-
-form#filter-form {
-    font-size: 80%;
-    padding: 5px;
-    background-color: rgba(66, 141, 152, 0.2);
-    border-left: 5px solid rgba(66, 141, 152, 0.3);
+.collections-list .stars {
     float: right;
+    padding-top: 1.5ex;
 }
 
-form#filter-form ul {
-    margin: 0;
+.page-header h1 {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
 }
 
-form#filter-form li {
-    display: inline;
-    padding: 0 5px;
+.scl-tags {
+    line-height: 1.7;
 }
+
+.control-label {
+    padding-right: 0px;
+}
+
+.repos td {
+    vertical-align: middle;
+}
+
+.img-cell {
+    width: 32px;
+    padding: 5px !important;
+}
+

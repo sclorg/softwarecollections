@@ -1,6 +1,6 @@
 {% load sekizai_tags %}
 
-<div>
+<div class='stars'>
     {% if active %}
         <form name="stars-{{scl.pk}}" method="POST" action="{% url "scls:rate" scl %}">
         {% csrf_token %}

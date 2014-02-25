@@ -110,13 +110,17 @@ class RateForm(forms.ModelForm):
 
 
 class FilterForm(forms.Form):
-    search          = forms.CharField(required=False, max_length=999)
-    search_desc     = forms.BooleanField(required=False)
-    approved        = forms.BooleanField(required=False)
-    per_page        = forms.ChoiceField(required=False,
+    search          = forms.CharField(required=False, max_length=999,
+                        widget=forms.TextInput(attrs={'class': 'form-control',
+                            'placeholder': 'Search Text'}))
+    search_desc     = forms.BooleanField(required=False, label='search description')
+    approved        = forms.BooleanField(required=False, label='Approved')
+    per_page        = forms.ChoiceField(required=False, label='Per page',
                         initial=PER_PAGE_CHOICES[0][0],
-                        choices=PER_PAGE_CHOICES)
-    order_by        = forms.ChoiceField(required=False,
+                        choices=PER_PAGE_CHOICES,
+                        widget=forms.Select(attrs={'class': 'form-control'}))
+    order_by        = forms.ChoiceField(required=False, label='Order',
                         initial=ORDER_BY_CHOICES[0][0],
-                        choices=ORDER_BY_CHOICES)
+                        choices=ORDER_BY_CHOICES,
+                        widget=forms.Select(attrs={'class': 'form-control'}))
 

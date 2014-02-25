@@ -2,22 +2,27 @@
 {% load md2 %}
 {% load rating_stars %}
 {% load url from future %}
-<h1><a href="{{ scl.get_absolute_url }}">{{ scl.title }}</a></h1>
-<p>
-    added by
-    <a href="{% url "scls:list_user" scl.maintainer.username %}">
-        {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
-    </a>
-</p>
+<div class='page-header collections-list'>
+    {% if scl.score_count %}
+    {% rating_stars 'passive' scl %}
+    {% endif %}
+    <h1><a href="{{ scl.get_absolute_url }}">{{ scl.title }}</a>
+        <small>
+            <span style='display: inline-block'>by
+                <a href="{% url "scls:list_user" scl.maintainer.username %}">
+                    {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
+                </a>
+            </span>
+        </small>
+    </h1>
+</div>
 
 {{ scl.description | markdown2 }}
 
-<p class="scl-tags">
+<div class="scl-tags">
     {% for tag in scl.tags %}
-        <a href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
+        <a class='label label-default' href="{% url "scls:list_tag" tag.name %}">{{ tag.name }}</a>
+        {% empty %}
+        <span class='label label-default'>No tags</span>
     {% endfor %}
-</p>
-
-{% if scl.score_count %}
-{% rating_stars 'passive' scl %}
-{% endif %}
+</div>

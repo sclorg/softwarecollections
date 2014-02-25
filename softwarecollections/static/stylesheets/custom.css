@@ -24,19 +24,29 @@ body {
 code {
     font-family: 'Oxygen Mono', 'Monospace';
     background-color: #EFF0F2;
-    padding: 1ex;
-    line-height: 1.5;
+    padding: 1.5ex;
+    line-height: 1;
+    display: inline-block;
 }
 
 h1, h2, h3 {
     font-family: 'dosis', 'sans-serif';
     color: #999;
-    padding-top: 0.1em;
+    padding-top: 0.5ex;
+    padding-bottom: 0.1ex;
 }
 
 html {
     position: relative;
     min-height: 100%;
+}
+
+legend {
+    font-family: 'Dosis';
+}
+
+p {
+    padding-bottom: 1ex;
 }
 
 #footer {
@@ -89,34 +99,39 @@ html {
 }
 
 .masthead h1 {
-    margin: 6px;
+    margin: 0px;
 }
 
-.masthead-wrap, .blam{
+.masthead-wrap, .blam, .messages{
     background-size: cover;
     background-attachment: fixed;
     background-image: url('../images/blurr4.jpg');
     color: white;
 }
 
-.masthead .nav a:hover {
+.masthead .nav a, .masthead .nav a:hover {
+    color: #FFF;
+    border-top: 7px solid transparent;
+    display: block;
+    font-size: 130%;
+    opacity: 0.8;
+    padding: 10px 2ex 20px;
+    text-transform: lowercase;
+}
+
+.masthead .nav {
+    display: inline-block;
+}
+
+.masthead .nav a:hover, .masthead .nav a:active {
+    border-top: 7px solid rgba(255, 255, 255, 0.5);
     background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) repeat scroll 0% 0% transparent;
 }
 
 .masthead .active a {
     opacity: 1;
     border-top: 7px solid rgba(255, 255, 255, 0.5);
-    padding-top: 15px;
     background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) repeat scroll 0% 0% transparent;
-}
-
-.masthead .nav a {
-    font-size: 130%;
-    color: #FFF;
-    padding: 15px 2ex 20px;
-    display: block;
-    opacity: 0.8;
-    text-transform: lowercase;
 }
 
 .masthead .nav a, .demo-area h3 {
@@ -126,12 +141,16 @@ html {
 .nav-justified > li > a, .nav-tabs.nav-justified > li > a {
     text-align: center;
 }
-.nav > li > a {
-    position: relative;
+.nav > li > a, .nav > li > p {
     display: block;
     padding: 10px 15px;
+    position: relative;
 }
-.nav a, .blam {
+.nav > li > p {
+    color: gray;
+}
+
+.nav a, .nav p, .blam {
     font-family: 'dosis';
 }
 a {

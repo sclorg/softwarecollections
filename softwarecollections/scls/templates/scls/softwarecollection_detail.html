@@ -35,13 +35,15 @@
 </div>
 {% endallowed %}
 
-<h1>{{ scl.title }}</h1>
-<p>
-    added by
-    <a href="{% url "scls:list_user" scl.maintainer.username %}">
-        {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
-    </a>
-</p>
+<div class='page-header'>
+<h1>{{ scl.title }}
+    <small>by
+        <a href="{% url "scls:list_user" scl.maintainer.username %}">
+            {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
+        </a>
+    </small>
+</h1>
+</div>
 {{ scl.description | markdown2 }}
 
 <h2>Instructions</h2>
@@ -50,37 +52,45 @@
 <h2>Policy</h2>
 {{ scl.policy | markdown2 }}
 
-<p class="scl-tags">
+<div class="scl-tags">
     {% for tag in scl.tags %}
-        <a href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
+        <a class='label label-default' href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
     {% endfor %}
-</p>
+</div>
 
 <h2>Yum Repositories</h2>
-<table class="yum-repos">
-    <tr>
-        <th colspan="2">Distribution</th>
-        <th>Architecture</th>
-        <th>Download</th>
-        <th>Last Modified</th>
-    </tr>
-    {% for repo in scl.get_enabled_repos %}
-    <tr>
-        <td><img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/></td>
-        <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>
-        <td>{{ repo.arch }}</td>
-        {% if scl.last_modified %}
-        <td>
-            <a href="{% url "scls:download" repo.slug %}" title="{{ repo.rpmfile }}">RPM</a>
-            {{ repo.download_count }}x
-        </td>
-        <td>{{ scl.last_modified }}</td>
-        {% else %}
-        <td collspan="2">(not synced)</td>
-        {% endif %}
-    </tr>
-{% endfor %}
-</table>
+<div class='panel panel-default'>
+    <table class='table table-hover repos'>
+        <thead>
+            <tr class=''>
+                <th></th>
+                <th>Distribution</th>
+                <th>Architecture</th>
+                <th>Download</th>
+                <th>Last Modified</th>
+            </tr>
+        </thead>
+        {% for repo in scl.get_enabled_repos %}
+        <tr>
+            <td class='img-cell'><img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/></td>
+            <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>
+            <td>{{ repo.arch }}</td>
+            {% if scl.last_modified %}
+            <td>
+                <a href="{% url "scls:download" repo.slug %}" title="{{ repo.rpmfile }}">RPM</a>
+                {{ repo.download_count }}x
+            </td>
+            <td>{{ scl.last_modified }}</td>
+            {% else %}
+            <td colspan="2">(not synced)</td>
+            {% endif %}
+        </tr>
+        {% empty %}
+            <td></td>
+            <td colspan='4'><em>No repos available</em></td>
+        {% endfor %}
+    </table>
+</div>
 
 {% if scl.score_count %}
 <h2>Rating</h2>

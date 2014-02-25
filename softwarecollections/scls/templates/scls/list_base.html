@@ -6,14 +6,14 @@
     {% addtoblock "css" %}
         <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
     {% endaddtoblock %}
-    <h1>{% block title %}{% endblock %}</h2>
-    {% include "scls/filter.html" %}
-    {% for scl in collections %}
-        {% include "scls/preview.html" %}
-    {% empty %}
-        {% block empty %}
-        <p>{% trans "No corresponding Software Collections." %}</p>
-        {% endblock %}
-    {% endfor %}
+    <h1>{% block title %}{% endblock %}</h1>
+        {% include "scls/filter.html" %}
+        {% for scl in collections %}
+            {% include "scls/preview.html" %}
+        {% empty %}
+            {% block empty %}
+            <li>{% trans "No corresponding Software Collections." %}</li>
+            {% endblock %}
+        {% endfor %}
     {% include "scls/pagination.html" %}
 {% endblock %}

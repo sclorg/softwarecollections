@@ -1,8 +1,95 @@
 {% load i18n %}
 
-<form id="filter-form">
-    <ul>
-        {{ filter_form.as_ul }}
-        <li><input type="submit" value="{% trans "Apply filter" %}"/></li>
-    </ul>
-</form>
+
+<div class='panel panel-default'>
+    <div class='panel-body'>
+        <form id='filter-form' class='form-horizontal' role='form'>
+            <legend>Filter collections</legend>
+
+            <!-- FIRST ROW -->
+            <div class='form-group'>
+
+                <!-- SEARCH -->
+                <div class='col-md-12 col-sm-12 col-xs-12'>
+                    <div class='input-group'>
+                        {{ filter_form.search }}
+                        <span class='input-group-addon'>
+                            {{ filter_form.search_desc }}
+                            {{ filter_form.search_desc.label }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECOND ROW -->
+            <div class='form-group'>
+                <div class='row'>
+
+                    <!-- POLICY -->
+                    <div class='col-md-5 col-sm-7 col-xs-12'>
+                        <label for='a' class='control-label col-md-4 col-sm-4 col-xs-4'>Policy</label>
+                        <div class='col-md-8 col-sm-8 col-xs-8'>
+                            <select name='a' class='form-control'>
+                                <option>All</option>
+                                <option>Quick and dirty</option>
+                                <option>Development</option>
+                                <option>Just works</option>
+                                <option>Professional</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- APPROVED -->
+                    <div class='col-md-4 col-sm-5 col-xs-12'>
+                        <label for='{{ filter_form.approved.id_for_label }}'
+                            class='control-label col-md-5 col-sm-6 col-xs-4'>{{ filter_form.approved.label }}
+                        </label>
+                        <div class='col-md-7 col-sm-6 col-xs-8 form-control-static'>
+                            {{ filter_form.approved }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THIRD ROW -->
+            <div class='form-group'>
+                <div class='row'>
+
+                    <!-- ORDER BY -->
+                    <div class='col-md-5 col-sm-7 col-xs-12'>
+                        <label for='{{ filter_form.order_by.id_for_label}}'
+                            class='control-label col-md-4 col-sm-4 col-xs-4'>{{ filter_form.order_by.label }}</label>
+                        <div class='col-md-8 col-sm-8 col-xs-8'>
+                            {{ filter_form.order_by }}
+                        </div>
+                    </div>
+
+                    <!-- PER PAGE -->
+                    <div class='col-md-4 col-sm-5 col-xs-12'><!-- style='background-color: red'>-->
+                        <label for='{{ filter_form.per_page.id_for_label}}'
+                            class='control-label col-md-5 col-sm-5 col-xs-4'>{{ filter_form.per_page.label }}</label>
+                        <div class='col-md-7 col-sm-7 col-xs-8'>
+                            {{ filter_form.per_page }}
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <div class='col-md-3 col-sm-12 visible-lg visible-md text-right'>
+                        <div class='col-md-12 col-sm-12'>
+                            <input class='btn btn-default' type='submit' value='{% trans 'Apply filter' %}'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEPARATE SUBMIT BUTTON FOR SMALL SCREENS -->
+            <div class='form-group visible-sm visible-xs'>
+
+                <!-- SUBMIT -->
+                <div class='col-md-12 col-sm-12 text-right'>
+                    <input class='btn btn-default' type='submit' value='{% trans 'Apply filter' %}'/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

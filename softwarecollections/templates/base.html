@@ -40,20 +40,22 @@
                             {% include "menu.html" %}
                         </div>
                     </div>
-                    {# TODO: find the right place and style for messages #}
-                    {% if messages %}
-                    <ul class="messages">
-                        {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                            {{ message }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
                 </div>
             </div>
         </div>
+
+        {% if messages %}
+        <div class='messages'>
+            <div class='container'>
+                {% for message in messages %}
+                    <div class='alert alert-info'>
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
         {% block base_content %}{% endblock %}
 
