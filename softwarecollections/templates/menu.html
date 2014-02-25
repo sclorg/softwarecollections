@@ -7,7 +7,7 @@
         <li class='{% if request.path == "/en/docs/" %}active{% endif %}' role='menuitem'>
             <a href='/en/docs/'>docs</a>
         </li>
-        <li class='{% if request.path == "/en/faq/" %}active{% endif %}' role='menuitem'>
+        <li class='{% if request.path == "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
             <a href='/en/faq/'>faq</a>
         </li>
         {% url "scls:list_all" as scls_list_all %}
