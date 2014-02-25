@@ -1,18 +1,82 @@
-
-.demos {
-    text-align: center;
+/* FONTS */
+@font-face {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: local("Open Sans"), local("OpenSans"), url("https://themes.googleusercontent.com/static/fonts/opensans/v8/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff") format("woff");
+}
+@font-face {
+    font-family: "Oxygen Mono";
+    font-style: normal;
+    font-weight: 400;
+    src: local("Oxygen Mono"), local("OxygenMono-Regular"), url("https://themes.googleusercontent.com/static/fonts/oxygenmono/v2/BzV4DVOwAgGelLT9EC5xyobN6UDyHWBl620a-IRfuBk.woff") format("woff");
 }
 
-.jumbotron {
-    text-align: center;
+/* GLOBAL STYLES */
+body {
+    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'Sans Serif';
+    font-size: 15px;
+    line-height: 1.5;
+    color: #333;
+}
+
+h1, h2, h3 {
+    font-family: 'dosis', 'sans-serif';
+    color: #999;
+    padding-top: 0.1em;
+}
+
+code {
+    font-family: 'Oxygen Mono', 'Monospace';
+    background-color: #EFF0F2;
+    padding: 1ex;
+    line-height: 1.5;
+}
+
+.blam .jumbotron {
+    background-color: transparent;
     font-weight: 500;
-    background-color: transparent
+    font-size: 22.5px;
+    max-width: 62ex;
+    margin: 0px auto;
 }
 
-.masthead-wrap, .blam {
+.blam .jumbotron h1 {
+    text-align: center;
+    font-size: 36pt;
+}
+
+.blam .jumbotron .lead {
+    padding-top: 48px;
+}
+
+.main-content, .submenu {
+    margin-top: 1ex;
+}
+
+.demo-area {
+    text-align: center;
+    padding: 3em;
+    background-color: #EFF0F2;
+}
+
+.demo-area h2 {
+    color: #697883;
+}
+
+.docbrowser {
+    padding: 1ex;
+}
+
+.masthead h1 {
+    margin: 6px;
+}
+
+.masthead-wrap, .blam{
     background-size: cover;
     background-attachment: fixed;
-    background: url('../images/blurr4.jpg')
+    background-image: url('../images/blurr4.jpg');
+    color: white;
 }
 
 .masthead .nav a:hover {
@@ -25,10 +89,11 @@
     padding-top: 15px;
     background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) repeat scroll 0% 0% transparent;
 }
+
 .masthead .nav a {
     font-size: 130%;
     color: #FFF;
-    padding: 22px 2ex 20px;
+    padding: 15px 2ex 20px;
     display: block;
     opacity: 0.8;
     text-transform: lowercase;
@@ -47,7 +112,7 @@
     padding: 10px 15px;
 }
 .nav a, .blam {
-    font-family: dosis;
+    font-family: 'dosis';
 }
 a {
     color: #428D98;
