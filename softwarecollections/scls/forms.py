@@ -98,6 +98,16 @@ class UpdateForm(forms.ModelForm):
         model = SoftwareCollection
         fields = ['title', 'description', 'instructions', 'policy', 'auto_sync']
 
+class AddCollaboratorForm(forms.ModelForm):
+    def save(self, commit=True):
+        obj = super(AddCollaboratorForm, self).save(commit)
+        obj.add_auto_tags()
+        return obj
+
+    class Meta:
+        model = SoftwareCollection
+        fields = ['collaborators']
+
 
 class RateForm(forms.ModelForm):
 
