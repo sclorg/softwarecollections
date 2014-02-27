@@ -51,7 +51,7 @@
 {{ scl.instructions | markdown2 }}
 
 <h2>Policy</h2>
-{{ scl.policy | markdown2 }}
+{{ scl.policy_text | markdown2 }}
 
 <p class="scl-tags">
     {% for tag in scl.tags %}
@@ -67,7 +67,7 @@
         <th>Download</th>
         <th>Last Modified</th>
     </tr>
-    {% for repo in scl.get_enabled_repos %}
+    {% for repo in scl.enabled_repos %}
     <tr>
         <td><img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/></td>
         <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>

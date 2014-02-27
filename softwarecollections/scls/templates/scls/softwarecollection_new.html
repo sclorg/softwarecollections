@@ -1,21 +1,33 @@
 {% extends "with_submenu.html" %}
+{% load sekizai_tags %}
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
 {% block title %}Directory{% endblock %}
 
 {% block content %}
 <h1>New Collection</h1>
-<form action="" method="get">
-    <p>
-        {{ form.copr_username.label_tag }}
-        <input id="id_copr_username" maxlength="100" name="copr_username" type="text" value="{{ form.copr_username.value }}" />
-        <input type="submit" value="Change Copr User" />
-    </p>
-</form>
 <form action="" method="post">{% csrf_token %}
     <table>
         {{ form }}
     </table>
     <input type="submit" value="Import" />
 </form>
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+//<![CDATA[
+
+    jQuery(document).ready(function (){
+        jQuery("#id_copr_name").blur(function () {
+            var e = jQuery("#id_name")[0];
+            if(!e._changed) {
+                e.value = this.value;
+            }
+        });
+    });
+
+//]]>
+</script>
+{% endaddtoblock %}
+
 {% endblock %}

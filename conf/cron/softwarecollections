@@ -1,4 +1,3 @@
 # Sync SCLs with copr repos every 10 minutes
 
-*/10 * * * * root /usr/bin/softwarecollections sclsync
-*/9 * * * * root /usr/bin/softwarecollections purge_deleted
+*/10 * * * *    root /usr/bin/softwarecollections sclsync; /usr/bin/softwarecollections sclclean

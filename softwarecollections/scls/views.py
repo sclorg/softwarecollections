@@ -11,7 +11,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
@@ -124,6 +124,11 @@ class Edit(UpdateView):
     form_class = UpdateForm
     template_name_suffix = '_edit'
 
+    def get_form_kwargs(self):
+        kwargs = super(Edit, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def get_object(self, *args, **kwargs):
         scl = super(Edit, self).get_object(*args, **kwargs)
         if self.request.user.has_perm('edit', obj=scl):
@@ -169,7 +174,7 @@ class EditCollaborators(UpdateView):
 edit_collab = EditCollaborators.as_view()
 
 
-class Delete(UpdateView):
+class Delete(DeleteView):
     model = SoftwareCollection
     template_name_suffix = '_delete'
 
@@ -186,8 +191,7 @@ class Delete(UpdateView):
         expected_name = scl.name
         actual_name = request.POST['name_check']
         if choice == 'delete' and actual_name == expected_name:
-            scl.deleted = True
-            scl.save()
+            scl.delete()
             url = reverse('scls:list_user',
                   kwargs={"username": scl.maintainer.get_username()})
             return HttpResponseRedirect(url)

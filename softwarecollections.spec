@@ -28,11 +28,13 @@ Requires:          python3-django-markdown2
 Requires:          python3-django-sekizai
 Requires:          python3-django-south
 Requires:          python3-django-tagging
+Requires:          python3-flock
 Requires:          python3-mod_wsgi
 Requires:          python3-openid
 Requires:          python3-requests
 Requires:          rpm-build
 Requires:          yum-utils
+Requires:          MTA
 
 %description
 Software Collections Management Website and Utils
