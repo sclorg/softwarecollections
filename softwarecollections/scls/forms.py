@@ -50,6 +50,7 @@ class CreateForm(forms.ModelForm):
             coprnames = []
         copr_name_choices = tuple((name, name) for name in coprnames)
         self.fields['copr_name'].widget.choices = copr_name_choices
+        self.fields['copr_name'].widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
         obj = super(CreateForm, self).save(False)
