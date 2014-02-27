@@ -19,7 +19,7 @@
     <a href="{% url "scls:edit" scl %}"><img src="/static/scls/toolbar/edit.png" alt="edit" /></a>
     <a href="{% url "scls:delete" scl %}"><img src="/static/scls/toolbar/delete.png" alt="delete" /></a>
     <br/>
-    <a href="{% url "scls:edit_collab" scl %}"><img src="/static/scls/toolbar/collab.png" alt="manage collaborators" /></a>
+    <a href="{% url "scls:acl" scl %}"><img src="/static/scls/toolbar/acl.png" alt="manage collaborators" /></a>
     <br/>
     {% if scl.auto_sync %}
     <img src="/static/scls/toolbar/auto-sync.png" alt="auto sync" title="automatic synchronization with copr repositories is enabled" />

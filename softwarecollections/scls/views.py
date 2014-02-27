@@ -15,8 +15,10 @@ from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
-from .forms import FilterForm, CreateForm, UpdateForm, RateForm, \
-    AddCollaboratorForm
+from .forms import (
+    FilterForm, CreateForm, UpdateForm, RateForm,
+    CollaboratorsForm
+)
 from .models import SoftwareCollection, Repo, Score
 
 
@@ -138,40 +140,20 @@ class Edit(UpdateView):
 
 edit = Edit.as_view()
 
-class EditCollaborators(UpdateView):
+
+class Collaborators(UpdateView):
     model = SoftwareCollection
-    template_name_suffix = '_collab'
+    form_class = CollaboratorsForm
+    template_name_suffix = '_acl'
 
     def get_object(self, *args, **kwargs):
-        scl = super(EditCollaborators, self).get_object(*args, **kwargs)
+        scl = super(Collaborators, self).get_object(*args, **kwargs)
         if self.request.user.has_perm('edit', obj=scl):
             return scl
         else:
             raise PermissionDenied()
 
-    def get_context_data(self, **kwargs):
-        context = dict(super(EditCollaborators, self).get_context_data(**kwargs))
-        scl = self.get_object()
-        collab = scl.collaborators.all().exclude(pk=scl.maintainer.pk)
-        non_collab = User.objects.exclude(pk__in=scl.collaborators.all())
-        context['collab'] = collab
-        context['non_collab'] = non_collab
-        return context
-
-    def post(self, request, *args, **kwargs):
-        scl = self.get_object()
-        collab = [user.pk for user in scl.collaborators.all()]
-        user = int(request.POST['user'])
-        if request.POST['action'] == 'delete':
-            if user in collab:
-                collab.remove(user)
-        elif request.POST['action'] == 'add':
-            collab.append(user)
-        form = AddCollaboratorForm({'collaborators': collab}, instance=scl)
-        form.save()
-        return super(EditCollaborators, self).post(request, *args, **kwargs)
-
-edit_collab = EditCollaborators.as_view()
+acl = Collaborators.as_view()
 
 
 class Delete(DeleteView):

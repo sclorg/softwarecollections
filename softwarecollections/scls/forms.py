@@ -1,5 +1,6 @@
 import os
 from django import forms
+from django.contrib.auth import get_user_model
 from django.forms.forms import pretty_name
 from django.utils.translation import ugettext_lazy as _
 from softwarecollections.copr import CoprProxy
@@ -97,15 +98,47 @@ class UpdateForm(forms.ModelForm):
             'copr_name': forms.Select(),
         }
 
-class AddCollaboratorForm(forms.ModelForm):
+
+class CollaboratorsForm(forms.ModelForm):
+    add = forms.fields.CharField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CollaboratorsForm, self).__init__(*args, **kwargs)
+        self.fields['collaborators'].widget.choices = tuple(
+            map(
+                lambda u: (u.id, '{} ({})'.format(u.get_full_name(), u.get_username())),
+                filter(
+                    lambda u: u != self.instance.maintainer,
+                    self.instance.collaborators.all()
+                )
+            )
+        )
+
+    def clean(self):
+        self.cleaned_data = super(CollaboratorsForm, self).clean()
+        self.cleaned_data['collaborators'] = list(self.cleaned_data['collaborators'])
+        add = self.cleaned_data.pop('add')
+        if add:
+            try:
+                self.cleaned_data['collaborators'].append(
+                    get_user_model().objects.get(username=add)
+                )
+            except:
+                self.errors['add'] = [_('Unknown user')]
+        self.cleaned_data['collaborators'].append(self.instance.maintainer)
+        return self.cleaned_data
+
     def save(self, commit=True):
-        obj = super(AddCollaboratorForm, self).save(commit)
+        obj = super(CollaboratorsForm, self).save(commit)
         obj.add_auto_tags()
         return obj
 
     class Meta:
         model = SoftwareCollection
         fields = ['collaborators']
+        widgets = {
+            'collaborators': forms.CheckboxSelectMultiple()
+        }
 
 
 class RateForm(forms.ModelForm):
