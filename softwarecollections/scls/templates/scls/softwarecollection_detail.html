@@ -15,22 +15,24 @@
 {% endaddtoblock %}
 
 {% allowed 'edit' obj=scl %}
-<div class="scl-toolbar">
-    <a href="{% url "scls:delete" scl %}"><img src="/static/scls/toolbar/delete.png" alt="delete" /></a>
-    <a href="{% url "scls:edit" scl %}"><img src="/static/scls/toolbar/edit.png" alt="edit" /></a>
+<div class="scl-toolbar btn-group btn-group-sm">
+    <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
+    <a  class='btn btn-default' href="{% url "scls:edit" scl %}">edit</a>
+
     {% if scl.auto_sync %}
-    <img src="/static/scls/toolbar/auto-sync.png" alt="auto sync" title="automatic synchronization with copr repositories is enabled" />
+        <div class='btn btn-default disabled' title='automatic synchronization with copr repositories is enabled'>auto sync</div>
     {% elif scl.need_sync %}
-    <img src="/static/scls/toolbar/sync-request.png" alt="sync requested" title="synchronization with copr repositories is requested" />
+        <div class='btn btn-default active' title='synchronization with copr repositories is requested'>sync requested</div>
     {% else %}
-    <a href="{% url "scls:sync_req" scl %}"><img src="/static/scls/toolbar/sync-request.png" alt="request sync" /></a>
+        <a class='btn btn-default' href="{% url "scls:sync_req" scl %}">request sync</a>
     {% endif %}
+
     {% if scl.approved %}
-    <img src="/static/scls/toolbar/approved.png" alt="approved" />
+    <span class='btn btn-default disabled'>approved</span>
     {% elif scl.approval_req %}
-    <img src="/static/scls/toolbar/approval-requested.png" alt="approval requested" />
+    <span class='btn btn-default active'>approval requested</span>
     {% else %}
-    <a href="{% url "scls:app_req" scl %}"><img src="/static/scls/toolbar/approval-request.png" alt="approval request" /></a>
+    <a class='btn btn-default' href="{% url "scls:app_req" scl %}">request approval</a>
     {% endif %}
 </div>
 {% endallowed %}
