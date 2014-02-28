@@ -54,6 +54,7 @@
 <h2>Policy</h2>
 {{ scl.policy | markdown2 }}
 
+<h2>Tags</h2>
 <div class="scl-tags">
     {% for tag in scl.tags %}
         <a class='label label-default' href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
