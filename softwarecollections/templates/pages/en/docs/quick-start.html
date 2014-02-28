@@ -6,149 +6,30 @@
 {% block content %}
 <h1>Quick Start</h1>
 
-<p>Software Collections (SCLs) give RPM packagers a means of packaging multiple versions of software for a single distribution. The version from the software collection does not interact with the system version. SCLs can provide backwards and forwards compat versions of a package compared to what&rsquo;s on the system.</p>
+<p>To start using one of Software Collections (SCLs), all  you need to do is follow
+these steps:</p>
 
-<h3>Terms</h3>
+<ol>
+  <li>Find a collection you are interested in. You can browse through available
+  collections in our <a href="/en/scls/">catalogue</a>. We will use <a
+  href="/en/scls/mmaslano/Perl516/">perl516 collection</a> as an example
+  </li>
+  <li>Download and install the collection repository RPM file for your system
+  (EPEL 6 on x86_64 in our case):
+  <code>yum install Perl516-epel-6-x86_64-1-1.noarch.rpm</code>
+  </li>
+  <li>Install main SCL package with name identical to the name of the
+  collection:
+  <code>yum install perl516</code>
+  </li>
+  <li>Start using newly installed collection:
+  <code>scl enable perl516 perl</code>
+  </li>
+</ol>
 
-<p>Here&rsquo;s a quick guide to the terms we use in this document and elsewhere on the site:</p>
+<p>For more usage examples and documentation of more complex scenarios see full
+<a
+href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/">Software
+Collections Guide</a></p>
 
-<div class='panel panel-default'>
-<table class='table table-hover'><thead>
-<tr>
-<th>Term</th>
-<th align="left">Definition</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>SCL</td>
-<td align="left">A Software Collection</td>
-</tr>
-<tr>
-<td>SCL Metapackage (SRPM)</td>
-<td align="left">SRPM package that defines the SCL.</td>
-</tr>
-<tr>
-<td>SCL Metapackage (RPM)</td>
-<td align="left">RPM built from the SCL Metapackage SRPM. Defines the essential packages you get when you install the scl.</td>
-</tr>
-<tr>
-<td>SCL Runtime Package</td>
-<td align="left">Built from the SCL Metapackage SRPM. Contains the SCL filesystem and essential scripts (usually just enable) used to work with this SCL.</td>
-</tr>
-<tr>
-<td>SCL Build Package</td>
-<td align="left">Built from the SCL Metapackage SRPM. Contains macro definitions needed to build packages for the collection.</td>
-</tr>
-<tr>
-<td>SCL Package</td>
-<td align="left">Any binary RPM built for an SCL.</td>
-</tr>
-</tbody></table>
-</div>
-
-<h2>Naming the SCL</h2>
-
-<p>Every SCL <strong>must</strong> have a name which does not match name of any other package. This is implied by the fact that the SCL metapackage&rsquo;s name is the same as name of the whole SCL. It is therefore not a good idea to name an SCL &ldquo;ruby&rdquo;, when there is a &ldquo;ruby&rdquo; package - the name has to be altered. Packager should include something specific to the SCL (usually a specific version of included library) into it&rsquo;s name. Therefore &ldquo;ruby193&rdquo; is a good name for a collection that contains Ruby 1.9.3, etc. Although more developers might use the name ruby193, which is reason why collections on Copr are created with <strong>additional prefix</strong> based on a username e.g. the package's name will be ruby193-username-packagename. </p>
-
-<h2>SCL Metapackage</h2>
-
-<p>Every SCL must have a so called metapackage. This metapackage <strong>must</strong> have a runtime and build subpackages. For more details see complete <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Creating_a_Meta_Package.html">documentation.</a></p>
-
-<p>There are more possibilities how to build a package, but on SCL.org are stored only packages build by Copr build system (see how's Copr <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">working</a>). Following example contains macros needed for proper build in Copr:</p>
-<pre class="highlight yaml">
-<span class="s"># if the build is running on Copr</span>
-<span class="err">%</span><span class="s">if 0<span class="err">%</span>{?copr_username:1}</span>
-<span class="s"># define your copr_username and copr_projectname</span>
-<span class="err">%</span><span class="s">global scl <span class="err">%</span>{copr_username}-<span class="err">%</span>{copr_projectname}</span>
-<span class="err">%</span><span class="s">else</span>
-<span class="s"># different build system need only name of the collection, ruby193 in this case</span>
-<span class="err">%</span><span class="s">global scl ruby193</span>
-<span class="err">%</span><span class="s">endif</span>
-<span class="err">%</span><span class="s">scl_package <span class="err">%</span>scl</span>
-
-<span class="err">%</span><span class="s">global install_scl 1</span>
-
-<span class="s">Summary</span><span class="p">:</span> <span class="s">Package that installs %scl</span>
-<span class="s">Name</span><span class="p">:</span> <span class="err">%</span><span class="s">scl_name</span>
-<span class="s">Version</span><span class="p">:</span> <span class="s">1</span>
-<span class="s">Release</span><span class="p">:</span> <span class="s">1%{?dist}</span>
-<span class="s">License</span><span class="p">:</span> <span class="s">GPLv2+</span>
-<span class="s">Requires</span><span class="p">:</span> <span class="err">%</span><span class="p">{</span><span class="nv">scl_prefix</span><span class="p">}</span><span class="s">js</span>
-<span class="s">Requires</span><span class="p">:</span> <span class="err">%</span><span class="p">{</span><span class="nv">scl_prefix</span><span class="p">}</span><span class="s">rubygem-sqlite3</span>
-<span class="s">Requires</span><span class="p">:</span> <span class="err">%</span><span class="p">{</span><span class="nv">scl_prefix</span><span class="p">}</span><span class="s">rubygem-rails</span>
-<span class="s">BuildRequires</span><span class="p">:</span> <span class="s">scl-utils-build</span>
-
-<span class="err">%</span><span class="s">description</span>
-<span class="s">This is the main package for %scl Software Collection.</span>
-<span class="s">Provide some useful info about this SCL.</span>
-
-<span class="err">%</span><span class="s">package runtime</span>
-<span class="s">Summary</span><span class="p">:</span> <span class="s">Package that handles %scl Software Collection</span>
-<span class="s">Requires</span><span class="p">:</span> <span class="s">scl-utils</span>
-
-<span class="err">%</span><span class="s">description runtime</span>
-<span class="s">Package shipping essential scripts to work with %scl Software Collection.</span>
-
-<span class="err">%</span><span class="s">package build</span>
-<span class="s">Summary</span><span class="p">:</span> <span class="s">Package shipping basic build configuration</span>
-<span class="s">Requires</span><span class="p">:</span> <span class="s">scl-utils-build</span>
-
-<span class="err">%</span><span class="s">description build</span>
-<span class="s">Package shipping essential configuration macros to build %scl Software Collection.</span>
-
-<span class="err">%</span><span class="s">prep</span>
-<span class="err">%</span><span class="s">setup -T -c</span>
-
-<span class="err">%</span><span class="s">build</span>
-
-<span class="err">%</span><span class="s">install</span>
-<span class="s">rm -rf %{buildroot}</span>
-<span class="s">mkdir -p %{buildroot}%{_scl_scripts}/root</span>
-<span class="s">cat &gt;&gt; %{buildroot}%{_scl_scripts}/enable &lt;&lt; EOF</span>
-<span class="s">export PATH=%{_bindir}\${PATH:+:\${PATH}}</span>
-<span class="s">export LD_LIBRARY_PATH=%{_libdir}\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}</span>
-<span class="s">export MANPATH=%{_mandir}:\${MANPATH}</span>
-<span class="s">EOF</span>
-<span class="err">%</span><span class="s">scl_install</span>
-
-<span class="err">%</span><span class="s">files</span>
-
-<span class="err">%</span><span class="s">files runtime</span>
-<span class="err">%</span><span class="s">scl_files</span>
-
-<span class="err">%</span><span class="s">files build</span>
-<span class="err">%</span><span class="p">{</span><span class="nv">_root_sysconfdir</span><span class="p">}</span><span class="s">/rpm/macros.%{scl}-config</span>
-
-<span class="err">%</span><span class="s">changelog</span>
-<span class="err">*</span> <span class="s">Fri Mar 30 2012 Bohuslav Kabrda &lt;bkabrda@redhat.com&gt; - 1-1</span>
-<span class="p">-</span> <span class="s">Initial package.</span>
-</pre>
-
-<p>Things to note here:</p>
-
-<ul>
-<li>The <code>-build</code> subpackage <strong>should</strong> include Requires: <code>scl-utils-build</code>.</li>
-<li><p>The enable scriptlet <strong>must</strong> contain certain path redefinitions, according to what packages SCL contains and what it is supposed to do. Most importantly, use these, if needed:</p>
-
-<ul>
-<li><code>PATH=%{_bindir}\${PATH:+:\${PATH}}</code> to run SCL binaries
-&ndash; <code>LD_LIBRARY_PATH=%{_libdir}\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}</code> to properly link against SCL shared objects</li>
-<li><code>MANPATH=%{_mandir}:\${MANPATH}</code> to be able to diplay manpages present in the SCL</li>
-<li><code>PKG_CONFIG_PATH=%{_libdir}/pkgconfig\${PKG_CONFIG_PATH:+:\${PKG_CONFIG_PATH}}</code> or <code>PKG_CONFIG_PATH=%{_datadir}/pkgconfig\${PKG_CONFIG_PATH:+:\${PKG_CONFIG_PATH}}</code> to enable using <code>pkg-config</code> files</li>
-<li><code>XDG_DATA_PATH=%{_datadir}\${XDG_DATA_PATH:+:\${XDG_DATA_PATH}}</code> to use systemtap tapsets from the SCL</li>
-</ul></li>
-<li><p>If all the packages in SCL are noarch, then the metapackage may be noarch, too.</p></li>
-<li><p>Among other things, the <code>%scl_install</code> macro creates a macro file <code>macros.%{scl}-config</code> (that ends up in the <code>%{scl}</code>-build package). This file is always located at <code>%{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl}-config</code>. If you need to add some more macros specific for this SCL, add them into this file.</p></li>
-<li><p>Unlike in specfiles of normal SCL packages (see below), the metapackage doesn&rsquo;t need to conditionalize SCL specific macros, as it can only be used as a part of SCL (for example, instead of Requires: <code>%{?scl_prefix}foo</code>, use just <code>Requires: %{scl_prefix}foo</code> - notice the missing questionmark, that makes the first macro conditional).</p></li>
-<li><p>When user runs <code>yum install ruby193</code>, he expects that the whole SCL with all dependencies gets installed. Because of that, it should have Requires on all packages of that SCL, that are needed for the SCL to fulfil its purpose. E.g. <code>yum install ruby193</code> definitely has to install Ruby 1.9.3, but it needn&rsquo;t install collection packages that were used to build the interpreter (and that are not needed at Ruby runtime).</p></li>
-</ul>
-
-<h2>Converting Packages for SCL</h2>
-
-<p>This section sums up the steps needed to take in order to convert a normal specfile to SCL specfile step by step. The resulting package should be buildable even without SCL - that means both without %{scl}-build in the buildroot and with it. Advantage of this approach is, that both non-SCL packages like rubygem-foo and SCL packages %{scl_prefix}rubygem-foo (depending on the SCL) can be built from the same SRPM, depending on the buildroot.</p>
-<p>
-How to SCL-ize package can be found in <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Converting_a_Conventional_Spec_File.html">documentation</a>. It's
-also possible to use automatic tool <a href="https://bitbucket.org/bkabrda/spec2scl/">spec2scl</a>, which can work with software like Python modules, PHP, Perl modules, ...
-The spec2scl package can be installed by standard way (yum) or latest release from upstream (pip install --user spec2scl). It's needed to review content of the new specfile, because Copr specific macros are not included.
-</p>
 {% endblock %}

@@ -1,0 +1,29 @@
+{% extends "with_submenu.html" %}
+{% block submenu %}{% include "submenu.html" %}{% endblock %}
+
+{% block title %}Adding Software Collections to Catalogue{% endblock %}
+
+{% block content %}
+
+<h2>Adding Software Collections to Catalogue</h2>
+<ol>
+  <li>
+    <a href='/en/docs/building'>Build your collection</a>
+  </li>
+  <li>
+    <a href='/en/login/'>Login</a> into your softwarecollections.org 
+  </li>
+  <li>
+    Go to <a href='/en/scls/'>Collections</a>
+  </li>
+  <li>
+    Click on <a href='/en/scls/new'>Import New</a>
+  </li>
+  <li>
+    Fill in the form for repository in copr. By default only your own
+    repositories are shown
+  </li>
+</ol>
+
+
+{% endblock %}
