@@ -4,6 +4,13 @@
 {% block title %}Directory{% endblock %}
 
 {% block content %}
+
+{% if form.errors %}
+    {% for error in form.errors %}
+        <div class='alert alert-danger'>{{ error }}</div>
+    {% endfor %}
+{% endif %}
+
 <h1>New Collection</h1>
 <form action="" method="get" class='form-horizontal'>
     <div class='row'>
@@ -24,6 +31,7 @@
 </form>
 
 <form action="" method="post" class='form-horizontal'>{% csrf_token %}
+    {{ form.copr_username }}
     <div class='row'>
         <!-- COPR NAME -->
         <div class='form-group'>
@@ -38,7 +46,16 @@
             <label for='{{ form.policy.id_for_label}}'
                 class='control-label col-md-3'>{{ form.policy.label }}</label>
             <div class='col-md-9'>
-                {{ form.policy }}
+                <div class='panel panel-default'>
+                    <table class='table'>
+                    {% for choice in form.policy %}
+                        <tr>
+                            <td style='background-color: #EEE' class='col-md-1 text-center'>{{ choice.tag }}</td>
+                            <td class='col-md-11'>{{ choice.choice_label }}</td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -50,4 +67,5 @@
         </div>
     </div>
 </form>
+<!-- {{ form }} -->
 {% endblock %}

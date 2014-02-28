@@ -74,7 +74,7 @@ class CreateForm(forms.ModelForm):
         widgets = {
             'copr_username': forms.HiddenInput(),
             'copr_name': forms.Select(),
-            'policy': forms.RadioSelect(choices=POLICY_CHOICES),
+            'policy': forms.RadioSelect(choices=POLICY_CHOICES, attrs={'class': 'well', 'size': '10'}),
         }
 
 
