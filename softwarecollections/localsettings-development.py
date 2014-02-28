@@ -28,6 +28,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Emails
+# https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-ADMINS
+# https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-MANAGERS
+# https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-SERVER_EMAIL
+ADMINS = ()
+MANAGERS = ADMINS
+SERVER_EMAIL = 'root@localhost'
+
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases

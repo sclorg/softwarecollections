@@ -12,11 +12,13 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 from django.utils.translation import ugettext_lazy as _
 
 # localsettings is used to store site depandant settings
-from .localsettings import \
-    BASE_DIR, SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASES, \
-    LANGUAGE_CODE, TIME_ZONE, LANGUAGES, \
-    MEDIA_ROOT, MEDIA_URL, STATIC_ROOT, STATIC_URL, REPOS_ROOT, REPOS_URL, \
+from .localsettings import (
+    BASE_DIR, SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASES,
+    ADMINS, MANAGERS, SERVER_EMAIL,
+    LANGUAGE_CODE, TIME_ZONE, LANGUAGES,
+    MEDIA_ROOT, MEDIA_URL, STATIC_ROOT, STATIC_URL, REPOS_ROOT, REPOS_URL,
     YUM_CACHE_ROOT, RPMBUILD_TOPDIR
+)
 
 
 TEMPLATE_DEBUG = True
