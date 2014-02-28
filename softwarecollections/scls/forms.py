@@ -33,7 +33,6 @@ ORDER_BY_CHOICES = (
     ('-last_modified',  _('recently built')),
 )
 
-
 class CreateForm(forms.ModelForm):
 
     def __init__(self, request, **kwargs):
@@ -74,20 +73,20 @@ class CreateForm(forms.ModelForm):
         widgets = {
             'copr_username': forms.HiddenInput(),
             'copr_name': forms.Select(),
-            'policy': forms.RadioSelect(choices=POLICY_CHOICES, attrs={'class': 'well', 'size': '10'}),
+            'policy': forms.RadioSelect(choices=POLICY_CHOICES),
         }
-
 
 class UpdateForm(forms.ModelForm):
     tags = TagField(max_length=200, required=False, help_text=_(
         'Enter space separated list of single word tags ' \
         'or comma separated list of tags containing spaces. ' \
         'Use doublequotes to enter name containing comma.'
-    ))
+    ), widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     def __init__(self, *args, **kwargs):
         super(UpdateForm, self).__init__(*args, **kwargs)
         self.initial['tags'] = self.instance.tags_edit_string()
+        self.initial['policy'] = self.instance.policy
 
     def save(self, commit=True):
         obj = super(UpdateForm, self).save(commit)
@@ -98,6 +97,14 @@ class UpdateForm(forms.ModelForm):
     class Meta:
         model = SoftwareCollection
         fields = ['title', 'description', 'instructions', 'policy', 'auto_sync']
+        widgets = {
+                'title': forms.TextInput(attrs={'class': 'form-control'}),
+                'description': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
+                'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
+                'policy': forms.RadioSelect(choices=POLICY_CHOICES),
+                'auto_sync': forms.CheckboxInput(attrs={'class': 'form-control-static'}),
+                }
+
 
 
 class RateForm(forms.ModelForm):
@@ -124,4 +131,5 @@ class FilterForm(forms.Form):
                         initial=ORDER_BY_CHOICES[0][0],
                         choices=ORDER_BY_CHOICES,
                         widget=forms.Select(attrs={'class': 'form-control'}))
+
 

@@ -5,10 +5,26 @@
 
 {% block content %}
 <h1>New Collection</h1>
-<form action="" method="post">{% csrf_token %}
-    <table>
-    {{ form }}
-    </table>
-    <input type="submit" value="Update" />
+{% if form.errors %}
+    {% for error in form.errors %}
+        <div class='alert alert-danger'>{{ error }}</div>
+    {% endfor %}
+{% endif %}
+<form action="" method="post" class='form-horizontal'>{% csrf_token %}
+    {% for item in form %}
+        <div class='form-group'>
+            <label for='{{ item.id_for_label }}'
+                class='control-label col-md-3'>{{ item.label }}</label>
+            <div class='col-md-9'>
+                {{ item }}
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class='form-group'>
+        <div class='col-md-9 col-md-offset-3'>
+            <input class='btn btn-default' type='submit' value='Submit' />
+        </div>
+    </div>
 </form>
 {% endblock %}
