@@ -103,6 +103,15 @@ done | grep %{python3_sitelib} > %{name}.files
 cat django.lang >> %{name}.files
 
 %post
+# create secret key
+if [ ! -e        %{scls_statedir}/secret_key ]; then
+    touch        %{scls_statedir}/secret_key
+    chown apache %{scls_statedir}/secret_key
+    chgrp apache %{scls_statedir}/secret_key
+    chmod 0400   %{scls_statedir}/secret_key
+    dd bs=1k  of=%{scls_statedir}/secret_key if=/dev/urandom count=5
+fi
+
 service httpd condrestart
 su apache - -s /bin/bash -c "softwarecollections syncdb --migrate --noinput"
 softwarecollections collectstatic --noinput

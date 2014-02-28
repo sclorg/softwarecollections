@@ -16,13 +16,9 @@ from django.utils.translation import ugettext_lazy as _
 import os
 BASE_DIR = '/var/scls'
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-# TODO: create SECRET_KEY in %post
-SECRET_KEY = 'm0zn_p7x*o(xvk^9p8_$6n7o)dn$bh-*_*xu*b!mg9$ihh0xu+'
+with open(os.path.join(BASE_DIR, 'secret_key'), 'rb') as f:
+    SECRET_KEY = repr(f.read())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
