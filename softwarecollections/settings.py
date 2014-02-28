@@ -69,6 +69,33 @@ ROOT_URLCONF = 'softwarecollections.urls'
 
 WSGI_APPLICATION = 'softwarecollections.wsgi.application'
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
