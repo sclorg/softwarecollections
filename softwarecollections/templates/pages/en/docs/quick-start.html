@@ -145,7 +145,7 @@
 
 <h2>Converting Packages for SCL</h2>
 
-<p>This section sums up the steps needed to take in order to convert a normal specfile to SCL specfile step by step. The resulting package should be buildable even without SCL - that means both without %{scl}-build in the buildroot and with it. Advantage of this approach is, that both non-SCL packages like rubygem-foo and SCL packages %{scl<em>prefix}rubygem</em>foo (depending on the SCL) can be built from the same SRPM, depending on the buildroot.</p>
+<p>This section sums up the steps needed to take in order to convert a normal specfile to SCL specfile step by step. The resulting package should be buildable even without SCL - that means both without %{scl}-build in the buildroot and with it. Advantage of this approach is, that both non-SCL packages like rubygem-foo and SCL packages %{scl_prefix}rubygem-foo (depending on the SCL) can be built from the same SRPM, depending on the buildroot.</p>
 <p>
 How to SCL-ize package can be found in <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Converting_a_Conventional_Spec_File.html">documentation</a>. It's
 also possible to use automatic tool <a href="https://bitbucket.org/bkabrda/spec2scl/">spec2scl</a>, which can work with software like Python modules, PHP, Perl modules, ... 

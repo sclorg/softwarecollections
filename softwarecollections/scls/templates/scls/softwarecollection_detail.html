@@ -18,6 +18,7 @@
 <div class="scl-toolbar btn-group btn-group-sm">
     <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
     <a  class='btn btn-default' href="{% url "scls:edit" scl %}">edit</a>
+    <a href="{% url "scls:acl" scl %}">collaborators</a>
 
     {% if scl.auto_sync %}
         <div class='btn btn-default disabled' title='automatic synchronization with copr repositories is enabled'>auto sync</div>
@@ -52,7 +53,7 @@
 {{ scl.instructions | markdown2 }}
 
 <h2>Policy</h2>
-{{ scl.policy | markdown2 }}
+{{ scl.policy_text | markdown2 }}
 
 <h2>Tags</h2>
 <div class="scl-tags">

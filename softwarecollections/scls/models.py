@@ -1,4 +1,4 @@
-import fcntl
+import markdown2
 import os
 import shutil
 import subprocess
@@ -11,8 +11,10 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
+from flock import Flock, LOCK_EX
 from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
 from tagging.utils import edit_string_for_tags
@@ -26,30 +28,43 @@ RELEASE = '1'
 
 DISTRO_ICONS = ('fedora', 'epel')
 
-class SclReposLocked(BlockingIOError):
-    """ Repos temporarily unavailable """
+POLICIES = {
+    'DEV':  '**Developing**: '
+            'Not publicly listed, this is primarily for developers trying out '
+            'SoftwareCollections.org to see if they want to publish software '
+            'or just for their own packaging purposes.',
+    'Q-D':  '**Quick and Dirty**: '
+            'Software will be publicly listed, but users will be warned '
+            'it is not considered stable. May be useful for some users, '
+            'but no guarantees.',
+    'COM':  '**Community Repositories**: '
+            'These repositories are cared for, but these are best-effort '
+            'repositories that should not be used in production.',
+    'PRO':  '**Professional**: '
+            'Being developed to be used in production. '
+            'The individual or team that maintains this repository is planning '
+            'to issue updates, bug fixes, and security updates as needed.',
+}
 
-class SclManager(models.Manager):
-    def get_query_set(self):
-        return super(SclManager, self).get_query_set().filter(deleted=False)
+POLICY_CHOICES = tuple((key, mark_safe(markdown2.markdown(val))) for key, val in POLICIES.items())
 
 class SoftwareCollection(models.Model):
-    objects = SclManager()
-
-    everything = models.Manager()
-
     # automatic value (maintainer.username/name) used as unique key
     slug            = models.SlugField(max_length=150, editable=False)
     # local name is unique per local maintainer
-    name            = models.SlugField(_('Name'), max_length=100, db_index=False)
+    name            = models.SlugField(_('Name'), max_length=100, db_index=False,
+                        help_text=_('Name without spaces (It will be part of the url and rpm name.)'))
     # copr_* are used to identify copr project
-    copr_username   = models.CharField(_('Copr User'), max_length=100)
-    copr_name       = models.CharField(_('Copr Project'), max_length=200)
+    copr_username   = models.CharField(_('Copr User'), max_length=100,
+                        help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
+    copr_name       = models.CharField(_('Copr Project'), max_length=200,
+                        help_text=_('Name of Copr Project to import packages from'))
     # other attributes are local
     title           = models.CharField(_('Title'), max_length=200)
     description     = models.TextField(_('Description'))
     instructions    = models.TextField(_('Instructions'))
-    policy          = models.TextField(_('Policy'))
+    policy          = models.CharField(_('Policy'), max_length=3, null=False,
+                        choices=POLICY_CHOICES)
     score           = models.SmallIntegerField(null=True, editable=False)
     score_count     = models.IntegerField(default=0, editable=False)
     download_count  = models.IntegerField(default=0, editable=False)
@@ -57,9 +72,8 @@ class SoftwareCollection(models.Model):
     last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
     approved        = models.BooleanField(_('Approved'), default=False)
     approval_req    = models.BooleanField(_('Requested approval'), default=False)
-    auto_sync       = models.BooleanField(_('Auto sync'), default=True)
-    need_sync       = models.BooleanField(_('Needs sync with copr'), default=True)
-    deleted         = models.BooleanField(_('Marked for deletion'), default=False, editable=False)
+    auto_sync       = models.BooleanField(_('Auto sync'), default=False)
+    need_sync       = models.BooleanField(_('Needs sync with copr'), default=False)
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
     collaborators   = models.ManyToManyField(User,
@@ -70,15 +84,7 @@ class SoftwareCollection(models.Model):
         # in fact, since slug is made of those and slug is unique,
         # this is not necessarry, but as a side effect, it create index,
         # which may be useful
-        unique_together = (
-            ('maintainer', 'name'),)
-
-    def __init__(self, *args, **kwargs):
-        if 'copr' in kwargs:
-            self._copr = kwargs.pop('copr')
-            kwargs['copr_username'] = self._copr.username
-            kwargs['copr_name']     = self._copr.name
-        super(SoftwareCollection, self).__init__(*args, **kwargs)
+        unique_together = (('maintainer', 'name'),)
 
     def __str__(self):
         return self.slug
@@ -95,8 +101,17 @@ class SoftwareCollection(models.Model):
     def get_repos_url(self):
         return os.path.join(settings.REPOS_URL, self.slug)
 
-    def get_enabled_repos(self):
-        return self.repos.filter(enabled=True)
+    @property
+    def policy_text(self):
+        return POLICIES[self.policy]
+
+    @property
+    def enabled_repos(self):
+        try:
+            return self._enabled_repos
+        except AttributeError:
+            self._enabled_repos = self.repos.filter(enabled=True)
+        return self._enabled_repos
 
     def get_auto_tags(self):
         tags = set()
@@ -115,12 +130,14 @@ class SoftwareCollection(models.Model):
 
     @property
     def copr(self):
-        if not hasattr(self, '_copr'):
+        try:
+            return self._copr
+        except AttributeError:
             if self.copr_username and self.copr_name:
                 self._copr = CoprProxy().copr(self.copr_username, self.copr_name)
+                return self._copr
             else:
                 return None
-        return self._copr
 
     def sync_copr_texts(self):
         self.description = self.copr.description
@@ -141,10 +158,11 @@ class SoftwareCollection(models.Model):
             Repo(scl=self, name=name, copr_url=repos[name]).save()
 
     def sync(self):
-        with self.repos_lock():
+        self.sync_copr_repos()
+        with self.lock:
             download_count = 0
-            for repo in self.get_enabled_repos():
-                repo._sync()
+            for repo in self.enabled_repos.all():
+                repo.sync()
                 download_count += repo.download_count
             self.download_count = download_count
             self.last_modified  = self.copr.last_modified \
@@ -152,25 +170,16 @@ class SoftwareCollection(models.Model):
                  or None
             self.save()
 
-    def repos_lock(self):
-        # lock file name does not contain self.name,
-        # for the case of scl renaming
-        lock_file  = os.path.join(
-            settings.REPOS_ROOT,
-            self.maintainer.username,
-            '{}.lock'.format(self.id)
-        )
+    @property
+    def lock(self):
         try:
-            lock = open(lock_file, 'w')
-        except FileNotFoundError:
-            os.makedirs(os.path.dirname(lock_file))
-            lock = open(lock_file, 'w')
-        try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as e:
-            lock.close()
-            raise SclReposLocked('Repos of {} temporarily unavailable'.format(self.slug))
-        return lock
+            return self._lock
+        except AttributeError:
+            # do not try to create the repos root if it does not exist
+            # it is always created before the collection is saved
+            # so if it does not exist, it means that the collection was deleted
+            self._lock = Flock(os.open(self.get_repos_root(), 0), LOCK_EX)
+            return self._lock
 
     def has_perm(self, user, perm):
         if perm in ['edit', 'delete']:
@@ -183,20 +192,19 @@ class SoftwareCollection(models.Model):
             return False
 
     def save(self, *args, **kwargs):
-        # ensure slug is correct
-        self.slug = '/'.join((self.maintainer.username, self.name))
-
-        #delete possible scl with the same slug that has not been really deleted yet
-        zombie = SoftwareCollection.everything.filter(deleted=True, slug=self.slug)
-        if zombie:
-            zombie[0].delete()
+        if self.auto_sync:
+            self.need_sync = True
         super(SoftwareCollection, self).save(*args, **kwargs)
-        # ensure maintainer is collaborator
-        self.collaborators.add(self.maintainer)
 
     def delete(self, *args, **kwargs):
-        if os.path.isdir(scl.get_repos_root()):
-            shutil.rmtree(scl.get_repos_root())
+        # rename of repos root is faster than deleting
+        # (name can not start with '.', therefore this is save)
+        os.rename(self.get_repos_root(), os.path.join(
+            settings.REPOS_ROOT,
+            self.maintainer.username,
+            '.{}.deleted'.format(self.id)
+        ))
+        # delete scl in the database
         super(SoftwareCollection, self).delete(*args, **kwargs)
 
 tagging.register(SoftwareCollection)
@@ -209,11 +217,7 @@ class Repo(models.Model):
     name            = models.CharField(_('Name'), max_length=50)
     copr_url        = models.CharField(_('Copr URL'), max_length=200)
     download_count  = models.IntegerField(default=0, editable=False)
-    create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
     enabled         = models.BooleanField(_('Enabled'), default=True)
-    auto_sync       = models.BooleanField(_('Auto sync'), default=True)
-    need_sync       = models.BooleanField(_('Needs sync'), default=True)
-    download_count  = models.IntegerField(default=0, editable=False)
 
     class Meta:
         # in fact, since slug is made of those and slug is unique,
@@ -269,61 +273,79 @@ class Repo(models.Model):
            and '{}/scls/icons/{}.png'.format(settings.STATIC_URL, self.distro) \
             or '{}/scls/icons/empty.png'.format(settings.STATIC_URL)
 
-    def _sync(self):
-        """
-        Run reposync and createrepo
-        (should not be run directly, use scl.sync() to sync all repos at the same time)
-        """
-
-        fd, tempcfg = tempfile.mkstemp()
+    @property
+    def lock(self):
         try:
+            return self._lock
+        except AttributeError:
+            try:
+                self._lock = Flock(os.open(self.get_repo_root(), 0), LOCK_EX)
+            except FileNotFoundError:
+                os.makedirs(self.get_repo_root())
+                self._lock = Flock(os.open(self.get_repo_root(), 0), LOCK_EX)
+            return self._lock
+
+    def rpmbuild(self, timeout=None):
+        with self.lock:
+            log = open(os.path.join(self.get_repo_root(), 'rpmbuild.log'), 'w')
+            return subprocess.call([
+                'rpmbuild', '-ba',
+                '-D',         '_topdir {}'.format(settings.RPMBUILD_TOPDIR),
+                '-D',         '_rpmdir {}'.format(self.get_repo_root()),
+                '-D',            'dist {}'.format(self.distro_version),
+                '-D',        'scl_name {}'.format(self.scl.name),
+                '-D',       'scl_title {}'.format(self.scl.title),
+                '-D', 'scl_description {}'.format(self.scl.description),
+                '-D',       'repo_name {}'.format(self.name),
+                '-D',    'repo_version {}'.format(VERSION),
+                '-D',    'repo_release {}'.format(RELEASE),
+                '-D',     'repo_distro {}'.format(self.distro),
+                '-D',       'repo_arch {}'.format(self.arch),
+                '-D',    'repo_baseurl {}'.format(self.get_repo_url()),
+                SPECFILE
+            ], stdout=log, stderr=log, timeout=timeout)
+
+    def reposync(self, timeout=None):
+        with self.lock:
+            log = open(os.path.join(self.get_repo_root(), 'reposync.log'), 'w')
+            # create new cache dir
             cache_dir = os.path.join(
                 settings.YUM_CACHE_ROOT,
                 self.scl.copr_username,
                 self.scl.copr_name,
                 self.name
             )
-            if not os.path.exists(cache_dir):
+            try:
+                shutil.rmtree(cache_dir)
+            except:
+                pass
+            finally:
                 os.makedirs(cache_dir)
 
-            cfg = os.fdopen(fd, "w+")
-            cfg.write("""[main]
-reposdir=
-cachedir={cache_dir}
+            # create config file
+            cfg = os.path.join(cache_dir, 'repo.conf')
+            with open(cfg, 'w') as f:
+                f.write("[main]\nreposdir=\ncachedir={cache_dir}\n\n"
+                        "[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n"
+                        "".format(cache_dir=cache_dir, name=self.name, url=self.copr_url))
 
-[{name}]
-name={name}
-baseurl={url}
-gpgcheck=0
-""".format(cache_dir=cache_dir, name=self.name, url=self.copr_url))
-            cfg.flush()
-            cfg.close()
+            # run reposync
+            return subprocess.call([
+                'reposync', '-c', cfg, '-p', self.scl.get_repos_root(), '-r', self.name
+            ], stdout=log, stderr=log, timeout=timeout)
 
-            definitions = ' '.join(['-D "{} {}"'.format(key, value) for key, value in {
-                '_topdir':          settings.RPMBUILD_TOPDIR,
-                '_rpmdir':          self.get_repo_root(),
-                'dist':             self.distro_version,
-                'scl_name':         self.scl.name,
-                'scl_title':        self.scl.title,
-                'scl_description':  self.scl.description,
-                'repo_name':        self.name,
-                'repo_version':     VERSION,
-                'repo_release':     RELEASE,
-                'repo_distro':      self.distro,
-                'repo_arch':        self.arch,
-                'repo_baseurl':     self.get_repo_url(),
-            }.items()])
-            command = "reposync -c {cfg} -p {destdir} -r {repoid} && " \
-                      "( test -e {rpmfile_path} || rpmbuild -ba {definitions} {specfile}; ) && " \
-                      "createrepo_c --database --update {destdir}/{repoid}" \
-                      .format(cfg=tempcfg, destdir=self.scl.get_repos_root(), repoid=self.name,
-                              definitions=definitions, rpmfile_path=self.get_rpmfile_path(), specfile=SPECFILE)
+    def createrepo(self, timeout=None):
+        with self.lock:
+            log = open(os.path.join(self.get_repo_root(), 'createrepo.log'), 'w')
+            return subprocess.call([
+                'createrepo_c', '--database', '--update', self.get_repo_root()
+            ], stdout=log, stderr=log, timeout=timeout)
 
-            subprocess.check_call(command, shell=True)
-        finally:
-            os.remove(tempcfg)
-
-        self.save()
+    def sync(self):
+        if os.path.exists(self.get_rpmfile_path()):
+            return self.reposync() + self.createrepo()
+        else:
+            return self.rpmbuild() + self.reposync() + self.createrepo()
 
     def save(self, *args, **kwargs):
         # ensure slug is correct

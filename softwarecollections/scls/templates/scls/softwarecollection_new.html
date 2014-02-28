@@ -1,4 +1,5 @@
 {% extends "with_submenu.html" %}
+{% load sekizai_tags %}
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
 {% block title %}Directory{% endblock %}
@@ -69,5 +70,22 @@
         </div>
     </div>
 </form>
-<!-- {{ form }} -->
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+//<![CDATA[
+
+    jQuery(document).ready(function (){
+        jQuery("#id_copr_name").blur(function () {
+            var e = jQuery("#id_name")[0];
+            if(!e._changed) {
+                e.value = this.value;
+            }
+        });
+    });
+
+//]]>
+</script>
+{% endaddtoblock %}
+
 {% endblock %}
