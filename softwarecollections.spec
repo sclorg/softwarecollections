@@ -124,8 +124,8 @@ softwarecollections collectstatic --noinput
 %config(noreplace) %{httpd_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
 %{scls_statedir}/htdocs/wsgi.py*
-%dir %{scls_statedir}/htdocs/repos
 %dir %{scls_statedir}/htdocs/static
+%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/repos
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/media
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/data
 
