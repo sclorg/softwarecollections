@@ -58,6 +58,8 @@ class CreateForm(forms.ModelForm):
         model = SoftwareCollection
         fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'policy']
         widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'copr_username': forms.HiddenInput(),
             'copr_name': forms.Select(),
             'maintainer': forms.HiddenInput(),
             'policy': forms.RadioSelect(),
@@ -95,6 +97,8 @@ class UpdateForm(forms.ModelForm):
         fields = ['title', 'description', 'instructions', 'policy', 'copr_username', 'copr_name', 'auto_sync']
         widgets = {
                 'title': forms.TextInput(attrs={'class': 'form-control'}),
+                'copr_name': forms.TextInput(attrs={'class': 'form-control'}),
+                'copr_username': forms.TextInput(attrs={'class': 'form-control'}),
                 'description': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
                 'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
                 'policy': forms.RadioSelect(choices=POLICY_CHOICES),

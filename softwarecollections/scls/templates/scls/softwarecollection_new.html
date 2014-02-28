@@ -33,6 +33,7 @@
 
 <form action="" method="post" class='form-horizontal'>{% csrf_token %}
     {{ form.copr_username }}
+    {{ form.maintainer }}
 
     <div class='row'>
         <!-- COPR NAME -->
@@ -44,6 +45,13 @@
             </div>
         </div>
 
+        <div class='form-group'>
+            <label for='{{ form.name.id_for_label }}'
+                class='control-label col-md-3'>{{ form.name.label }}</label>
+            <div class='col-md-9'>
+                {{ form.name }}
+            </div>
+        </div>
         <!-- POLICY -->
         <div class='form-group'>
             <label for='{{ form.policy.id_for_label}}'
