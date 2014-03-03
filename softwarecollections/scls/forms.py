@@ -120,7 +120,8 @@ class UpdateForm(forms.ModelForm):
 
 
 class CollaboratorsForm(forms.ModelForm):
-    add = forms.fields.CharField(required=False)
+    add = forms.fields.CharField(required=False,
+            help_text=_('Enter FAS username of user You want to add.'))
 
     def __init__(self, *args, **kwargs):
         super(CollaboratorsForm, self).__init__(*args, **kwargs)
