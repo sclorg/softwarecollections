@@ -63,7 +63,7 @@ p {
     padding-bottom: 5ex;
 }
 
-.btn {
+.btn, .td-gray {
     background-color: #EEE;
 }
 

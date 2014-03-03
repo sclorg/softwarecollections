@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.forms.forms import pretty_name
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from softwarecollections.copr import CoprProxy
 from tagging.forms import TagField
 
@@ -16,6 +17,17 @@ ORDER_BY_CHOICES = (
     ('-download_count', _('download count')),
     ('-last_modified',  _('recently built')),
 )
+
+class PolicyRadioRenderer(forms.RadioSelect.renderer):
+    ''' Renders RadioSelect in a nice table '''
+
+    def render(self):
+        header = '<div class="panel panel-default"><table class="table"><tbody>'
+        row =    '<tr><td class="col-md-1 text-center td-gray">{}</td><td>{}</td></tr>'
+        footer = '</tbody></table></div>'
+        return mark_safe(
+            header + '\n'.join([row.format(w.tag(), w.choice_label) for w in self]) + footer)
+
 
 class CreateForm(forms.ModelForm):
 
@@ -62,7 +74,7 @@ class CreateForm(forms.ModelForm):
             'copr_username': forms.HiddenInput(),
             'copr_name': forms.Select(),
             'maintainer': forms.HiddenInput(),
-            'policy': forms.RadioSelect(),
+            'policy': forms.RadioSelect(renderer=PolicyRadioRenderer),
         }
 
 class UpdateForm(forms.ModelForm):
@@ -101,7 +113,7 @@ class UpdateForm(forms.ModelForm):
                 'copr_username': forms.TextInput(attrs={'class': 'form-control'}),
                 'description': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
                 'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
-                'policy': forms.RadioSelect(choices=POLICY_CHOICES),
+                'policy': forms.RadioSelect(renderer=PolicyRadioRenderer),
                 'auto_sync': forms.CheckboxInput(attrs={'class': 'form-control-static'}),
                 }
 

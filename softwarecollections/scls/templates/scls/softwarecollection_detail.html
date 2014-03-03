@@ -55,13 +55,6 @@
 <h2>Policy</h2>
 {{ scl.policy_text | markdown2 }}
 
-<h2>Tags</h2>
-<div class="scl-tags">
-    {% for tag in scl.tags %}
-        <a class='label label-default' href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
-    {% endfor %}
-</div>
-
 <h2>Yum Repositories</h2>
 <div class='panel panel-default'>
     <table class='table table-hover repos'>
@@ -94,6 +87,13 @@
             <td colspan='4'><em>No repos available</em></td>
         {% endfor %}
     </table>
+</div>
+
+<h2>Tags</h2>
+<div class="scl-tags">
+    {% for tag in scl.tags %}
+        <a class='label label-default' href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
+    {% endfor %}
 </div>
 
 {% if scl.score_count %}
