@@ -2,7 +2,7 @@
 {% load sekizai_tags %}
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}Directory{% endblock %}
+{% block title %}New Collection{% endblock %}
 
 {% block content %}
 
@@ -13,6 +13,12 @@
 {% endif %}
 
 <h1>New Collection</h1>
+
+<p>
+    This form is used to import packages from an existing <a target="_new" href="http://copr-fe.cloud.fedoraproject.org/">Copr</a> project.
+    For more information on how to build Your collection in Copr see <a href="/en/docs/developers/">Software Collections for Developers</a>.
+</p>
+
 <form action="" method="get" class='form-horizontal'>
     <div class='row'>
         <div class='form-group'>
