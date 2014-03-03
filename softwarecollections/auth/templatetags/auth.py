@@ -52,7 +52,7 @@ def allowed(parser, token):
         {% endallowed %}
 
     ``allowed`` also accepts user=user argument to check permissions of given user::
-        
+
         {% allowed user=u 'news.add' %}
             User {{u.get_full_name()}} is allowed to write news.
         {% endallowed %}
@@ -75,7 +75,7 @@ def allowed(parser, token):
             kwargs['obj']  = template.Variable(arg[4:])
         else:
             args.append(template.Variable(arg))
-            
+
     kwargs['ifnodes'] = parser.parse(('notallowed', 'endallowed'))
     token = parser.next_token()
 

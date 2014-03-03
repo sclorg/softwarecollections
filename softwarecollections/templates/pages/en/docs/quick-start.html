@@ -48,15 +48,15 @@
 
 <h2>Naming the SCL</h2>
 
-<p>Every SCL <strong>must</strong> have a name which does not match name of any other package. This is implied by the fact that the SCL metapackage&rsquo;s name is the same as name of the whole SCL. It is therefore not a good idea to name an SCL &ldquo;ruby&rdquo;, when there is a &ldquo;ruby&rdquo; package - the name has to be altered. Packager should include something specific to the SCL (usually a specific version of included library) into it&rsquo;s name. Therefore &ldquo;ruby193&rdquo; is a good name for a collection that contains Ruby 1.9.3, etc. Although more developers might use the name ruby193, which is reason why collections on copr are created with <strong>additional prefix</strong> based on a username e.g. the package's name will be ruby193-username-packagename. </p>
+<p>Every SCL <strong>must</strong> have a name which does not match name of any other package. This is implied by the fact that the SCL metapackage&rsquo;s name is the same as name of the whole SCL. It is therefore not a good idea to name an SCL &ldquo;ruby&rdquo;, when there is a &ldquo;ruby&rdquo; package - the name has to be altered. Packager should include something specific to the SCL (usually a specific version of included library) into it&rsquo;s name. Therefore &ldquo;ruby193&rdquo; is a good name for a collection that contains Ruby 1.9.3, etc. Although more developers might use the name ruby193, which is reason why collections on Copr are created with <strong>additional prefix</strong> based on a username e.g. the package's name will be ruby193-username-packagename. </p>
 
 <h2>SCL Metapackage</h2>
 
 <p>Every SCL must have a so called metapackage. This metapackage <strong>must</strong> have a runtime and build subpackages. For more details see complete <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Creating_a_Meta_Package.html">documentation.</a></p>
 
-<p>There are more possibilities how to build a package, but on SCL.org are stored only packages build by copr build system (see how's copr <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">working</a>). Following example contains macros needed for proper build in copr:</p>
+<p>There are more possibilities how to build a package, but on SCL.org are stored only packages build by Copr build system (see how's Copr <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">working</a>). Following example contains macros needed for proper build in Copr:</p>
 <pre class="highlight yaml">
-<span class="s"># if the build is running on copr</span>
+<span class="s"># if the build is running on Copr</span>
 <span class="err">%</span><span class="s">if 0<span class="err">%</span>{?copr_username:1}</span>
 <span class="s"># define your copr_username and copr_projectname</span>
 <span class="err">%</span><span class="s">global scl <span class="err">%</span>{copr_username}-<span class="err">%</span>{copr_projectname}</span>
@@ -148,7 +148,7 @@
 <p>This section sums up the steps needed to take in order to convert a normal specfile to SCL specfile step by step. The resulting package should be buildable even without SCL - that means both without %{scl}-build in the buildroot and with it. Advantage of this approach is, that both non-SCL packages like rubygem-foo and SCL packages %{scl_prefix}rubygem-foo (depending on the SCL) can be built from the same SRPM, depending on the buildroot.</p>
 <p>
 How to SCL-ize package can be found in <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/sect-Converting_a_Conventional_Spec_File.html">documentation</a>. It's
-also possible to use automatic tool <a href="https://bitbucket.org/bkabrda/spec2scl/">spec2scl</a>, which can work with software like Python modules, PHP, Perl modules, ... 
-The spec2scl package can be installed by standard way (yum) or latest release from upstream (pip install --user spec2scl). It's needed to review content of the new specfile, because copr specific macros are not included.
+also possible to use automatic tool <a href="https://bitbucket.org/bkabrda/spec2scl/">spec2scl</a>, which can work with software like Python modules, PHP, Perl modules, ...
+The spec2scl package can be installed by standard way (yum) or latest release from upstream (pip install --user spec2scl). It's needed to review content of the new specfile, because Copr specific macros are not included.
 </p>
 {% endblock %}
