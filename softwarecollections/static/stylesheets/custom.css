@@ -63,6 +63,20 @@ p {
     padding-bottom: 5ex;
 }
 
+.btn {
+    background-color: #EEE;
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active {
+    background-color: #DDD;
+}
+
+.input-group-addon {
+    background-color: #FFF !important;
+}
+
 .blam .jumbotron {
     background-color: transparent;
     font-weight: 500;
