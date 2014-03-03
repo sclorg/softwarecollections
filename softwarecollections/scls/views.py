@@ -34,6 +34,8 @@ def _list(request, template, queryset, dictionary, **kwargs):
             queryset = queryset.filter(search)
         if filter_form.cleaned_data['approved']:
             queryset = queryset.filter(approved=True)
+        if filter_form.cleaned_data['policy']:
+            queryset = queryset.filter(policy=filter_form.cleaned_data['policy'])
         per_page = filter_form.cleaned_data['per_page'] or \
                    filter_form.fields['per_page'].initial
         order_by = filter_form.cleaned_data['order_by'] or \

@@ -28,7 +28,10 @@ RELEASE = '1'
 
 DISTRO_ICONS = ('fedora', 'epel')
 
-POLICIES = {
+# Tuple is needed to preserve the order of policies
+POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
+
+POLICY_TEXT = {
     'DEV':  '**Developing**: '
             'Not publicly listed, this is primarily for developers trying out '
             'SoftwareCollections.org to see if they want to publish software '
@@ -46,7 +49,16 @@ POLICIES = {
             'to issue updates, bug fixes, and security updates as needed.',
 }
 
-POLICY_CHOICES = tuple((key, mark_safe(markdown2.markdown(val))) for key, val in POLICIES.items())
+
+POLICY_LABEL = {
+    'DEV': 'Developing',
+    'Q-D': 'Quick and Dirty',
+    'COM': 'Community Repositories',
+    'PRO': 'Professional',
+}
+
+POLICY_CHOICES_TEXT = [(key, mark_safe(markdown2.markdown(POLICY_TEXT[key]))) for key in POLICIES]
+POLICY_CHOICES_LABEL = [(key, POLICY_LABEL[key]) for key in POLICIES]
 
 class SoftwareCollection(models.Model):
     # automatic value (maintainer.username/name) used as unique key
@@ -64,7 +76,7 @@ class SoftwareCollection(models.Model):
     description     = models.TextField(_('Description'))
     instructions    = models.TextField(_('Instructions'))
     policy          = models.CharField(_('Policy'), max_length=3, null=False,
-                        choices=POLICY_CHOICES)
+                        choices=POLICY_CHOICES_TEXT)
     score           = models.SmallIntegerField(null=True, editable=False)
     score_count     = models.IntegerField(default=0, editable=False)
     download_count  = models.IntegerField(default=0, editable=False)
@@ -103,7 +115,7 @@ class SoftwareCollection(models.Model):
 
     @property
     def policy_text(self):
-        return POLICIES[self.policy]
+        return POLICY_TEXT[self.policy]
 
     @property
     def enabled_repos(self):

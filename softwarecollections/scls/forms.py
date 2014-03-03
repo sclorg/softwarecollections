@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from softwarecollections.copr import CoprProxy
 from tagging.forms import TagField
 
-from .models import SoftwareCollection, Score, POLICY_CHOICES
+from .models import SoftwareCollection, Score, POLICY_CHOICES_TEXT, POLICY_CHOICES_LABEL
 
 PER_PAGE_CHOICES = ((10, '10'), (25, '25'), (50, '50'))
 
@@ -74,7 +74,8 @@ class CreateForm(forms.ModelForm):
             'copr_username': forms.HiddenInput(),
             'copr_name': forms.Select(),
             'maintainer': forms.HiddenInput(),
-            'policy': forms.RadioSelect(renderer=PolicyRadioRenderer),
+            'policy': forms.RadioSelect(choices=POLICY_CHOICES_TEXT,
+                renderer=PolicyRadioRenderer),
         }
 
 class UpdateForm(forms.ModelForm):
@@ -113,7 +114,7 @@ class UpdateForm(forms.ModelForm):
                 'copr_username': forms.TextInput(attrs={'class': 'form-control'}),
                 'description': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
                 'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
-                'policy': forms.RadioSelect(renderer=PolicyRadioRenderer),
+                'policy': forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=PolicyRadioRenderer),
                 'auto_sync': forms.CheckboxInput(attrs={'class': 'form-control-static'}),
                 }
 
@@ -184,5 +185,6 @@ class FilterForm(forms.Form):
                         initial=ORDER_BY_CHOICES[0][0],
                         choices=ORDER_BY_CHOICES,
                         widget=forms.Select(attrs={'class': 'form-control'}))
-
-
+    policy          = forms.ChoiceField(required=False, label='Policy',
+                        choices=[('', 'All')] + POLICY_CHOICES_LABEL,
+                        widget=forms.Select(attrs={'class': 'form-control'}))

@@ -27,15 +27,10 @@
 
                     <!-- POLICY -->
                     <div class='col-md-5 col-sm-7 col-xs-12'>
-                        <label for='a' class='control-label col-md-4 col-sm-4 col-xs-4'>Policy</label>
+                        <label for='{{ filter_form.policies.id_for_label }}'
+                            class='control-label col-md-4 col-sm-4 col-xs-4'>Policy</label>
                         <div class='col-md-8 col-sm-8 col-xs-8'>
-                            <select name='a' class='form-control' disabled>
-                                <option>All</option>
-                                <option>Quick and dirty</option>
-                                <option>Development</option>
-                                <option>Just works</option>
-                                <option>Professional</option>
-                            </select>
+                            {{ filter_form.policy }}
                         </div>
                     </div>
 
