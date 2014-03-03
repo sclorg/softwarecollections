@@ -11,6 +11,12 @@
     font-weight: 400;
     src: local("Oxygen Mono"), local("OxygenMono-Regular"), url("https://themes.googleusercontent.com/static/fonts/oxygenmono/v2/BzV4DVOwAgGelLT9EC5xyobN6UDyHWBl620a-IRfuBk.woff") format("woff");
 }
+@font-face {
+    font-family: 'Dosis';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Dosis Regular'), local('Dosis-Regular'), url('http://themes.googleusercontent.com/static/fonts/dosis/v1/Ewe0SEXPrakEimFzbOGwB6CWcynf_cDxXwCLxiixG1c.woff') format('woff');
+}
 
 /* GLOBAL STYLES */
 body {
@@ -30,7 +36,7 @@ code {
 }
 
 h1, h2, h3 {
-    font-family: 'dosis', 'sans-serif';
+    font-family: 'Dosis', 'sans-serif';
     color: #999;
     padding-top: 0.5ex;
     padding-bottom: 0.1ex;
@@ -164,7 +170,7 @@ p {
 }
 
 .nav a, .nav p, .blam {
-    font-family: 'dosis';
+    font-family: 'Dosis';
 }
 a {
     color: #428D98;
