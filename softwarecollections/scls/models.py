@@ -76,7 +76,7 @@ class SoftwareCollection(models.Model):
     description     = models.TextField(_('Description'))
     instructions    = models.TextField(_('Instructions'))
     policy          = models.CharField(_('Policy'), max_length=3, null=False,
-                        choices=POLICY_CHOICES_TEXT)
+                        choices=POLICY_CHOICES_LABEL)
     score           = models.SmallIntegerField(null=True, editable=False)
     score_count     = models.IntegerField(default=0, editable=False)
     download_count  = models.IntegerField(default=0, editable=False)
@@ -129,7 +129,7 @@ class SoftwareCollection(models.Model):
         tags = set()
         for user in self.collaborators.all():
             tags.update([user.get_username()])
-        for repo in self.repos.all():
+        for repo in self.enabled_repos.all():
             tags.update(repo.get_auto_tags())
         return list(tags)
 

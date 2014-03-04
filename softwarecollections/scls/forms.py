@@ -7,7 +7,10 @@ from django.utils.safestring import mark_safe
 from softwarecollections.copr import CoprProxy
 from tagging.forms import TagField
 
-from .models import SoftwareCollection, Score, POLICY_CHOICES_TEXT, POLICY_CHOICES_LABEL
+from .models import (
+    SoftwareCollection, Repo, Score,
+    POLICY_CHOICES_TEXT, POLICY_CHOICES_LABEL
+)
 
 PER_PAGE_CHOICES = ((10, '10'), (25, '25'), (50, '50'))
 
@@ -18,29 +21,26 @@ ORDER_BY_CHOICES = (
     ('-last_modified',  _('recently built')),
 )
 
-class PolicyRadioRenderer(forms.RadioSelect.renderer):
-    ''' Renders RadioSelect in a nice table '''
+
+class TableRenderer:
 
     def render(self):
         header = '<div class="panel panel-default"><table class="table"><tbody>'
-        row =    '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label for="{}">{}</label></td></tr>'
+        row    = '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label for="{}">{}</label></td></tr>'
         footer = '</tbody></table></div>'
+        rows   = [row.format(w.tag(), w.attrs['id'], w.choice_label) for w in self]
+        if not rows:
+            rows.append('<tr><td class="col-md-1 text-center td-gray"><input type="checkbox" disabled="disabled" /></td><td></td></tr>')
         return mark_safe(
-            header + '\n'.join([row.format(w.tag(), w.attrs['id'], w.choice_label) for w in self]) + footer)
+            header + '\n'.join(rows) + footer)
 
-class CollaboratorsChoiceRenderer(forms.CheckboxSelectMultiple.renderer):
-    ''' Renders CheckboxSelectMultiple in a nice table'''
 
-    def render(self):
-        header = '<div class="panel panel-default"><table class="table"><tbody>'
-        row =    '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label for="{}">{}</label></td></tr>'
-        footer = '</tbody></table></div>'
+class CheckboxSelectMultipleTableRenderer(TableRenderer, forms.CheckboxSelectMultiple.renderer):
+    ''' Renders CheckboxSelectMultiple in a nice table '''
 
-        options = '\n'.join([row.format(w.tag(), w.attrs['id'], w.choice_label) for w in self])
-        if options:
-            return mark_safe(header + options  + footer)
-        else:
-            return mark_safe('<div class="form-control-static"><em>No collaborators yet</em></div>')
+
+class RadioSelectTableRenderer(TableRenderer, forms.RadioSelect.renderer):
+    ''' Renders RadioSelect in a nice table '''
 
 
 class MaintainerWidget(forms.HiddenInput):
@@ -116,7 +116,7 @@ class CreateForm(_SclForm):
             'maintainer':    MaintainerWidget(attrs={'class': 'form-control'}),
             'name':          forms.TextInput( attrs={'class': 'form-control'}),
             'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT,
-                                                renderer=PolicyRadioRenderer),
+                                                renderer=RadioSelectTableRenderer),
         }
 
 
@@ -145,7 +145,7 @@ class UpdateForm(_SclForm):
             'title':         forms.TextInput(    attrs={'class': 'form-control'}),
             'description':   forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
             'instructions':  forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
-            'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=PolicyRadioRenderer),
+            'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=RadioSelectTableRenderer),
             'copr_username': forms.TextInput(    attrs={'class': 'form-control'}),
             'copr_name':     forms.Select(       attrs={'class': 'form-control'}),
             'auto_sync':     forms.CheckboxInput(attrs={'class': 'form-control-static'}),
@@ -154,12 +154,13 @@ class UpdateForm(_SclForm):
 
 class CollaboratorsForm(forms.ModelForm):
     add = forms.fields.CharField(required=False,
-            help_text=_('Enter FAS username of user you want to add.'),
-            widget=forms.TextInput(attrs={'class': 'form-control'}))
+            help_text=_('Enter username of user You want to add.'))
 
     def __init__(self, *args, **kwargs):
         super(CollaboratorsForm, self).__init__(*args, **kwargs)
-        self.fields['collaborators'].widget.choices = tuple(
+        self.fields['add'].widget.attrs={'class': 'form-control'}
+        self.fields['collaborators'].help_text = _('Unselect users You want to remove.')
+        self.fields['collaborators'].choices = tuple(
             map(
                 lambda u: (u.id, '{} ({})'.format(u.get_full_name(), u.get_username())),
                 filter(
@@ -168,6 +169,7 @@ class CollaboratorsForm(forms.ModelForm):
                 )
             )
         )
+        self.tags = self.instance.tags_edit_string()
 
     def clean(self):
         self.cleaned_data = super(CollaboratorsForm, self).clean()
@@ -184,16 +186,47 @@ class CollaboratorsForm(forms.ModelForm):
         return self.cleaned_data
 
     def save(self, commit=True):
-        obj = super(CollaboratorsForm, self).save(commit)
-        obj.add_auto_tags()
+        scl = super(CollaboratorsForm, self).save(commit)
+        scl.tags = self.tags
+        scl.add_auto_tags()
         return obj
 
     class Meta:
         model = SoftwareCollection
         fields = ['collaborators']
         widgets = {
-            'collaborators': forms.CheckboxSelectMultiple(renderer=CollaboratorsChoiceRenderer)
+            'collaborators': forms.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer)
         }
+
+
+class ReposForm(forms.ModelForm):
+    repos = forms.MultipleChoiceField(label=_('Enabled repos'), required=False,
+                widget=forms.widgets.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer))
+
+    def __init__(self, *args, **kwargs):
+        super(ReposForm, self).__init__(*args, **kwargs)
+        self.initial['repos'] = list(map(lambda r: r.id, self.instance.enabled_repos.all()))
+        self.fields['repos'].choices = tuple(
+            map(
+                lambda r: (r.id, mark_safe('<img src="{}" width="32" height="32" alt=""/> {} {} {}'.format(
+                    r.get_icon_url(), r.distro, r.version, r.arch
+                ))),
+                self.instance.repos.all()
+            )
+        )
+        self.tags = self.instance.tags_edit_string()
+
+    def save(self, commit=True):
+        scl  = super(ReposForm, self).save(False)
+        scl.repos.filter (id__in=self.cleaned_data['repos']).update(enabled=True)
+        scl.repos.exclude(id__in=self.cleaned_data['repos']).update(enabled=False)
+        scl.tags = self.tags
+        scl.add_auto_tags()
+        return scl
+
+    class Meta:
+        model = SoftwareCollection
+        fields = []
 
 
 class RateForm(forms.ModelForm):

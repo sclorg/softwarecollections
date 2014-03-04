@@ -1,0 +1,38 @@
+{% extends "with_submenu.html" %}
+
+{% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
+
+{% block title %}Repos Setup{% endblock %}
+
+{% block content %}
+
+<h1>Repos setup</h1>
+
+{% for error in form.non_field_errors %}
+    <div class='alert alert-danger'>{{ error }}</div>
+{% endfor %}
+
+<form action="" method="post" class='form-horizontal'>{% csrf_token %}
+    {% for item in form %}
+        <div class='form-group'>
+            <label for='{{ item.id_for_label }}'
+                class='control-label col-md-3'>{{ item.label }}</label>
+            <div class='col-md-9{% if item.errors %} alert alert-danger{% endif %}'>
+                {{ item }}
+                {% for error in item.errors %}
+                <div>{{ error }}</div>
+                {% endfor %}
+                {{ item.help_text }}
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- SUBMIT -->
+    <div class='form-group'>
+        <div class='col-md-9 col-md-offset-3'>
+            <input class='btn btn-default' type='submit' value='Save changes' />
+        </div>
+    </div>
+</form>
+
+{% endblock %}

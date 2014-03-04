@@ -19,7 +19,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 from .forms import (
     FilterForm, CreateForm, UpdateForm, RateForm,
-    CollaboratorsForm
+    CollaboratorsForm, ReposForm
 )
 from .models import SoftwareCollection, Repo, Score
 
@@ -166,6 +166,21 @@ class Collaborators(UpdateView):
             raise PermissionDenied()
 
 acl = Collaborators.as_view()
+
+
+class Repos(UpdateView):
+    model = SoftwareCollection
+    form_class = ReposForm
+    template_name_suffix = '_repos'
+
+    def get_object(self, *args, **kwargs):
+        scl = super(Repos, self).get_object(*args, **kwargs)
+        if self.request.user.has_perm('edit', obj=scl):
+            return scl
+        else:
+            raise PermissionDenied()
+
+repos = Repos.as_view()
 
 
 class Delete(DeleteView):
