@@ -1,3 +1,4 @@
+import json
 from django.contrib import messages
 from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
@@ -6,12 +7,13 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Manager
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
+from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
@@ -88,6 +90,14 @@ def list_tag(request, name, **kwargs):
     queryset = SoftwareCollection.tagged.with_all(tag)
     dictionary = {'tag': tag}
     return _list(request, 'scls/list_tag.html', queryset, dictionary, **kwargs)
+
+
+def coprnames(request, copr_username, **kwargs):
+    if copr_username:
+        coprnames = CoprProxy().coprnames(copr_username)
+    else:
+        coprnames = []
+    return HttpResponse(json.dumps(coprnames), mimetype='application/json')
 
 
 class Detail(DetailView):

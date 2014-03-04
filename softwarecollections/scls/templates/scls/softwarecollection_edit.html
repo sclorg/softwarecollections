@@ -1,4 +1,5 @@
 {% extends "with_submenu.html" %}
+{% load sekizai_tags %}
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
 {% block title %}Edit Collection{% endblock %}
@@ -25,10 +26,37 @@
         </div>
     {% endfor %}
 
+    <!-- SUBMIT -->
     <div class='form-group'>
         <div class='col-md-9 col-md-offset-3'>
             <input class='btn btn-default' type='submit' value='Save changes' />
         </div>
     </div>
 </form>
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+//<![CDATA[
+
+    jQuery(document).ready(function (){
+        jQuery("#id_copr_username").change(function () {
+            var url = "{% url 'scls:coprnames' '__copr_username__' %}"
+                        .replace("__copr_username__", jQuery(this).val());
+            $.get(url, function( projects ) {
+                var $select = $("#id_copr_name");
+                $select.empty();
+                for (i in projects) {
+                    $select.append(
+                        jQuery("<option></option>")
+                            .attr("value", projects[i]).text(projects[i])
+                    );
+                }
+            }, "json");
+        });
+    });
+
+//]]>
+</script>
+{% endaddtoblock %}
+
 {% endblock %}

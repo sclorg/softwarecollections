@@ -17,71 +17,24 @@
     <div class='alert alert-danger'>{{ error }}</div>
 {% endfor %}
 
-<form action="" method="get" class='form-horizontal'>
-    <div class='row'>
-        <div class='form-group'>
-            <label for='{{ form.copr_username.id_for_label }}'
-                class='control-label col-md-3'>{{ form.copr_username.label }}</label>
-
-            <div class='col-md-9{% if form.copr_username.errors %} alert alert-danger{% endif %}'>
-                <div class='input-group'>
-                    <input class='form-control' id="id_copr_username" maxlength="100" name="copr_username" type="text" value="{{ form.copr_username.value }}" />
-                    <span class='input-group-btn'>
-                        <input class='btn btn-default' type="submit" value="Change Copr User" />
-                    </span>
-                </div>
-                {% for error in form.copr_username.errors %}
-                <div>{{ error }}</div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</form>
-
 <form action="" method="post" class='form-horizontal'>{% csrf_token %}
-    {{ form.copr_username }}
-    {{ form.maintainer }}
-
-    <div class='row'>
-        <!-- COPR NAME -->
+    {% for item in form %}
         <div class='form-group'>
-            <label for='{{ form.copr_name.id_for_label }}'
-                class='control-label col-md-3'>{{ form.copr_name.label }}</label>
-            <div class='col-md-9{% if form.copr_name.errors %} alert alert-danger{% endif %}'>
-                {{ form.copr_name }}
-                {% for error in form.copr_name.errors %}
+            <label for='{{ item.id_for_label }}'
+                class='control-label col-md-3'>{{ item.label }}</label>
+            <div class='col-md-9{% if item.errors %} alert alert-danger{% endif %}'>
+                {{ item }}
+                {% for error in item.errors %}
                 <div>{{ error }}</div>
                 {% endfor %}
             </div>
         </div>
+    {% endfor %}
 
-        <div class='form-group'>
-            <label for='{{ form.name.id_for_label }}'
-                class='control-label col-md-3'>{{ form.name.label }}</label>
-            <div class='col-md-9{% if form.name.errors %} alert alert-danger{% endif %}'>
-                {{ form.name }}
-                {% for error in form.name.errors %}
-                <div>{{ error }}</div>
-                {% endfor %}
-            </div>
-        </div>
-        <!-- POLICY -->
-        <div class='form-group'>
-            <label for='{{ form.policy.id_for_label}}'
-                class='control-label col-md-3'>{{ form.policy.label }}</label>
-            <div class='col-md-9{% if form.policy.errors %} alert alert-danger{% endif %}'>
-                {{ form.policy }}
-                {% for error in form.policy.errors %}
-                <div>{{ error }}</div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- SUBMIT -->
-        <div class='form-group'>
-            <div class='col-md-9 col-md-offset-3'>
-                <input class='btn btn-default' type="submit" value="Import" />
-            </div>
+    <!-- SUBMIT -->
+    <div class='form-group'>
+        <div class='col-md-9 col-md-offset-3'>
+            <input class='btn btn-default' type='submit' value='Import' />
         </div>
     </div>
 </form>
@@ -91,7 +44,24 @@
 //<![CDATA[
 
     jQuery(document).ready(function (){
-        jQuery("#id_copr_name").blur(function () {
+        jQuery("#id_copr_username").change(function () {
+            var url = "{% url 'scls:coprnames' '__copr_username__' %}"
+                        .replace("__copr_username__", jQuery(this).val());
+            $.get(url, function( projects ) {
+                var $select = $("#id_copr_name");
+                $select.empty();
+                for (i in projects) {
+                    $select.append(
+                        jQuery("<option></option>")
+                            .attr("value", projects[i]).text(projects[i])
+                    );
+                }
+            }, "json");
+        });
+    });
+
+    jQuery(document).ready(function (){
+        jQuery("#id_copr_name").change(function () {
             var e = jQuery("#id_name")[0];
             if(!e._changed) {
                 e.value = this.value;

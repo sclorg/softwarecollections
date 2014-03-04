@@ -23,10 +23,20 @@ class PolicyRadioRenderer(forms.RadioSelect.renderer):
 
     def render(self):
         header = '<div class="panel panel-default"><table class="table"><tbody>'
-        row =    '<tr><td class="col-md-1 text-center td-gray">{}</td><td>{}</td></tr>'
+        row =    '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label for="{}">{}</label></td></tr>'
         footer = '</tbody></table></div>'
         return mark_safe(
-            header + '\n'.join([row.format(w.tag(), w.choice_label) for w in self]) + footer)
+            header + '\n'.join([row.format(w.tag(), w.attrs['id'], w.choice_label) for w in self]) + footer)
+
+
+class MaintainerWidget(forms.HiddenInput):
+    ''' Renders Maintainer '''
+
+    def render(self, name, value, attrs=None):
+        user = get_user_model().objects.get(id=value)
+        html = super(MaintainerWidget, self).render(name, value, attrs=None)
+        html += '\n<div class="form-control">{} ({})</div>'.format(user.get_full_name(), user.get_username())
+        return mark_safe(html)
 
 
 class _SclForm(forms.ModelForm):
@@ -87,12 +97,12 @@ class CreateForm(_SclForm):
         model = SoftwareCollection
         fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'policy']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'copr_username': forms.HiddenInput(),
-            'copr_name': forms.Select(attrs={'class': 'form-control'}),
-            'maintainer': forms.HiddenInput(),
-            'policy': forms.RadioSelect(choices=POLICY_CHOICES_TEXT,
-                renderer=PolicyRadioRenderer),
+            'copr_username': forms.TextInput( attrs={'class': 'form-control'}),
+            'copr_name':     forms.Select(    attrs={'class': 'form-control'}),
+            'maintainer':    MaintainerWidget(attrs={'class': 'form-control'}),
+            'name':          forms.TextInput( attrs={'class': 'form-control'}),
+            'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT,
+                                                renderer=PolicyRadioRenderer),
         }
 
 
@@ -118,14 +128,14 @@ class UpdateForm(_SclForm):
         model = SoftwareCollection
         fields = ['title', 'description', 'instructions', 'policy', 'copr_username', 'copr_name', 'auto_sync']
         widgets = {
-                'title': forms.TextInput(attrs={'class': 'form-control'}),
-                'copr_name': forms.Select(attrs={'class': 'form-control'}),
-                'copr_username': forms.TextInput(attrs={'class': 'form-control'}),
-                'description': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
-                'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
-                'policy': forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=PolicyRadioRenderer),
-                'auto_sync': forms.CheckboxInput(attrs={'class': 'form-control-static'}),
-                }
+            'title':         forms.TextInput(    attrs={'class': 'form-control'}),
+            'description':   forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
+            'instructions':  forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
+            'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=PolicyRadioRenderer),
+            'copr_username': forms.TextInput(    attrs={'class': 'form-control'}),
+            'copr_name':     forms.Select(       attrs={'class': 'form-control'}),
+            'auto_sync':     forms.CheckboxInput(attrs={'class': 'form-control-static'}),
+        }
 
 
 class CollaboratorsForm(forms.ModelForm):
