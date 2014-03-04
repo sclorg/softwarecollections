@@ -28,6 +28,20 @@ class PolicyRadioRenderer(forms.RadioSelect.renderer):
         return mark_safe(
             header + '\n'.join([row.format(w.tag(), w.attrs['id'], w.choice_label) for w in self]) + footer)
 
+class CollaboratorsChoiceRenderer(forms.CheckboxSelectMultiple.renderer):
+    ''' Renders CheckboxSelectMultiple in a nice table'''
+
+    def render(self):
+        header = '<div class="panel panel-default"><table class="table"><tbody>'
+        row =    '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label for="{}">{}</label></td></tr>'
+        footer = '</tbody></table></div>'
+
+        options = '\n'.join([row.format(w.tag(), w.attrs['id'], w.choice_label) for w in self])
+        if options:
+            return mark_safe(header + options  + footer)
+        else:
+            return mark_safe('<div class="form-control-static"><em>No collaborators yet</em></div>')
+
 
 class MaintainerWidget(forms.HiddenInput):
     ''' Renders Maintainer '''
@@ -140,7 +154,8 @@ class UpdateForm(_SclForm):
 
 class CollaboratorsForm(forms.ModelForm):
     add = forms.fields.CharField(required=False,
-            help_text=_('Enter FAS username of user You want to add.'))
+            help_text=_('Enter FAS username of user you want to add.'),
+            widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     def __init__(self, *args, **kwargs):
         super(CollaboratorsForm, self).__init__(*args, **kwargs)
@@ -177,7 +192,7 @@ class CollaboratorsForm(forms.ModelForm):
         model = SoftwareCollection
         fields = ['collaborators']
         widgets = {
-            'collaborators': forms.CheckboxSelectMultiple()
+            'collaborators': forms.CheckboxSelectMultiple(renderer=CollaboratorsChoiceRenderer)
         }
 
 

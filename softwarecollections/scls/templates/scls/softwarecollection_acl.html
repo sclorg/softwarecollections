@@ -5,10 +5,29 @@
 
 {% block content %}
 <h1>Manage Collaborators</h1>
-<form action="" method="post">{% csrf_token %}
-    <table>
-        {{ form }}
-    </table>
-    <button type="submit">Save</button>
+<form action="" method="post" class='form-horizontal'>{% csrf_token %}
+    {% for item in form %}
+        <div class='form-group'>
+            <label for='{{ item.id_for_label }}'
+                class='control-label col-md-3'>{{ item.label }}</label>
+            <div class='col-md-9{% if item.errors %} alert alert-danger{% endif %}'>
+                {{ item }}
+                {% for error in item.errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+
+                {% if item.help_text %}
+                    <span class='help-block'>{{ item.help_text }}</span>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- SUBMIT -->
+    <div class='form-group'>
+        <div class='col-md-9 col-md-offset-3'>
+            <input class='btn btn-default' type='submit' value='Save changes' />
+        </div>
+    </div>
 </form>
 {% endblock %}
