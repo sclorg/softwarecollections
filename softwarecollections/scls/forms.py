@@ -29,13 +29,15 @@ class PolicyRadioRenderer(forms.RadioSelect.renderer):
             header + '\n'.join([row.format(w.tag(), w.choice_label) for w in self]) + footer)
 
 
-class CreateForm(forms.ModelForm):
+class _SclForm(forms.ModelForm):
 
     def __init__(self, request, **kwargs):
         self.request = request
-        super(CreateForm, self).__init__(**kwargs)
+        super(_SclForm, self).__init__(**kwargs)
         if 'copr_username' in self.request.REQUEST:
             copr_username = self.request.REQUEST['copr_username']
+        elif self.instance.copr_username:
+            copr_username = self.instance.copr_username
         else:
             try:
                 copr_username = SoftwareCollection.objects.filter(
@@ -43,19 +45,34 @@ class CreateForm(forms.ModelForm):
                 ).order_by('-id')[0].copr_username
             except:
                 copr_username = self.request.user.get_username()
+            self.initial['copr_username'] = copr_username
         self.initial['copr_username'] = copr_username
         self.initial['maintainer']    = self.request.user
         if copr_username:
-            coprnames = CoprProxy().coprnames(copr_username)
+            self.coprnames = CoprProxy().coprnames(copr_username)
         else:
-            coprnames = []
-        copr_name_choices = tuple((name, name) for name in coprnames)
+            self.coprnames = []
+        copr_name_choices = tuple((name, name) for name in self.coprnames)
         self.fields['copr_name'].widget.choices = copr_name_choices
-        self.fields['copr_name'].widget.attrs['class'] = 'form-control'
+
+    def clean_copr_username(self):
+        if not len(self.coprnames):
+            raise forms.ValidationError(_('No SCL project found for this Copr user.'))
+        return self.cleaned_data['copr_username']
+
+    def clean_maintainer(self):
+        return self.request.user
+
+    def clean_copr_name(self):
+        if self.coprnames and self.cleaned_data['copr_name'] not in self.coprnames:
+            raise forms.ValidationError(_('This field is mandatory.'))
+        return self.cleaned_data['copr_name']
+
+
+class CreateForm(_SclForm):
 
     def save(self, commit=True):
         obj = super(CreateForm, self).save(False)
-        obj.maintainer = self.request.user
         obj.slug       = '{}/{}'.format(obj.maintainer.username, obj.name)
         obj.title      = pretty_name(obj.name)
         obj.sync_copr_texts()
@@ -72,31 +89,23 @@ class CreateForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'copr_username': forms.HiddenInput(),
-            'copr_name': forms.Select(),
+            'copr_name': forms.Select(attrs={'class': 'form-control'}),
             'maintainer': forms.HiddenInput(),
             'policy': forms.RadioSelect(choices=POLICY_CHOICES_TEXT,
                 renderer=PolicyRadioRenderer),
         }
 
-class UpdateForm(forms.ModelForm):
+
+class UpdateForm(_SclForm):
     tags = TagField(max_length=200, required=False, help_text=_(
         'Enter space separated list of single word tags ' \
         'or comma separated list of tags containing spaces. ' \
         'Use doublequotes to enter name containing comma.'
     ), widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    def __init__(self, request, **kwargs):
-        self.request = request
-        super(UpdateForm, self).__init__(**kwargs)
-        if 'copr_username' in self.request.REQUEST:
-            copr_username = self.request.REQUEST['copr_username']
-        else:
-            copr_username = self.instance.copr_username
-        coprnames = CoprProxy().coprnames(copr_username)
-        copr_name_choices = tuple((name, name) for name in coprnames)
-        self.fields['copr_name'].widget.choices = copr_name_choices
+    def __init__(self, *args, **kwargs):
+        super(UpdateForm, self).__init__(*args, **kwargs)
         self.initial['tags'] = self.instance.tags_edit_string()
-        self.initial['policy'] = self.instance.policy
 
     def save(self, commit=True):
         obj = super(UpdateForm, self).save(commit)
@@ -110,7 +119,7 @@ class UpdateForm(forms.ModelForm):
         fields = ['title', 'description', 'instructions', 'policy', 'copr_username', 'copr_name', 'auto_sync']
         widgets = {
                 'title': forms.TextInput(attrs={'class': 'form-control'}),
-                'copr_name': forms.TextInput(attrs={'class': 'form-control'}),
+                'copr_name': forms.Select(attrs={'class': 'form-control'}),
                 'copr_username': forms.TextInput(attrs={'class': 'form-control'}),
                 'description': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
                 'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),

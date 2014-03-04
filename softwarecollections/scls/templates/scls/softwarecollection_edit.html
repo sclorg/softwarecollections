@@ -1,22 +1,26 @@
 {% extends "with_submenu.html" %}
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}Directory{% endblock %}
+{% block title %}Edit Collection{% endblock %}
 
 {% block content %}
+
 <h1>Edit Collection</h1>
-{% if form.errors %}
-    {% for error in form.errors %}
-        <div class='alert alert-danger'>{{ error }}</div>
-    {% endfor %}
-{% endif %}
+
+{% for error in form.non_field_errors %}
+    <div class='alert alert-danger'>{{ error }}</div>
+{% endfor %}
+
 <form action="" method="post" class='form-horizontal'>{% csrf_token %}
     {% for item in form %}
         <div class='form-group'>
             <label for='{{ item.id_for_label }}'
                 class='control-label col-md-3'>{{ item.label }}</label>
-            <div class='col-md-9'>
+            <div class='col-md-9{% if item.errors %} alert alert-danger{% endif %}'>
                 {{ item }}
+                {% for error in item.errors %}
+                <div>{{ error }}</div>
+                {% endfor %}
             </div>
         </div>
     {% endfor %}
