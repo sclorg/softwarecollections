@@ -1,10 +1,17 @@
 {% extends "with_submenu.html" %}
+
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
 {% block title %}Manage Collaborators{% endblock %}
 
 {% block content %}
+
 <h1>Manage Collaborators</h1>
+
+{% for error in form.non_field_errors %}
+    <div class='alert alert-danger'>{{ error }}</div>
+{% endfor %}
+
 <form action="" method="post" class='form-horizontal'>{% csrf_token %}
     {% for item in form %}
         <div class='form-group'>
@@ -30,4 +37,5 @@
         </div>
     </div>
 </form>
+
 {% endblock %}

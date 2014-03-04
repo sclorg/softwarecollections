@@ -20,9 +20,12 @@
             <div class='col-md-9{% if item.errors %} alert alert-danger{% endif %}'>
                 {{ item }}
                 {% for error in item.errors %}
-                <div>{{ error }}</div>
+                    <div>{{ error }}</div>
                 {% endfor %}
-                {{ item.help_text }}
+
+                {% if item.help_text %}
+                    <span class='help-block'>{{ item.help_text }}</span>
+                {% endif %}
             </div>
         </div>
     {% endfor %}
