@@ -55,7 +55,13 @@
 <h2>Policy</h2>
 {{ scl.policy_text | markdown2 }}
 
-<h2>Yum Repositories</h2>
+<h2>Yum Repositories
+    {% if scl.last_modified %}
+        <small>
+        <td>{{ scl.last_modified }}</td>
+        </small>
+    {% endif %}
+</h2>
 <div class='panel panel-default'>
     <table class='table table-hover repos'>
         <thead>
@@ -64,7 +70,7 @@
                 <th>Distribution</th>
                 <th>Architecture</th>
                 <th>Download</th>
-                <th>Last Modified</th>
+                <th>Link</th>
             </tr>
         </thead>
         {% for repo in scl.enabled_repos %}
@@ -73,14 +79,14 @@
             <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>
             <td>{{ repo.arch }}</td>
             {% if scl.last_modified %}
-            <td>
-                <a href="{% url "scls:download" repo.slug %}" title="{{ repo.rpmfile }}">RPM</a>
-                {{ repo.download_count }}x
-            </td>
-            <td>{{ scl.last_modified }}</td>
+                <td>
+                    <a href="{% url "scls:download" repo.slug %}" title="{{ repo.rpmfile }}">RPM</a>
+                    {{ repo.download_count }}x
+                </td>
             {% else %}
-            <td colspan="2">(not synced)</td>
+                <td>(not synced)</td>
             {% endif %}
+            <td><a href="{{ repo.get_repo_url }}" target="_new" title="browse repo content">browse</a></td>
         </tr>
         {% empty %}
             <td></td>
