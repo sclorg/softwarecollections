@@ -12,13 +12,13 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import CreateView, DetailView, UpdateView
 from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
 
 from .forms import (
-    FilterForm, CreateForm, UpdateForm, RateForm,
+    FilterForm, CreateForm, UpdateForm, DeleteForm, RateForm,
     CollaboratorsForm, ReposForm
 )
 from .models import SoftwareCollection, Repo, Score
@@ -183,31 +183,21 @@ class Repos(UpdateView):
 repos = Repos.as_view()
 
 
-class Delete(DeleteView):
+class Delete(UpdateView):
     model = SoftwareCollection
+    form_class = DeleteForm
     template_name_suffix = '_delete'
 
     def get_object(self, *args, **kwargs):
         scl = super(Delete, self).get_object(*args, **kwargs)
+        self.success_url = reverse(
+            'scls:list_user',
+            kwargs={"username": self.request.user.get_username()}
+        )
         if self.request.user.has_perm('delete', obj=scl):
             return scl
         else:
             raise PermissionDenied()
-
-    def post(self, request, *args, **kwargs):
-        scl = self.get_object()
-        choice = request.POST['choice']
-        expected_name = scl.name
-        actual_name = request.POST['name_check']
-        if choice == 'delete' and actual_name == expected_name:
-            scl.delete()
-            url = reverse('scls:list_user',
-                  kwargs={"username": scl.maintainer.get_username()})
-            return HttpResponseRedirect(url)
-        else:
-            url = reverse('scls:detail',
-                  kwargs={"slug": scl.slug})
-            return HttpResponseRedirect(url)
 
 delete = Delete.as_view()
 

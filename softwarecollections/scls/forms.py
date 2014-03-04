@@ -132,10 +132,10 @@ class UpdateForm(_SclForm):
         self.initial['tags'] = self.instance.tags_edit_string()
 
     def save(self, commit=True):
-        obj = super(UpdateForm, self).save(commit)
-        obj.tags = self.cleaned_data['tags']
-        obj.sync_copr_repos()
-        obj.add_auto_tags()
+        scl = super(UpdateForm, self).save(commit)
+        scl.sync_copr_repos()
+        scl.tags = self.cleaned_data['tags']
+        scl.add_auto_tags()
         return obj
 
     class Meta:
@@ -149,6 +149,30 @@ class UpdateForm(_SclForm):
             'copr_username': forms.TextInput(    attrs={'class': 'form-control'}),
             'copr_name':     forms.Select(       attrs={'class': 'form-control'}),
             'auto_sync':     forms.CheckboxInput(attrs={'class': 'form-control-static'}),
+        }
+
+
+class DeleteForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(DeleteForm, self).__init__(*args, **kwargs)
+        self.initial['name'] = ''
+
+    def clean_name(self):
+        if self.cleaned_data['name'] != self.instance.name:
+            raise forms.ValidationError(_('Enter the name of your collection.'))
+        return self.cleaned_data['name']
+
+    def save(self, commit=True):
+        scl = super(DeleteForm, self).save(commit)
+        scl.delete()
+        return scl
+
+    class Meta:
+        model = SoftwareCollection
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 
