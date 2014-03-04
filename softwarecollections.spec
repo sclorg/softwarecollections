@@ -99,8 +99,9 @@ while read FILE; do
 done | grep %{python3_sitelib} > %{name}.files
 
 # add language files
-%find_lang django
-cat django.lang >> %{name}.files
+# (uncomment next two lines to process language files)
+#%find_lang django
+#cat django.lang >> %{name}.files
 
 %post
 # create secret key
