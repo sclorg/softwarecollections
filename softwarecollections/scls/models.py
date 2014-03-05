@@ -83,8 +83,9 @@ class SoftwareCollection(models.Model):
     create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
     last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
     approved        = models.BooleanField(_('Approved'), default=False)
-    auto_sync       = models.BooleanField(_('Auto sync'), default=False)
     review_req      = models.BooleanField(_('Review requested'), default=False)
+    auto_sync       = models.BooleanField(_('Auto sync'), default=False,
+                        help_text=_('Enable periodic synchronization with related Copr project'))
     need_sync       = models.BooleanField(_('Needs sync with copr'), default=False)
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
