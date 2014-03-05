@@ -15,8 +15,11 @@ USER test
 
 CMD cd /srv/softwarecollections; \
 cp softwarecollections/localsettings{-development,}.py; \
+ls data/db.sqlite3; dbexists=$?; \
 ./manage.py syncdb --migrate --noinput; \
-ls data/db.sqlite3 || echo -e "test\ntest@test.com\ntest\ntest\n" | ./manage.py createsuperuser; \
-./manage.py makesuperuser test; \
+if [ $dbexists -ne 0 ]; then \
+  echo -e "test\ntest@test.com\ntest\ntest\n" | ./manage.py createsuperuser; \
+  ./manage.py makesuperuser test; \
+fi; \
 chmod a+w data/db.sqlite3; \
 ./manage.py runserver 0.0.0.0:8000
