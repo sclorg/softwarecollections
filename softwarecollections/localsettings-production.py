@@ -36,6 +36,10 @@ ADMINS = (
 MANAGERS = ADMINS
 SERVER_EMAIL = 'root@softwarecollections.org'
 
+# COPR
+COPR_URL = 'http://copr-fe.cloud.fedoraproject.org'
+COPR_API_URL   = COPR_URL + '/api'
+COPR_COPRS_URL = COPR_URL + '/coprs'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases

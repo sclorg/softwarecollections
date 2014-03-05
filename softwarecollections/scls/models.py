@@ -104,8 +104,8 @@ class SoftwareCollection(models.Model):
     def get_absolute_url(self):
         return reverse('scls:detail', kwargs={'slug': self.slug})
 
-    def get_edit_url(self):
-        return reverse('scls:edit', kwargs={'slug': self.slug})
+    def get_copr_url(self):
+        return os.path.join(settings.COPR_COPRS_URL, self.copr_username, self.copr_name)
 
     def get_repos_root(self):
         return os.path.join(settings.REPOS_ROOT, self.slug)
