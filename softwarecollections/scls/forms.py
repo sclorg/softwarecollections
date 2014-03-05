@@ -232,7 +232,7 @@ class ReposForm(forms.ModelForm):
         self.fields['repos'].choices = tuple(
             map(
                 lambda r: (r.id, mark_safe('<img src="{}" width="32" height="32" alt=""/> {} {} {}'.format(
-                    r.get_icon_url(), r.distro, r.version, r.arch
+                    r.get_icon_url(), r.distro.title(), r.version, r.arch
                 ))),
                 self.instance.repos.all()
             )
