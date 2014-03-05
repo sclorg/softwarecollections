@@ -8,9 +8,6 @@
     {% endif %}
     {% for i in "12345" %}<img
         {% if active %}
-            onclick="scl_rate('{{scl.pk}}','{{i}}');"
-            onmouseover="stars_show('{{scl.pk}}', {{i}})"
-            onmouseout="stars_revert('{{scl.pk}}')"
             style="cursor: pointer"
             id="star-{{scl.pk}}-{{i}}"
         {% endif %}
@@ -28,47 +25,59 @@
 
 {% addtoblock "js" %}
     <script type="text/javascript">
-        function scl_rate(scl_id, score) {
-            var form = document.forms["stars-" + scl_id];
-            stars_show(scl_id, score);
-            for (var i = 1; i <= 5; i++) {
-                var img = document.getElementById("star-" + scl_id + '-' + i);
-                img.onmouseover = null;
-                img.onmouseout = null;
-                if (i <= score) {
-                    img.alt = '*';
-                    img.src = '/static/images/star.png';
-                } else {
-                    img.alt = '-';
-                    img.src = '/static/images/star_empty.png';
-                }
-            }
-            form["score"].value = score;
-            form.submit();
+        function makeStarId(scl_id, i) {
+            return 'star-' + scl_id + '-' + i
         }
-        function stars_show(scl_id, score) {
-            for (var i = 1; i <= 5; i++) {
-                var img = document.getElementById("star-" + scl_id + '-' + i);
-                if (i <= score) {
-                    img.alt = '*';
-                    img.src = '/static/images/star.png';
-                } else {
-                    img.alt = '-';
-                    img.src = '/static/images/star_empty.png';
-                }
-            }
+
+        function emptyStar(imgObject) {
+            imgObject.attr('alt', '-')
+            imgObject.attr('src', '/static/images/star_empty.png')
         }
-        function stars_revert(scl_id) {
-            for (var i = 1; i <= 5; i++) {
-                var img = document.getElementById("star-" + scl_id + '-' + i);
-                if (img.className == 'star') {
-                    img.alt = '*';
-                    img.src = '/static/images/star.png';
-                } else {
-                    img.alt = '-';
-                    img.src = '/static/images/star_empty.png';
-                }
-            }
+
+        function fillStar(imgObject) {
+            imgObject.attr('alt', '*')
+            imgObject.attr('src', '/static/images/star.png')
         }
+
+        $(function() {
+            $('img[id^="star-"]').each(function() {
+                match = /star-(\d+)-(\d+)/.exec($(this).attr('id'))
+                var scl_id = match[1]
+                var score = match[2]
+                $(this).click(function() {
+                    for (var i = 1; i <= 5; i++) {
+                        img = $('img[id="' + makeStarId(scl_id, i) + '"]')
+                        if (i <= score) {
+                            fillStar(img)
+                        } else {
+                            emptyStar(img)
+                        }
+                    }
+                    form = $('form[name=stars-' + scl_id + ']')
+                    form.children('[name=score]').val(score)
+                    form.submit()
+                })
+                $(this).mouseover(function() {
+                    for (var i = 1; i <= 5; i++) {
+                        img = $('img[id="' + makeStarId(scl_id, i) + '"]')
+                        if (i <= score) {
+                            fillStar(img)
+                        } else {
+                            emptyStar(img)
+                        }
+                    }
+                })
+                $(this).mouseleave(function() {
+                    for (var i = 1; i <= 5; i++) {
+                        img = $('img[id="' + makeStarId(scl_id, i) + '"]')
+                        if (img.attr('class') == 'star') {
+                            fillStar(img)
+                        } else {
+                            emptyStar(img)
+                        }
+                    }
+                })
+            })
+        })
     </script>
 {% endaddtoblock %}
