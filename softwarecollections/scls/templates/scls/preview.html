@@ -2,6 +2,7 @@
 {% load md2 %}
 {% load rating_stars %}
 {% load url from future %}
+
 <div class='page-header collections-list'>
     {% if scl.score_count %}
     {% rating_stars 'passive' scl %}
@@ -18,11 +19,3 @@
 </div>
 
 {{ scl.description | markdown2 }}
-
-<div class="scl-tags">
-    {% for tag in scl.tags %}
-        <a class='label label-default' href="{% url "scls:list_tag" tag.name %}">{{ tag.name }}</a>
-        {% empty %}
-        <span class='label label-default'>No tags</span>
-    {% endfor %}
-</div>
