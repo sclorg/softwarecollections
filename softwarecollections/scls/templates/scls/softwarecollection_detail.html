@@ -16,7 +16,6 @@
 
 {% allowed 'edit' obj=scl %}
 <div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
     <a class='btn btn-default' href="{% url "scls:edit" scl %}">edit</a>
     <a class='btn btn-default' href="{% url "scls:acl" scl %}">collaborators</a>
     <a class='btn btn-default' href="{% url "scls:repos" scl %}">repos</a>
@@ -36,6 +35,7 @@
     {% else %}
     <a class='btn btn-default' href="{% url "scls:review_req" scl %}">review request</a>
     {% endif %}
+    <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
 </div>
 {% endallowed %}
 
