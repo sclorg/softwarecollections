@@ -31,10 +31,10 @@
 
     {% if scl.approved %}
     <span class='btn btn-default disabled'>approved</span>
-    {% elif scl.approval_req %}
-    <span class='btn btn-default active'>approval requested</span>
+    {% elif scl.review_req %}
+    <span class='btn btn-default active'>review requested</span>
     {% else %}
-    <a class='btn btn-default' href="{% url "scls:app_req" scl %}">request approval</a>
+    <a class='btn btn-default' href="{% url "scls:review_req" scl %}">review request</a>
     {% endif %}
 </div>
 {% endallowed %}

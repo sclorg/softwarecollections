@@ -1,0 +1,38 @@
+{% extends "with_submenu.html" %}
+{% load sekizai_tags %}
+
+{% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
+
+{% block title %}Review Request{% endblock %}
+
+{% block content %}
+{% addtoblock "css" %}
+    <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
+{% endaddtoblock %}
+
+<div class="scl-toolbar btn-group btn-group-sm">
+    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
+</div>
+
+<h1>Review Request</h1>
+
+{% for error in form.non_field_errors %}
+    <div class='alert alert-danger'>{{ error }}</div>
+{% endfor %}
+
+<form action="" method="post" class='form-horizontal'>{% csrf_token %}
+    {{ form }}
+
+    <p>
+        Request a review of Your collection.
+    </p>
+
+    <!-- SUBMIT -->
+    <div class='form-group'>
+        <div class='col-md-9 col-md-offset-3'>
+            <input class='btn btn-default' type='submit' value='Submit review request' />
+        </div>
+    </div>
+</form>
+
+{% endblock %}

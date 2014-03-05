@@ -252,6 +252,19 @@ class ReposForm(forms.ModelForm):
         fields = []
 
 
+class ReviewReqForm(forms.ModelForm):
+
+    def clean_review_req(self):
+        return True
+
+    class Meta:
+        model = SoftwareCollection
+        fields = ['review_req']
+        widgets = {
+            'review_req': forms.HiddenInput(),
+        }
+
+
 class SyncReqForm(forms.ModelForm):
 
     def clean_need_sync(self):
@@ -292,3 +305,4 @@ class FilterForm(forms.Form):
     policy          = forms.ChoiceField(required=False, label='Policy',
                         choices=[('', 'All')] + POLICY_CHOICES_LABEL,
                         widget=forms.Select(attrs={'class': 'form-control'}))
+

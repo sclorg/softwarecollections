@@ -19,7 +19,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 from .forms import (
     FilterForm, CreateForm, UpdateForm, DeleteForm, RateForm,
-    CollaboratorsForm, ReposForm, SyncReqForm,
+    CollaboratorsForm, ReposForm, ReviewReqForm, SyncReqForm,
 )
 from .models import SoftwareCollection, Repo, Score
 
@@ -202,14 +202,19 @@ class Delete(UpdateView):
 delete = Delete.as_view()
 
 
-def app_req(request, slug):
-    scl = get_object_or_404(SoftwareCollection, slug=slug)
-    if scl.approved or scl.approval_req or not request.user.has_perm('edit', obj=scl):
-        raise PermissionDenied()
-    scl.approval_req = True
-    scl.save()
-    messages.success(request, 'Approval requested.')
-    return HttpResponseRedirect(scl.get_absolute_url())
+class ReviewReq(UpdateView):
+    model = SoftwareCollection
+    form_class = ReviewReqForm
+    template_name_suffix = '_review_req'
+
+    def get_object(self, *args, **kwargs):
+        scl = super(ReviewReq, self).get_object(*args, **kwargs)
+        if self.request.user.has_perm('edit', obj=scl):
+            return scl
+        else:
+            raise PermissionDenied()
+
+review_req = ReviewReq.as_view()
 
 
 class SyncReq(UpdateView):
