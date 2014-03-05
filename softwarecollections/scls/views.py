@@ -19,7 +19,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 from .forms import (
     FilterForm, CreateForm, UpdateForm, DeleteForm, RateForm,
-    CollaboratorsForm, ReposForm
+    CollaboratorsForm, ReposForm, SyncReqForm,
 )
 from .models import SoftwareCollection, Repo, Score
 
@@ -212,14 +212,19 @@ def app_req(request, slug):
     return HttpResponseRedirect(scl.get_absolute_url())
 
 
-def sync_req(request, slug):
-    scl = get_object_or_404(SoftwareCollection, slug=slug)
-    if scl.auto_sync or scl.need_sync or not request.user.has_perm('edit', obj=scl):
-        raise PermissionDenied()
-    scl.need_sync = True
-    scl.save()
-    messages.success(request, 'Synchronization with Copr repositories requested.')
-    return HttpResponseRedirect(scl.get_absolute_url())
+class SyncReq(UpdateView):
+    model = SoftwareCollection
+    form_class = SyncReqForm
+    template_name_suffix = '_sync_req'
+
+    def get_object(self, *args, **kwargs):
+        scl = super(SyncReq, self).get_object(*args, **kwargs)
+        if self.request.user.has_perm('edit', obj=scl):
+            return scl
+        else:
+            raise PermissionDenied()
+
+sync_req = SyncReq.as_view()
 
 
 def download(request, slug):

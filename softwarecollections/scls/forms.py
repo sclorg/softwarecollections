@@ -252,6 +252,19 @@ class ReposForm(forms.ModelForm):
         fields = []
 
 
+class SyncReqForm(forms.ModelForm):
+
+    def clean_need_sync(self):
+        return True
+
+    class Meta:
+        model = SoftwareCollection
+        fields = ['need_sync']
+        widgets = {
+            'need_sync': forms.HiddenInput(),
+        }
+
+
 class RateForm(forms.ModelForm):
 
     class Meta:

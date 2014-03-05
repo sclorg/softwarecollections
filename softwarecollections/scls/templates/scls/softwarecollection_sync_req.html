@@ -1,0 +1,45 @@
+{% extends "with_submenu.html" %}
+{% load sekizai_tags %}
+
+{% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
+
+{% block title %}Manage Collaborators{% endblock %}
+
+{% block content %}
+{% addtoblock "css" %}
+    <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
+{% endaddtoblock %}
+
+<div class="scl-toolbar btn-group btn-group-sm">
+    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
+</div>
+
+<h1>Request synchronization with Copr</h1>
+
+{% for error in form.non_field_errors %}
+    <div class='alert alert-danger'>{{ error }}</div>
+{% endfor %}
+
+<form action="" method="post" class='form-horizontal'>{% csrf_token %}
+    {{ form }}
+
+    <p>
+        Request synchronization of repositories from related Copr project
+        <a href="{{ form.instance.get_copr_url }}">
+            {{ form.instance.copr_username }} / {{ form.instance.copr_name }}
+        </a>.
+    </p>
+    <p>
+        Note that You may enable automatic synchronization or change Copr project
+        <a href="{% url "scls:edit" form.instance %}">here</a>.
+    </p>
+
+    <!-- SUBMIT -->
+    <div class='form-group'>
+        <div class='col-md-9 col-md-offset-3'>
+            <input class='btn btn-default' type='submit' value='Submit synchronization request' />
+        </div>
+    </div>
+</form>
+
+{% endblock %}
