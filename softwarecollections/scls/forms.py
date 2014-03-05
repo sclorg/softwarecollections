@@ -115,8 +115,7 @@ class CreateForm(_SclForm):
             'copr_name':     forms.Select(    attrs={'class': 'form-control'}),
             'maintainer':    MaintainerWidget(attrs={'class': 'form-control'}),
             'name':          forms.TextInput( attrs={'class': 'form-control'}),
-            'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT,
-                                                renderer=RadioSelectTableRenderer),
+            'policy':        forms.RadioSelect(renderer=RadioSelectTableRenderer),
         }
 
 

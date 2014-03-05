@@ -76,7 +76,7 @@ class SoftwareCollection(models.Model):
     description     = models.TextField(_('Description'))
     instructions    = models.TextField(_('Instructions'))
     policy          = models.CharField(_('Policy'), max_length=3, null=False,
-                        choices=POLICY_CHOICES_LABEL)
+                        choices=POLICY_CHOICES_TEXT, default='DEV')
     score           = models.SmallIntegerField(null=True, editable=False)
     score_count     = models.IntegerField(default=0, editable=False)
     download_count  = models.IntegerField(default=0, editable=False)
