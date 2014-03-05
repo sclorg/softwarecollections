@@ -1,22 +1,5 @@
 /* FONTS */
-@font-face {
-    font-family: "Open Sans";
-    font-style: normal;
-    font-weight: 400;
-    src: local("Open Sans"), local("OpenSans"), url("https://themes.googleusercontent.com/static/fonts/opensans/v8/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff") format("woff");
-}
-@font-face {
-    font-family: "Oxygen Mono";
-    font-style: normal;
-    font-weight: 400;
-    src: local("Oxygen Mono"), local("OxygenMono-Regular"), url("https://themes.googleusercontent.com/static/fonts/oxygenmono/v2/BzV4DVOwAgGelLT9EC5xyobN6UDyHWBl620a-IRfuBk.woff") format("woff");
-}
-@font-face {
-    font-family: 'Dosis';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Dosis Regular'), local('Dosis-Regular'), url('http://themes.googleusercontent.com/static/fonts/dosis/v1/Ewe0SEXPrakEimFzbOGwB6CWcynf_cDxXwCLxiixG1c.woff') format('woff');
-}
+@import url(https://fonts.googleapis.com/css?family=Dosis:400,600|Open+Sans|Oxygen+Mono);
 
 /* GLOBAL STYLES */
 body {
