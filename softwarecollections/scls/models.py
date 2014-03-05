@@ -127,10 +127,8 @@ class SoftwareCollection(models.Model):
 
     def get_auto_tags(self):
         tags = set()
-        for user in self.collaborators.all():
-            tags.update([user.get_username()])
         for repo in self.enabled_repos.all():
-            tags.update(repo.get_auto_tags())
+            tags.update([repo.distro_version])
         return list(tags)
 
     def add_auto_tags(self):
@@ -264,9 +262,6 @@ class Repo(models.Model):
                 VERSION,
                 RELEASE,
             ]) + '.noarch.rpm'
-
-    def get_auto_tags(self):
-        return [self.name, self.distro, self.distro_version, self.arch]
 
     def get_repo_root(self):
         return os.path.join(self.scl.get_repos_root(), self.name)
