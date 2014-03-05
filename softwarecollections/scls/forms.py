@@ -96,16 +96,16 @@ class _SclForm(forms.ModelForm):
 class CreateForm(_SclForm):
 
     def save(self, commit=True):
-        obj = super(CreateForm, self).save(False)
-        obj.slug       = '{}/{}'.format(obj.maintainer.username, obj.name)
-        obj.title      = pretty_name(obj.name)
-        obj.sync_copr_texts()
-        os.makedirs(obj.get_repos_root())
-        obj.save()
-        obj.sync_copr_repos()
-        obj.add_auto_tags()
-        obj.collaborators.add(obj.maintainer)
-        return obj
+        scl = super(CreateForm, self).save(False)
+        scl.slug       = '{}/{}'.format(scl.maintainer.username, scl.name)
+        scl.title      = pretty_name(scl.name)
+        scl.sync_copr_texts()
+        os.makedirs(scl.get_repos_root())
+        scl.save()
+        scl.sync_copr_repos()
+        scl.add_auto_tags()
+        scl.collaborators.add(scl.maintainer)
+        return scl
 
     class Meta:
         model = SoftwareCollection
@@ -135,7 +135,7 @@ class UpdateForm(_SclForm):
         scl.sync_copr_repos()
         scl.tags = self.cleaned_data['tags']
         scl.add_auto_tags()
-        return obj
+        return scl
 
     class Meta:
         model = SoftwareCollection
@@ -212,7 +212,7 @@ class CollaboratorsForm(forms.ModelForm):
         scl = super(CollaboratorsForm, self).save(commit)
         scl.tags = self.tags
         scl.add_auto_tags()
-        return obj
+        return scl
 
     class Meta:
         model = SoftwareCollection
