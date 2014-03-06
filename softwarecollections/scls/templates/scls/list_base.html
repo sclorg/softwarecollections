@@ -9,7 +9,7 @@
     <h1>{% block title %}{% endblock %}</h1>
         {% include "scls/filter.html" %}
         {% for scl in collections %}
-            {% include "scls/preview.html" %}
+            {% include "scls/softwarecollection_preview.html" %}
         {% empty %}
             {% block empty %}
             <li>{% trans "No corresponding Software Collections." %}</li>
