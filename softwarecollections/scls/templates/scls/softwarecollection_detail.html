@@ -81,7 +81,7 @@
             <td>{{ repo.arch }}</td>
             {% if scl.last_modified %}
                 <td>
-                    <a href="{% url "scls:download" repo.slug %}" title="{{ repo.rpmfile }}">RPM</a>
+                    <a href="{% url "scls:download" repo.slug %}{{ repo.rpmfile }}" title="{{ repo.rpmfile }}">RPM</a>
                     {{ repo.download_count }}x
                 </td>
             {% else %}
