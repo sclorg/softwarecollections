@@ -45,7 +45,7 @@ def _list(request, template, queryset, dictionary, **kwargs):
     else:
         per_page = filter_form.fields['per_page'].initial
         order_by = filter_form.fields['order_by'].initial
-    paginator = Paginator(queryset.order_by(order_by), per_page)
+    paginator = Paginator(queryset.order_by('-approved', order_by), per_page)
     page = request.GET.get('page')
     try:
         collections = paginator.page(page)

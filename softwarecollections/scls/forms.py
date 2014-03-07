@@ -15,9 +15,9 @@ from .models import (
 PER_PAGE_CHOICES = ((10, '10'), (25, '25'), (50, '50'))
 
 ORDER_BY_CHOICES = (
+    ('-download_count', _('download count')),
     ('-score',          _('score')),
     ('title',           _('title')),
-    ('-download_count', _('download count')),
     ('-last_modified',  _('recently built')),
 )
 
