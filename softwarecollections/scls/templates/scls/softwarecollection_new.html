@@ -47,35 +47,26 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 //<![CDATA[
-
-    jQuery(document).ready(function (){
-        jQuery("#id_copr_username").change(function () {
-            var url = "{% url 'scls:coprnames' '__copr_username__' %}"
-                        .replace("__copr_username__", jQuery(this).val());
-            $.get(url, function( projects ) {
-                var $select = $("#id_copr_name");
-                $select.empty();
-                for (i in projects) {
-                    $select.append(
-                        jQuery("<option></option>")
-                            .attr("value", projects[i]).text(projects[i])
-                    );
-                }
-            }, "json");
-        });
-    });
-
-    jQuery(document).ready(function (){
-        jQuery("#id_copr_name").change(function () {
-            var e = jQuery("#id_name")[0];
-            if(!e._changed) {
-                e.value = this.value;
+    var coprnames_url = "{% url 'scls:coprnames' '__copr_username__' %}"
+    $(function() {
+        // if name of scl project hasn't changed or is empty, change it to
+        // copr reponame on selection of copr repo
+        $("#id_copr_name").change(function() {
+            var name = $("#id_name");
+	    console.log(name.val())
+            if(!(name.val() && name.data("changed"))) {
+                name.val(this.value);
+		name.data("changed", false);
             }
+        });
+        $(function() {
+            $("#id_name").change(function() { $(this).data("changed", true) });
         });
     });
 
 //]]>
 </script>
+<script src="/static/scls/javascripts/collection-add-edit.js" type="text/javascript"></script>
 {% endaddtoblock %}
 
 {% endblock %}

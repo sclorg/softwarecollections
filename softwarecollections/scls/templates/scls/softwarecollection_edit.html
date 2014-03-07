@@ -49,26 +49,10 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 //<![CDATA[
-
-    jQuery(document).ready(function (){
-        jQuery("#id_copr_username").change(function () {
-            var url = "{% url 'scls:coprnames' '__copr_username__' %}"
-                        .replace("__copr_username__", jQuery(this).val());
-            $.get(url, function( projects ) {
-                var $select = $("#id_copr_name");
-                $select.empty();
-                for (i in projects) {
-                    $select.append(
-                        jQuery("<option></option>")
-                            .attr("value", projects[i]).text(projects[i])
-                    );
-                }
-            }, "json");
-        });
-    });
-
+    var coprnames_url = "{% url 'scls:coprnames' '__copr_username__' %}"
 //]]>
 </script>
+<script src="/static/scls/javascripts/collection-add-edit.js" type="text/javascript"></script>
 {% endaddtoblock %}
 
 {% endblock %}
