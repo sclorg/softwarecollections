@@ -19,6 +19,8 @@ from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
 from tagging.utils import edit_string_for_tags
 
+from .validators import validate_name
+
 User = get_user_model()
 
 
@@ -62,9 +64,9 @@ POLICY_CHOICES_LABEL = [(key, POLICY_LABEL[key]) for key in POLICIES]
 
 class SoftwareCollection(models.Model):
     # automatic value (maintainer.username/name) used as unique key
-    slug            = models.SlugField(max_length=150, editable=False)
+    slug            = models.CharField(max_length=150, editable=False, db_index=True)
     # local name is unique per local maintainer
-    name            = models.SlugField(_('Name'), max_length=100, db_index=False,
+    name            = models.CharField(_('Name'), max_length=100, validators=[validate_name],
                         help_text=_('Name without spaces (It will be part of the url and rpm name.)'))
     # copr_* are used to identify copr project
     copr_username   = models.CharField(_('Copr User'), max_length=100,

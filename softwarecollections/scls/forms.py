@@ -152,15 +152,13 @@ class UpdateForm(_SclForm):
 
 
 class DeleteForm(forms.ModelForm):
+    scl_name = forms.fields.CharField(required=False,
+                    widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    def __init__(self, *args, **kwargs):
-        super(DeleteForm, self).__init__(*args, **kwargs)
-        self.initial['name'] = ''
-
-    def clean_name(self):
-        if self.cleaned_data['name'] != self.instance.name:
+    def clean_scl_name(self):
+        if self.cleaned_data['scl_name'] != self.instance.name:
             raise forms.ValidationError(_('Enter the name of your collection.'))
-        return self.cleaned_data['name']
+        return self.cleaned_data['scl_name']
 
     def save(self, commit=True):
         scl = super(DeleteForm, self).save(commit)
@@ -169,10 +167,7 @@ class DeleteForm(forms.ModelForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['name']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+        fields = []
 
 
 class CollaboratorsForm(forms.ModelForm):

@@ -29,14 +29,14 @@
         collection into field below:
     </p>
     <div class='form-group'>
-        <div class='col-md-9{% if form.name.errors %} alert alert-danger{% endif %}'>
+        <div class='col-md-9{% if form.scl_name.errors %} alert alert-danger{% endif %}'>
             <div class='input-group'>
-                {{ form.name }}
+                {{ form.scl_name }}
                 <span class='input-group-btn'>
                     <input class='btn btn-default' type="submit" value="Delete" />
                 </span>
             </div>
-            {% for error in form.name.errors %}
+            {% for error in form.scl_name.errors %}
                 <div>{{ error }}</div>
             {% endfor %}
         </div>
