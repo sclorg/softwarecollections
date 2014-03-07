@@ -48,10 +48,10 @@
     </small>
 </h1>
 </div>
-{{ scl.description | markdown2 }}
+{{ scl.description | markdown2:"safe" }}
 
 <h2>Instructions</h2>
-{{ scl.instructions | markdown2 }}
+{{ scl.instructions | markdown2:"safe" }}
 
 <h2>Policy</h2>
 {{ scl.policy_text | markdown2 }}
