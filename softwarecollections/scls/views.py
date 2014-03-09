@@ -11,6 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, UpdateView
 from softwarecollections.copr import CoprProxy
@@ -150,6 +151,10 @@ class Edit(UpdateView):
         else:
             raise PermissionDenied()
 
+    def form_valid(self, form):
+        messages.success(self.request, _('The changes have been saved.'))
+        return super(Edit, self).form_valid(form)
+
 edit = Edit.as_view()
 
 
@@ -165,6 +170,10 @@ class Collaborators(UpdateView):
         else:
             raise PermissionDenied()
 
+    def form_valid(self, form):
+        messages.success(self.request, _('The list of collaborators have been updated.'))
+        return super(Collaborators, self).form_valid(form)
+
 acl = Collaborators.as_view()
 
 
@@ -179,6 +188,10 @@ class Repos(UpdateView):
             return scl
         else:
             raise PermissionDenied()
+
+    def form_valid(self, form):
+        messages.success(self.request, _('The list of enabled repositories have been saved.'))
+        return super(Repos, self).form_valid(form)
 
 repos = Repos.as_view()
 
@@ -199,6 +212,10 @@ class Delete(UpdateView):
         else:
             raise PermissionDenied()
 
+    def form_valid(self, form):
+        messages.success(self.request, _('The Collection has been deleted.'))
+        return super(Delete, self).form_valid(form)
+
 delete = Delete.as_view()
 
 
@@ -214,6 +231,10 @@ class ReviewReq(UpdateView):
         else:
             raise PermissionDenied()
 
+    def form_valid(self, form):
+        messages.success(self.request, _('The review has been requested.'))
+        return super(ReviewReq, self).form_valid(form)
+
 review_req = ReviewReq.as_view()
 
 
@@ -228,6 +249,10 @@ class SyncReq(UpdateView):
             return scl
         else:
             raise PermissionDenied()
+
+    def form_valid(self, form):
+        messages.success(self.request, _('The synchronization has been requested.'))
+        return super(SyncReq, self).form_valid(form)
 
 sync_req = SyncReq.as_view()
 
