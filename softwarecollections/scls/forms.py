@@ -120,7 +120,7 @@ class CreateForm(_SclForm):
 
 
 class UpdateForm(_SclForm):
-    tags = TagField(max_length=200, required=False, help_text=_(
+    tags = TagField(required=False, help_text=_(
         'Enter space separated list of single word tags ' \
         'or comma separated list of tags containing spaces. ' \
         'Use doublequotes to enter name containing comma.'
