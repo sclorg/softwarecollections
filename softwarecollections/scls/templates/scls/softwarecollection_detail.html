@@ -108,19 +108,24 @@
     {% endfor %}
 </div>
 
-{% if scl.score_count %}
 <h2>Rating</h2>
-{% rating_stars 'passive' scl %}
-<p>Rated by {{ scl.score_count }} user{{ scl.score_count|pluralize }}</p>
-{% endif %}
-
-{% allowed 'rate' obj=scl %}
-{% if user_score %}
-<strong>Your rating:</strong>
-{% else %}
-<strong>Rate this collection:</strong>
-{% endif %}
-{% rating_stars 'active' scl user_score %}
-{% endallowed %}
+<div class='row'>
+    {% if scl.score_count %}
+        <div class='col-md-6'>
+            {% rating_stars 'passive' scl %}
+            <p>Rated by {{ scl.score_count }} user{{ scl.score_count|pluralize }}</p>
+        </div>
+    {% endif %}
+    <div class='col-md-6'>
+        {% allowed 'rate' obj=scl %}
+            {% rating_stars 'active' scl user_score %}
+            {% if user_score %}
+                <strong>Your rating:</strong>
+            {% else %}
+                <strong>Rate this collection:</strong>
+            {% endif %}
+        {% endallowed %}
+    </div>
+</div>
 
 {% endblock %}
