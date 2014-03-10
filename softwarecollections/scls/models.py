@@ -220,14 +220,6 @@ class SoftwareCollection(models.Model):
         # delete scl in the database
         super(SoftwareCollection, self).delete(*args, **kwargs)
 
-    @property
-    def description_truncated(self):
-        if len(self.description) > 300:
-            link = '<a href="{}">[more]</a>'.format(self.get_absolute_url())
-            return self.description[:300].rsplit(' ', 1)[0] + '... ' + link
-        else:
-            return self.description
-
 tagging.register(SoftwareCollection)
 
 
