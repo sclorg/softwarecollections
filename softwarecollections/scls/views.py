@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.mail import mail_managers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Manager
@@ -227,12 +228,21 @@ class ReviewReq(UpdateView):
     def get_object(self, *args, **kwargs):
         scl = super(ReviewReq, self).get_object(*args, **kwargs)
         if self.request.user.has_perm('edit', obj=scl):
+            self.scl = scl
             return scl
         else:
             raise PermissionDenied()
 
     def form_valid(self, form):
         messages.success(self.request, _('The review has been requested.'))
+        subject = _('The review has been requested for {title}') \
+                    .format(title=self.scl.title)
+        message = _(
+            'The review has been requested for {title}.\n' \
+            'Collection URL: http://www.softwarecollections.org{url}\n' \
+            'Admin URL: http://www.softwarecollections.org/en/admin/scls/softwarecollection/{id}/'
+        ).format(title=self.scl.title, url=self.scl.get_absolute_url(), id=self.scl.id)
+        mail_managers(subject, message, fail_silently=True)
         return super(ReviewReq, self).form_valid(form)
 
 review_req = ReviewReq.as_view()
