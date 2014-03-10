@@ -7,8 +7,12 @@
     {% if scl.score_count %}
     {% rating_stars 'passive' scl %}
     {% endif %}
-    <h1><a href="{{ scl.get_absolute_url }}">{{ scl.title }}</a>
+    <h1><a href='{{ scl.get_absolute_url }}'>{{ scl.title }}</a>
         <small>
+            {% if scl.approved %}
+                <span class='glyphicon glyphicon-ok-circle approved'
+                    title='This collection has been approved'></span>
+            {% endif %}
             <span style='display: inline-block'>by
                 <a href="{% url "scls:list_user" scl.maintainer.username %}">
                     {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}

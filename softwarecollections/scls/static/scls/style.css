@@ -39,3 +39,6 @@ table.yum-repos td {
     padding: 5px !important;
 }
 
+.approved {
+    color: #FFB428;
+}
