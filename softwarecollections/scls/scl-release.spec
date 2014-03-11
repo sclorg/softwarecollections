@@ -19,7 +19,7 @@ echo "Nothing to build"
 
 %install
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d
-cat >    %{buildroot}%{_sysconfdir}/yum.repos.d/%{scl_name}.repo <<EOF
+cat >    %{buildroot}%{_sysconfdir}/yum.repos.d/%{scl_name}-%{repo_name}.repo <<EOF
 [%{scl_name}-%{repo_name}]
 name=%{scl_title} - %{repo_name}
 baseurl=https://www.softwarecollections.org%{repo_baseurl}
