@@ -15,15 +15,6 @@ class AllowedNode(template.base.Node):
     def __repr__(self):
         return "<AllowedNode>"
 
-    #def __iter__(self):
-    #    for nodelist in self.ifnodes, self.elsenodes:
-    #        for node in nodelist:
-    #            yield node
-
-    #@property
-    #def nodelist(self):
-    #    return NodeList(node for _, nodelist in self.conditions_nodelists for node in nodelist)
-
     def render(self, context):
         user = self.user.resolve(context) \
             if self.user else context['request'].user
@@ -42,7 +33,7 @@ class AllowedNode(template.base.Node):
 @register.tag
 def allowed(parser, token):
     """
-    The ``{% has_perms %}`` tag evaluates user permissions, and if the result is "true"
+    The ``{% allowed %}`` tag evaluates user permissions, and if the result is "true"
     (the user has appropriate permissions), the contents of the block are output::
 
         {% allowed 'news.add' %}
