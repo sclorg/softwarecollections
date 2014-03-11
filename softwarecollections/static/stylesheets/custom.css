@@ -52,6 +52,22 @@ p {
     padding-bottom: 5ex;
 }
 
+.award {
+    background-color: #FF3978;
+}
+
+.award img {
+    height: 92px;
+}
+
+.award p {
+    font-size: 250%;
+    font-family: 'Dosis';
+    margin: 16px;
+    padding: 0;
+    line-height: 1.5;
+}
+
 .btn, .td-gray {
     background-color: #EEE;
 }
