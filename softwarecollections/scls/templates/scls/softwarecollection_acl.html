@@ -1,14 +1,10 @@
 {% extends "with_submenu.html" %}
-{% load sekizai_tags %}
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
 {% block title %}Manage Collaborators{% endblock %}
 
 {% block content %}
-{% addtoblock "css" %}
-    <link href="/static/scls/style.css" media="screen" rel="stylesheet" type="text/css" />
-{% endaddtoblock %}
 
 <div class="scl-toolbar btn-group btn-group-sm">
     <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
