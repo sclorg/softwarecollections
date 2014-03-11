@@ -4,21 +4,19 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 
-from softwarecollections.scls.models import SoftwareCollection
+from softwarecollections.scls.models import Repo
 
 
 class Command(BaseCommand):
-    help = 'Sync SCLs with copr repos'
+    help = 'Rebuild all release RPMs'
 
     def handle(self, *args, **options):
         failed = 0
-        for scl in SoftwareCollection.objects.filter(need_sync=True):
+        for repo in Repo.objects.filter(enabled=True):
             try:
-                self.stdout.write('Syncing {}'.format(scl.slug))
-                scl.sync()
-                if not scl.auto_sync:
-                    scl.need_sync = False
-                    scl.save()
+                self.stdout.write('rpmbuild {}'.format(repo.rpmname))
+                repo.rpmbuild()
+                repo.createrepo()
             except Exception as e:
                 self.stderr.write(str(e))
                 failed += 1
