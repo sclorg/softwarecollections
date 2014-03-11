@@ -67,7 +67,7 @@ class SoftwareCollection(models.Model):
     slug            = models.CharField(max_length=150, editable=False, db_index=True)
     # local name is unique per local maintainer
     name            = models.CharField(_('Name'), max_length=100, validators=[validate_name],
-                        help_text=_('Name without spaces (It will be part of the url and rpm name.)'))
+                        help_text=_('Name without spaces (It will be part of the url and RPM name.)'))
     # copr_* are used to identify copr project
     copr_username   = models.CharField(_('Copr User'), max_length=100,
                         help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
@@ -258,13 +258,20 @@ class Repo(models.Model):
         return self.name.rsplit('-', 1)[1]
 
     @property
+    def rpmname(self):
+        return '-'.join([
+            self.scl.maintainer.get_username(),
+            self.scl.name,
+            self.name,
+        ])
+
+    @property
     def rpmfile(self):
         return '-'.join([
-                self.scl.name,
-                self.name,
-                VERSION,
-                RELEASE,
-            ]) + '.noarch.rpm'
+            self.rpmname,
+            VERSION,
+            RELEASE,
+        ]) + '.noarch.rpm'
 
     def get_repo_root(self):
         return os.path.join(self.scl.get_repos_root(), self.name)
@@ -307,8 +314,9 @@ class Repo(models.Model):
                 '-D',       'scl_title {}'.format(self.scl.title),
                 '-D', 'scl_description {}'.format(self.scl.description),
                 '-D',       'repo_name {}'.format(self.name),
-                '-D',    'repo_version {}'.format(VERSION),
-                '-D',    'repo_release {}'.format(RELEASE),
+                '-D',        'pkg_name {}'.format(self.rpmname),
+                '-D',     'pkg_version {}'.format(VERSION),
+                '-D',     'pkg_release {}'.format(RELEASE),
                 '-D',     'repo_distro {}'.format(self.distro),
                 '-D',       'repo_arch {}'.format(self.arch),
                 '-D',    'repo_baseurl {}'.format(self.get_repo_url()),
