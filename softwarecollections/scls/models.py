@@ -174,7 +174,7 @@ class SoftwareCollection(models.Model):
         self.sync_copr_repos()
         with self.lock:
             download_count = 0
-            for repo in self.enabled_repos.all():
+            for repo in self.repos.all():
                 repo.sync()
                 download_count += repo.download_count
             self.download_count = download_count
