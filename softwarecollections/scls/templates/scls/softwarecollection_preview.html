@@ -2,6 +2,7 @@
 {% load md2 %}
 {% load rating_stars %}
 {% load url from future %}
+{% load truncate_tags %}
 
 <div class='page-header collections-list'>
     {% if scl.score_count %}
@@ -22,4 +23,6 @@
     </h1>
 </div>
 
-{{ scl.description | markdown2:"safe" | truncatewords_html:50 }}
+{% truncate 50 words_html %}
+    {{ scl.description | markdown2:"safe" }}
+{% truncatestop %}... <a href='{{ scl.get_absolute_url }}'>[more]</a>{% endtruncate %}
