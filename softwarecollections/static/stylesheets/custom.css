@@ -193,11 +193,6 @@ table.yum-repos td {
     padding: 5px;
 }
 
-.collections-list .stars {
-    float: right;
-    padding-top: 1.5ex;
-}
-
 .page-header h1 {
     padding-bottom: 0px;
     margin-bottom: 0px;
@@ -222,5 +217,11 @@ table.yum-repos td {
 
 .approved {
     color: #FFB428;
+}
+
+.approved-sign {
+    font-size: 130%;
+    line-height: 2;
+    font-weight: bold;
 }
 

@@ -5,24 +5,49 @@
 {% load truncate_tags %}
 
 <div class='page-header collections-list'>
-    {% if scl.score_count %}
-    {% rating_stars 'passive' scl %}
-    {% endif %}
     <h1><a href='{{ scl.get_absolute_url }}'>{{ scl.title }}</a>
         <small>
-            {% if scl.approved %}
-                <span class='glyphicon glyphicon-ok-circle approved'
-                    title='This collection has been approved'></span>
-            {% endif %}
-            <span style='display: inline-block'>by
-                <a href="{% url "scls:list_user" scl.maintainer.username %}">
-                    {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
-                </a>
-            </span>
         </small>
     </h1>
 </div>
 
-{% truncate 50 words_html %}
-    {{ scl.description | markdown2:"safe" }}
-{% truncatestop %}... <a href='{{ scl.get_absolute_url }}'>[more]</a>{% endtruncate %}
+<div class='row'>
+    <div class='col-md-4'>
+        <div class='well well-sm'>
+            <div class='text-center'>
+                {% if scl.score_count %}
+                    {% rating_stars 'passive' scl %}
+                {% endif %}
+                {% if scl.approved %}
+                    <div class='row'>
+                        <span class='approved approved-sign'>
+                            <span class='glyphicon glyphicon-ok-circle'
+                                title='This collection has been approved'></span>
+                            APPROVED
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            Author:
+            <a href="{% url "scls:list_user" scl.maintainer.username %}">
+                {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
+            </a>
+
+            <br />
+            Downloads:
+            {{ scl.download_count }}
+        </div>
+    </div>
+
+    <div class='col-md-8'>
+        {% if scl.description %}
+            {% truncate 50 words_html %}
+                {{ scl.description | markdown2:"safe" }}
+            {% truncatestop %}... <a href='{{ scl.get_absolute_url }}'>[more]</a>{% endtruncate %}
+        {% else %}
+            <em>No description available</em>
+        {% endif %}
+    </div>
+
+</div>
