@@ -229,7 +229,6 @@ class ReviewReq(UpdateView):
     def get_object(self, *args, **kwargs):
         scl = super(ReviewReq, self).get_object(*args, **kwargs)
         if self.request.user.has_perm('edit', obj=scl):
-            self.scl = scl
             return scl
         else:
             raise PermissionDenied()
@@ -237,12 +236,12 @@ class ReviewReq(UpdateView):
     def form_valid(self, form):
         messages.success(self.request, _('The review has been requested.'))
         subject = _('The review has been requested for {title}') \
-                    .format(title=self.scl.title)
+                    .format(title=self.object.title)
         message = _(
             'The review has been requested for {title}.\n' \
             'Collection URL: http://www.softwarecollections.org{url}\n' \
             'Admin URL: http://www.softwarecollections.org/en/admin/scls/softwarecollection/{id}/'
-        ).format(title=self.scl.title, url=self.scl.get_absolute_url(), id=self.scl.id)
+        ).format(title=self.object.title, url=self.object.get_absolute_url(), id=self.object.id)
         mail_managers(subject, message, fail_silently=True)
         return super(ReviewReq, self).form_valid(form)
 
