@@ -22,6 +22,7 @@ from urllib.parse import urlsplit, urlunsplit
 from .forms import (
     FilterForm, CreateForm, UpdateForm, DeleteForm, RateForm,
     CollaboratorsForm, ReposForm, ReviewReqForm, SyncReqForm,
+    ComplainForm
 )
 from .models import SoftwareCollection, Repo, Score
 
@@ -265,6 +266,34 @@ class SyncReq(UpdateView):
         return super(SyncReq, self).form_valid(form)
 
 sync_req = SyncReq.as_view()
+
+
+class Complain(UpdateView):
+    model = SoftwareCollection
+    form_class = ComplainForm
+    template_name_suffix = '_complain'
+
+    def form_valid(self, form):
+        email = 'jdornak@redhat.com'
+        
+        subject = _('[{title}] {subject}').format(
+            title=self.object.title,
+            subject=form.cleaned_data['subject']
+        )
+        message = _(
+            'Reporter: {email}\n' \
+            'Collection: {title}\n' \
+            'Message:\n{message}'
+        ).format(
+            email=form.cleaned_data['email'],
+            title=self.object.title,
+            message=form.cleaned_data['message']
+        )
+        mail_managers(subject, message, fail_silently=False)
+        messages.success(self.request, _('Your report has been sent to administrators.'))
+        return super(Complain, self).form_valid(form)
+
+complain = Complain.as_view()
 
 
 def download(request, slug):

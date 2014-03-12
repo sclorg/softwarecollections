@@ -10,8 +10,8 @@
 
 {% block content %}
 
-{% allowed 'edit' obj=scl %}
 <div class="scl-toolbar btn-group btn-group-sm">
+    {% allowed 'edit' obj=scl %}
     <a class='btn btn-default' href="{% url "scls:edit" scl %}">edit</a>
     <a class='btn btn-default' href="{% url "scls:acl" scl %}">collaborators</a>
     <a class='btn btn-default' href="{% url "scls:repos" scl %}">repos</a>
@@ -32,8 +32,10 @@
     <a class='btn btn-default' href="{% url "scls:review_req" scl %}">review request</a>
     {% endif %}
     <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
+    {% notallowed %}
+    <a class='btn btn-default' href="{% url "scls:complain" scl %}">complain</a>
+    {% endallowed %}
 </div>
-{% endallowed %}
 
 <div class='page-header'>
 <h1>{{ scl.title }}

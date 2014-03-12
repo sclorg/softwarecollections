@@ -273,6 +273,19 @@ class SyncReqForm(forms.ModelForm):
         }
 
 
+class ComplainForm(forms.ModelForm):
+    email   = forms.EmailField(
+                widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    subject = forms.CharField(
+                widget=forms.TextInput(attrs={'class': 'form-control'}))
+    message = forms.CharField(
+                widget=forms.Textarea(attrs={'class': 'form-control', 'rows': '6'}))
+
+    class Meta:
+        model = SoftwareCollection
+        fields = []
+
+
 class RateForm(forms.ModelForm):
 
     class Meta:
