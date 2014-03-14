@@ -21,6 +21,7 @@ BuildRequires:     python3-setuptools
 
 Requires:          createrepo_c
 Requires:          cronie
+Requires:          flite
 Requires:          httpd
 Requires:          mod_ssl
 Requires:          python3-django >= 1.6
@@ -31,6 +32,7 @@ Requires:          python3-django-tagging
 Requires:          python3-flock
 Requires:          python3-mod_wsgi
 Requires:          python3-openid
+Requires:          python3-pillow
 Requires:          python3-requests
 Requires:          rpm-build
 Requires:          yum-utils

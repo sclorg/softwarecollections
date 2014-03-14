@@ -1,4 +1,5 @@
 import os
+from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms.forms import pretty_name
@@ -280,6 +281,7 @@ class ComplainForm(forms.ModelForm):
                 widget=forms.TextInput(attrs={'class': 'form-control'}))
     message = forms.CharField(
                 widget=forms.Textarea(attrs={'class': 'form-control', 'rows': '6'}))
+    captcha = CaptchaField()
 
     class Meta:
         model = SoftwareCollection

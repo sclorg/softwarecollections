@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'softwarecollections.scls',
     'softwarecollections.auth',
     'south',
+    'captcha',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -126,4 +127,14 @@ LOGIN_REDIRECT_URL = '/'
 
 # The number of days a password reset link is valid for
 PASSWORD_RESET_TIMEOUT_DAYS = 3
+
+CAPTCHA_FONT_SIZE        = 32
+CAPTCHA_LETTER_ROTATION  = None
+CAPTCHA_BACKGROUND_COLOR = '#ffffff'
+CAPTCHA_FOREGROUND_COLOR = '#001100'
+CAPTCHA_CHALLENGE_FUNCT  = 'captcha.helpers.math_challenge'
+CAPTCHA_NOISE_FUNCTIONS  = ()
+CAPTCHA_FILTER_FUNCTIONS = ()
+CAPTCHA_FLITE_PATH       = '/usr/bin/flite'
+CAPTCHA_TIMEOUT          = 20
 
