@@ -29,7 +29,7 @@
                 {% endif %}
             </div>
 
-            Author:
+            Maintainer:
             <a href="{% url "scls:list_user" scl.maintainer.username %}">
                 {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
             </a>
