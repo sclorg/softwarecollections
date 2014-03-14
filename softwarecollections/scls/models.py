@@ -34,11 +34,11 @@ DISTRO_ICONS = ('fedora', 'epel')
 POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
 
 POLICY_TEXT = {
-    'DEV':  '**Developing**: '
+    'DEV':  '**Unpublished**: '
             'Not publicly listed, this is primarily for developers trying out '
             'SoftwareCollections.org to see if they want to publish software '
             'or just for their own packaging purposes.',
-    'Q-D':  '**Quick and Dirty**: '
+    'Q-D':  '**Unmaintained**: '
             'Software will be publicly listed, but users will be warned '
             'it is not considered stable. May be useful for some users, '
             'but no guarantees.',
@@ -53,8 +53,8 @@ POLICY_TEXT = {
 
 
 POLICY_LABEL = {
-    'DEV': 'Developing',
-    'Q-D': 'Quick and Dirty',
+    'DEV': 'Unpublished',
+    'Q-D': 'Unmaintained',
     'COM': 'Community Repositories',
     'PRO': 'Professional',
 }
