@@ -27,6 +27,7 @@ Requires:          mod_ssl
 Requires:          python3-django >= 1.6
 Requires:          python3-django-markdown2
 Requires:          python3-django-sekizai
+Requires:          python3-django-simple-captcha
 Requires:          python3-django-south
 Requires:          python3-django-tagging
 Requires:          python3-flock
