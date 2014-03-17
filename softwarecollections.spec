@@ -116,6 +116,16 @@ if [ ! -e        %{scls_statedir}/secret_key ]; then
     dd bs=1k  of=%{scls_statedir}/secret_key if=/dev/urandom count=5
 fi
 
+# link default certificate
+if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.crt ]; then
+    ln -s localhost.crt %{_sysconfdir}/pki/tls/certs/softwarecollections.org.crt
+fi
+
+# link default private key
+if [ ! -e               %{_sysconfdir}/pki/tls/private/softwarecollections.org.key ]; then
+    ln -s localhost.key %{_sysconfdir}/pki/tls/private/softwarecollections.org.key
+fi
+
 service httpd condrestart
 su apache - -s /bin/bash -c "softwarecollections syncdb --migrate --noinput"
 softwarecollections collectstatic --noinput

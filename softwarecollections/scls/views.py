@@ -239,8 +239,8 @@ class ReviewReq(UpdateView):
                     .format(title=self.object.title)
         message = _(
             'The review has been requested for {title}.\n' \
-            'Collection URL: http://www.softwarecollections.org{url}\n' \
-            'Admin URL: http://www.softwarecollections.org/en/admin/scls/softwarecollection/{id}/'
+            'Collection URL: http://softwarecollections.org{url}\n' \
+            'Admin URL: http://softwarecollections.org/en/admin/scls/softwarecollection/{id}/'
         ).format(title=self.object.title, url=self.object.get_absolute_url(), id=self.object.id)
         mail_managers(subject, message, fail_silently=True)
         return super(ReviewReq, self).form_valid(form)

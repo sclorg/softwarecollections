@@ -23,7 +23,7 @@ with open(os.path.join(BASE_DIR, 'secret_key'), 'rb') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.softwarecollections.org']
+ALLOWED_HOSTS = ['softwarecollections.org']
 
 # Emails
 # https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-ADMINS

@@ -5,7 +5,7 @@ Summary:	%{scl_title} Repository Configuration
 
 Group:		System Environment/Base
 License:	BSD
-URL:		https://www.softwarecollections.org
+URL:		https://softwarecollections.org
 BuildArch:	noarch
 
 %description
@@ -22,7 +22,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d
 cat >    %{buildroot}%{_sysconfdir}/yum.repos.d/%{pkg_name}.repo <<EOF
 [%{pkg_name}]
 name=%{scl_title} - %{repo_name}
-baseurl=https://www.softwarecollections.org%{repo_baseurl}
+baseurl=https://softwarecollections.org%{repo_baseurl}
 enabled=1
 EOF
 
