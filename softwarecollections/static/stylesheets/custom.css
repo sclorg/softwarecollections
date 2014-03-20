@@ -183,11 +183,6 @@ a {
     float: right;
 }
 
-.pagination {
-    padding-top: 10px;
-    text-align: center;
-}
-
 table.yum-repos th,
 table.yum-repos td {
     padding: 5px;
