@@ -343,10 +343,19 @@ class Repo(models.Model):
             # create config file
             cfg = os.path.join(cache_dir, 'repo.conf')
             with open(cfg, 'w') as f:
-                f.write("[main]\nreposdir=\ncachedir={cache_dir}\n\n"
-                        "[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n"
-                        "".format(cache_dir=cache_dir, name=self.name, url=self.copr_url))
+                content="""[main]
+reposdir=
+cachedir={cache_dir}
 
+[{name}]
+name={name}
+baseurl={url}
+gpgcheck=0
+""".format(cache_dir=cache_dir, name=self.name, url=self.copr_url)
+                f.write(content)
+                log.write("repo.conf:\n"+content)
+
+            log.write("reposync -c {} -p {} -r {}".format(cfg, self.scl.get_repos_root(), self.name))
             # run reposync
             return subprocess.call([
                 'reposync', '-c', cfg, '-p', self.scl.get_repos_root(), '-r', self.name
