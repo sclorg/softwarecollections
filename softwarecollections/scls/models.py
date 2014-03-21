@@ -334,6 +334,11 @@ class Repo(models.Model):
                 self.name
             )
             try:
+               # workaround BZ 1079387
+               shutil.rmtree('/var/tmp/yum-apache-*')
+            except:
+               pass
+            try:
                 shutil.rmtree(cache_dir)
             except:
                 pass
