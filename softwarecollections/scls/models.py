@@ -360,10 +360,10 @@ gpgcheck=0
                 f.write(content)
                 log.write("repo.conf:\n"+content)
 
-            log.write("reposync -c {} -p {} -r {}".format(cfg, self.scl.get_repos_root(), self.name))
+            log.write("reposync -t -c {} -p {} -r {}".format(cfg, self.scl.get_repos_root(), self.name))
             # run reposync
             return subprocess.call([
-                'reposync', '-c', cfg, '-p', self.scl.get_repos_root(), '-r', self.name
+                'reposync', '-t', '-c', cfg, '-p', self.scl.get_repos_root(), '-r', self.name
             ], stdout=log, stderr=log, timeout=timeout)
 
     def createrepo(self, timeout=None):
