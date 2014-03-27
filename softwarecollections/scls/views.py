@@ -242,7 +242,7 @@ class ReviewReq(UpdateView):
             'Collection URL: http://softwarecollections.org{url}\n' \
             'Admin URL: http://softwarecollections.org/en/admin/scls/softwarecollection/{id}/'
         ).format(title=self.object.title, url=self.object.get_absolute_url(), id=self.object.id)
-        mail_managers(subject, message, 'admin@softwarecollections.org', fail_silently=True)
+        mail_managers(subject, message, fail_silently=True)
         return super(ReviewReq, self).form_valid(form)
 
 review_req = ReviewReq.as_view()
@@ -288,7 +288,7 @@ class Complain(UpdateView):
             title=self.object.title,
             message=form.cleaned_data['message']
         )
-        mail_managers(subject, message, 'admin@softwarecollections.org', fail_silently=False)
+        mail_managers(subject, message, fail_silently=False)
         messages.success(self.request, _('Your report has been sent to administrators.'))
         return super(Complain, self).form_valid(form)
 

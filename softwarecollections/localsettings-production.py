@@ -34,7 +34,7 @@ ADMINS = (
     ('Miroslav Suchý', 'msuchy@redhat.com'),
 )
 MANAGERS = ADMINS
-SERVER_EMAIL = 'root@softwarecollections.org'
+SERVER_EMAIL = 'admin@softwarecollections.org'
 
 # COPR
 COPR_URL = 'http://copr-fe.cloud.fedoraproject.org'
