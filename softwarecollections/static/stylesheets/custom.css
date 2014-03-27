@@ -220,3 +220,9 @@ table.yum-repos td {
     font-weight: bold;
 }
 
+#bh-logo {
+    background-color: #fff;
+    padding: 2px 5px 6px;
+    border-radius: 3px;
+}
+
