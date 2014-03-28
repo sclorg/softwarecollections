@@ -41,6 +41,13 @@ def _list(request, template, queryset, dictionary, **kwargs):
             queryset = queryset.filter(approved=True)
         if filter_form.cleaned_data['policy']:
             queryset = queryset.filter(policy=filter_form.cleaned_data['policy'])
+        if filter_form.cleaned_data['repo']:
+            queryset = queryset.filter(
+                id__in=Repo.objects.filter(
+                    enabled=True,
+                    name=filter_form.cleaned_data['repo']
+                ).values('scl_id')
+            )
         per_page = filter_form.cleaned_data['per_page'] or \
                    filter_form.fields['per_page'].initial
         order_by = filter_form.cleaned_data['order_by'] or \

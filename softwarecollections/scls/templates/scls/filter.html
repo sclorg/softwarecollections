@@ -26,20 +26,29 @@
                 <div class='row'>
 
                     <!-- POLICY -->
-                    <div class='col-md-5 col-sm-7 col-xs-12'>
-                        <label for='{{ filter_form.policies.id_for_label }}'
+                    <div class='col-md-4 col-sm-7 col-xs-12'>
+                        <label for='{{ filter_form.policy.id_for_label }}'
                             class='control-label col-md-4 col-sm-4 col-xs-4'>Policy</label>
                         <div class='col-md-8 col-sm-8 col-xs-8'>
                             {{ filter_form.policy }}
                         </div>
                     </div>
 
+                    <!-- REPO -->
+                    <div class='col-md-5 col-sm-5 col-xs-12'>
+                        <label for='{{ filter_form.repo.id_for_label }}'
+                            class='control-label col-md-4 col-sm-4 col-xs-4'>Repo</label>
+                        <div class='col-md-8 col-sm-8 col-xs-8'>
+                            {{ filter_form.repo }}
+                        </div>
+                    </div>
+
                     <!-- APPROVED -->
-                    <div class='col-md-4 col-sm-5 col-xs-12'>
+                    <div class='col-md-3 col-sm-7 col-xs-12'>
                         <label for='{{ filter_form.approved.id_for_label }}'
-                            class='control-label col-md-5 col-sm-6 col-xs-4'>{{ filter_form.approved.label }}
+                            class='control-label col-md-8 col-sm-4 col-xs-4'>{{ filter_form.approved.label }}
                         </label>
-                        <div class='col-md-7 col-sm-6 col-xs-8 form-control-static'>
+                        <div class='col-md-4 col-sm-8 col-xs-8 form-control-static'>
                             {{ filter_form.approved }}
                         </div>
                     </div>
@@ -51,7 +60,7 @@
                 <div class='row'>
 
                     <!-- ORDER BY -->
-                    <div class='col-md-5 col-sm-7 col-xs-12'>
+                    <div class='col-md-4 col-sm-7 col-xs-12'>
                         <label for='{{ filter_form.order_by.id_for_label}}'
                             class='control-label col-md-4 col-sm-4 col-xs-4'>{{ filter_form.order_by.label }}</label>
                         <div class='col-md-8 col-sm-8 col-xs-8'>
@@ -60,10 +69,10 @@
                     </div>
 
                     <!-- PER PAGE -->
-                    <div class='col-md-4 col-sm-5 col-xs-12'><!-- style='background-color: red'>-->
+                    <div class='col-md-5 col-sm-5 col-xs-12'><!-- style='background-color: red'>-->
                         <label for='{{ filter_form.per_page.id_for_label}}'
-                            class='control-label col-md-5 col-sm-5 col-xs-4'>{{ filter_form.per_page.label }}</label>
-                        <div class='col-md-7 col-sm-7 col-xs-8'>
+                            class='control-label col-md-4 col-sm-6 col-xs-4'>{{ filter_form.per_page.label }}</label>
+                        <div class='col-md-8 col-sm-6 col-xs-8'>
                             {{ filter_form.per_page }}
                         </div>
                     </div>

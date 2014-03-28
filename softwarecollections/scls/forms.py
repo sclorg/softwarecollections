@@ -299,20 +299,32 @@ class RateForm(forms.ModelForm):
 
 
 class FilterForm(forms.Form):
-    search          = forms.CharField(required=False, max_length=999,
-                        widget=forms.TextInput(attrs={'class': 'form-control',
-                            'placeholder': 'Search Text'}))
-    search_desc     = forms.BooleanField(required=False, label='search description')
-    approved        = forms.BooleanField(required=False, label='Approved')
-    per_page        = forms.ChoiceField(required=False, label='Per page',
-                        initial=PER_PAGE_CHOICES[0][0],
-                        choices=PER_PAGE_CHOICES,
-                        widget=forms.Select(attrs={'class': 'form-control'}))
-    order_by        = forms.ChoiceField(required=False, label='Order',
-                        initial=ORDER_BY_CHOICES[0][0],
-                        choices=ORDER_BY_CHOICES,
-                        widget=forms.Select(attrs={'class': 'form-control'}))
-    policy          = forms.ChoiceField(required=False, label='Policy',
-                        choices=[('', 'All')] + POLICY_CHOICES_LABEL,
-                        widget=forms.Select(attrs={'class': 'form-control'}))
+    search      = forms.CharField(required=False, max_length=999,
+                    widget=forms.TextInput(attrs={'class': 'form-control',
+                        'placeholder': 'Search Text'}))
+    search_desc = forms.BooleanField(required=False, label='search description')
+    approved    = forms.BooleanField(required=False,
+                    help_text='Display only collections, which have passed a review.')
+    per_page    = forms.ChoiceField(required=False, label='Per page',
+                    initial=PER_PAGE_CHOICES[0][0],
+                    choices=PER_PAGE_CHOICES,
+                    widget=forms.Select(attrs={'class': 'form-control'}))
+    order_by    = forms.ChoiceField(required=False, label='Order',
+                    initial=ORDER_BY_CHOICES[0][0],
+                    choices=ORDER_BY_CHOICES,
+                    widget=forms.Select(attrs={'class': 'form-control'}))
+    policy      = forms.ChoiceField(required=False, label='Policy',
+                    choices=[('', 'All')] + POLICY_CHOICES_LABEL,
+                    widget=forms.Select(attrs={'class': 'form-control'}))
+    repo        = forms.ChoiceField(required=False, label='Repository',
+                    widget=forms.Select(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        super(FilterForm, self).__init__(*args, **kwargs)
+        self.fields['repo'].choices = [('', 'All')] + list(
+            map(
+                lambda r: (r['name'], r['name'].capitalize().replace('-', ' ', 1).replace('-', ' - ')),
+                Repo.objects.values('name').distinct()
+            )
+        )
 
