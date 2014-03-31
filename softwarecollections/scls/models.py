@@ -51,7 +51,7 @@ POLICY_TEXT = {
             'These repositories are cared for, possibly by upstream communities '
             'developing the software, but these are best-effort repositories '
             'that should not be depended on for production deployments. They '
-            'are updated with bug fixes and security fixes, but the repository ',
+            'are updated with bug fixes and security fixes, but the repository '
             'owner is not making any statement about doing so in a timely manner.',
     'PRO':  '**Professional**: '
             'These repositories are being developed to be used in production '
