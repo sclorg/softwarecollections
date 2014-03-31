@@ -1,0 +1,11 @@
+table#indexlist {
+    width: 100%;
+}
+
+table#indexlist td {
+    padding: 5px;
+}
+
+table#indexlist tr.odd {
+    background-color: #eee;
+}
