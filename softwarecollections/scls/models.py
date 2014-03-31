@@ -35,20 +35,30 @@ POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
 
 POLICY_TEXT = {
     'DEV':  '**Unpublished**: '
-            'Not publicly listed, this is primarily for developers trying out '
-            'SoftwareCollections.org to see if they want to publish software '
-            'or just for their own packaging purposes.',
+            'These SCLs are **not** listed publicly, so users browsing the '
+            'SoftwareCollections.org index will not see these packages or be '
+            'able to install them. This is for collections that are currently '
+            'in development prior to release to the public, or for packages '
+            'that are for your personal use.',
     'Q-D':  '**Unmaintained**: '
-            'Software will be publicly listed, but users will be warned '
-            'it is not considered stable. May be useful for some users, '
-            'but no guarantees.',
+            'This software will be publicly listed, but users will be warned '
+            "they are potentially unstable and there's no assurance of any "
+            'effort to update the repository beyond the existing build. These '
+            'repositories may be suitable for trying software that is not '
+            'natively available for your system, but are considered not '
+            'suitable for long-term use - and certainly not for production deployments.',
     'COM':  '**Community Repositories**: '
-            'These repositories are cared for, but these are best-effort '
-            'repositories that should not be used in production.',
+            'These repositories are cared for, possibly by upstream communities '
+            'developing the software, but these are best-effort repositories '
+            'that should not be depended on for production deployments. They '
+            'are updated with bug fixes and security fixes, but the repository ',
+            'owner is not making any statement about doing so in a timely manner.',
     'PRO':  '**Professional**: '
-            'Being developed to be used in production. '
-            'The individual or team that maintains this repository is planning '
-            'to issue updates, bug fixes, and security updates as needed.',
+            'These repositories are being developed to be used in production '
+            'deployments. The individual or organization that maintains this '
+            'repository is planning to issue updates, bug fixes, and security '
+            'updates in a timely fashion.',
+
 }
 
 
