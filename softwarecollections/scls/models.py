@@ -40,7 +40,7 @@ POLICY_TEXT = {
             'able to install them. This is for collections that are currently '
             'in development prior to release to the public, or for packages '
             'that are for your personal use.',
-    'Q-D':  '**Unmaintained**: '
+    'Q-D':  '**Incubator**: '
             'This software will be publicly listed, but users will be warned '
             "they are potentially unstable and there's no assurance of any "
             'effort to update the repository beyond the existing build. These '
@@ -64,7 +64,7 @@ POLICY_TEXT = {
 
 POLICY_LABEL = {
     'DEV': 'Unpublished',
-    'Q-D': 'Unmaintained',
+    'Q-D': 'Incubator',
     'COM': 'Community Repositories',
     'PRO': 'Professional',
 }
