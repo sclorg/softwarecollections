@@ -126,6 +126,11 @@ if [ ! -e               %{_sysconfdir}/pki/tls/private/softwarecollections.org.k
     ln -s localhost.key %{_sysconfdir}/pki/tls/private/softwarecollections.org.key
 fi
 
+# link default chain file
+if [ ! -e               %{_sysconfdir}/pki/tls/private/softwarecollections.org.CA.crt ]; then
+    ln -s localhost.crt %{_sysconfdir}/pki/tls/private/softwarecollections.org.CA.crt
+fi
+
 service httpd condrestart
 su apache - -s /bin/bash -c "softwarecollections syncdb --migrate --noinput"
 softwarecollections collectstatic --noinput
