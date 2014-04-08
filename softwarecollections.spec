@@ -10,7 +10,7 @@ Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
 Group:             System Environment/Daemons
-License:           TODO
+License:           BSD
 URL:               http://softwarecollections.org/
 Source0:           http://github.srcurl.net/misli/%{name}/%{version}/%{name}-%{version}.tar.gz
 
