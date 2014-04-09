@@ -4,15 +4,14 @@
         <li class='{% if request.path == "/en/" %}active{% endif %}' role='menuitem'>
             <a href='/en/'>home</a>
         </li>
-        <li class='{% if request.path == "/en/docs/" %}active{% endif %}' role='menuitem'>
+        <li class='{% if request.path|slice:":9" == "/en/docs/" and request.path != "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
             <a href='/en/docs/'>docs</a>
         </li>
-        <li class='{% if request.path == "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
+        <li class='{% if request.path|slice:":13" == "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
             <a href='/en/faq/'>faq</a>
         </li>
-        {% url "scls:list_all" as scls_list_all %}
-        <li class='{% if request.path == scls_list_all %}active{% endif %}' role='menuitem'>
-            <a href='{{ scls_list_all }}'>collections</a>
+        <li class='{% if request.path|slice:":9" == "/en/scls/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/scls/'>collections</a>
         </li>
         {% if request.user.is_authenticated %}
         <li class='' role='menuitem'>
