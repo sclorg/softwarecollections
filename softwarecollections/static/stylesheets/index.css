@@ -1,5 +1,6 @@
 table#indexlist {
     width: 100%;
+    margin-top: 2ex;
 }
 
 table#indexlist td {
@@ -9,3 +10,8 @@ table#indexlist td {
 table#indexlist tr.odd {
     background-color: #eee;
 }
+
+tr.indexbreakrow hr {
+    margin: 5px 0 5px;
+}
+
