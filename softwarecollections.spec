@@ -5,7 +5,7 @@
 %global  httpd_group   apache
 
 Name:              softwarecollections
-Version:           0.7
+Version:           0.8
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -150,6 +150,11 @@ softwarecollections collectstatic --noinput
 
 
 %changelog
+* Wed Apr 09 2014 Miroslav Suchý <msuchy@redhat.com> 0.8-1
+- add google analytics code (msuchy@redhat.com)
+- license (jdornak@redhat.com)
+- add SSLCertificateChainFile to the config file (jdornak@redhat.com)
+
 * Tue Apr 08 2014 Miroslav Suchý <msuchy@redhat.com> 0.7-1
 - add Licensing Guidelines (msuchy@redhat.com)
 - redirect scl.org to www.scl.org, which better corresponds to the certificate
