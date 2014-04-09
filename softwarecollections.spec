@@ -127,8 +127,8 @@ if [ ! -e               %{_sysconfdir}/pki/tls/private/softwarecollections.org.k
 fi
 
 # link default chain file
-if [ ! -e               %{_sysconfdir}/pki/tls/private/softwarecollections.org.CA.crt ]; then
-    ln -s localhost.crt %{_sysconfdir}/pki/tls/private/softwarecollections.org.CA.crt
+if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.crt ]; then
+    ln -s localhost.crt %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.crt
 fi
 
 service httpd condrestart
