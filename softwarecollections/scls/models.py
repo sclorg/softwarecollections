@@ -221,12 +221,14 @@ class SoftwareCollection(models.Model):
 
     def delete(self, *args, **kwargs):
         # rename of repos root is faster than deleting
-        # (name can not start with '.', therefore this is save)
-        os.rename(self.get_repos_root(), os.path.join(
-            settings.REPOS_ROOT,
-            self.maintainer.username,
-            '.{}.deleted'.format(self.id)
-        ))
+        # renamed directories will be deleted by command sclclean
+        os.rename(
+            self.get_repos_root(),
+            os.path.join(
+                settings.REPOS_ROOT,
+                '.scl.{}.deleted'.format(self.id)
+            )
+        )
         # delete scl in the database
         super(SoftwareCollection, self).delete(*args, **kwargs)
 
@@ -401,6 +403,22 @@ gpgcheck=0
         # ensure slug is correct
         self.slug = '/'.join((self.scl.slug, self.name))
         super(Repo, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # rename of repo directory is faster than deleting
+        # renamed directories will be deleted by command sclclean
+        try:
+            os.rename(
+                self.get_repo_root(),
+                os.path.join(
+                    settings.REPOS_ROOT,
+                    '.repo.{}.deleted'.format(self.id)
+                )
+            )
+        except FileNotFoundError:
+            pass
+        # delete repo in the database
+        super(Repo, self).delete(*args, **kwargs)
 
 
 
