@@ -125,6 +125,9 @@ class SoftwareCollection(models.Model):
     def get_repos_url(self):
         return os.path.join(settings.REPOS_URL, self.slug)
 
+    def get_repos_config(self):
+        return os.path.join(settings.REPOS_ROOT, self.slug, 'copr-repos.conf')
+
     @property
     def policy_text(self):
         return POLICY_TEXT[self.policy]
@@ -167,6 +170,17 @@ class SoftwareCollection(models.Model):
 
     def sync_copr_repos(self):
         repos = self.copr.yum_repos
+        with self.lock:
+            repos_config = open(self.get_repos_config(), 'w')
+            repos_config.write(
+                "[main]\nreposdir=\ncachedir={cache_dir}\n\n".format(cache_dir=self.get_repos_root())
+            )
+            for name in repos:
+                repos_config.write(
+                    "[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n".format(
+                        name=name, url=repos[name]
+                    )
+                )
         for repo in self.repos.all():
             if repo.name not in repos:
                 # delete old repos
@@ -345,46 +359,20 @@ class Repo(models.Model):
     def reposync(self, timeout=None):
         with self.lock:
             log = open(os.path.join(self.get_repo_root(), 'reposync.log'), 'w')
-            # create new cache dir
-            cache_dir = os.path.join(
-                settings.YUM_CACHE_ROOT,
-                self.scl.copr_username,
-                self.scl.copr_name,
-                self.name
-            )
             try:
                 # workaround BZ 1079387
                 subprocess.call('rm -r /var/tmp/yum-apache-*', shell=True)
             except:
                 pass
 
-            try:
-                shutil.rmtree(cache_dir)
-            except:
-                pass
-            finally:
-                os.makedirs(cache_dir)
-
-            # create config file
-            cfg = os.path.join(cache_dir, 'repo.conf')
-            with open(cfg, 'w') as f:
-                content="""[main]
-reposdir=
-cachedir={cache_dir}
-
-[{name}]
-name={name}
-baseurl={url}
-gpgcheck=0
-""".format(cache_dir=cache_dir, name=self.name, url=self.copr_url)
-                f.write(content)
-                log.write("repo.conf:\n"+content)
-
-            log.write("reposync -t -c {} -p {} -r {}".format(cfg, self.scl.get_repos_root(), self.name))
             # run reposync
-            return subprocess.call([
-                'reposync', '-t', '-c', cfg, '-p', self.scl.get_repos_root(), '-r', self.name
-            ], stdout=log, stderr=log, timeout=timeout)
+            args = [
+                'reposync', '-c', self.scl.get_repos_config(),
+                '-p', self.scl.get_repos_root(), '-r', self.name,
+            ]
+            log.write(' '.join(args) + '\n')
+            log.flush()
+            return subprocess.call(args, stdout=log, stderr=log, timeout=timeout)
 
     def createrepo(self, timeout=None):
         with self.lock:
