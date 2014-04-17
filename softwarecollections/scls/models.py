@@ -315,8 +315,7 @@ class Repo(models.Model):
     def rpmbuild(self, timeout=None):
         with self.lock:
             log = open(os.path.join(self.get_repo_root(), 'rpmbuild.log'), 'w')
-            return subprocess.call([
-                'rpmbuild', '-ba',
+            defines = [
                 '-D',         '_topdir {}'.format(settings.RPMBUILD_TOPDIR),
                 '-D',         '_rpmdir {}'.format(self.get_repo_root()),
                 '-D',            'dist {}'.format(self.distro_version),
@@ -330,8 +329,17 @@ class Repo(models.Model):
                 '-D',     'repo_distro {}'.format(self.distro),
                 '-D',       'repo_arch {}'.format(self.arch),
                 '-D',    'repo_baseurl {}'.format(self.get_repo_url()),
-                SPECFILE
-            ], stdout=log, stderr=log, timeout=timeout)
+            ]
+            if self.distro_version == 'epel-5':
+                defines += [
+                    '-D', '_source_filedigest_algorithm 1',
+                    '-D', '_binary_filedigest_algorithm 1',
+                    '-D', '_binary_payload w9.gzdio',
+                ]
+            return subprocess.call(
+                ['rpmbuild', '-ba'] + defines + [ SPECFILE ],
+                stdout=log, stderr=log, timeout=timeout
+            )
 
     def reposync(self, timeout=None):
         with self.lock:
