@@ -87,10 +87,10 @@
                     <a href="{% url "scls:download" repo.slug %}{{ repo.rpmfile }}" title="{{ repo.rpmfile }}">RPM</a>
                     {{ repo.download_count }}x
                 </td>
+                <td><a href="{{ repo.get_repo_url }}" target="_blank" title="browse repo content">browse</a></td>
             {% else %}
-                <td>(not synced)</td>
+                <td colspan="2">(not synced)</td>
             {% endif %}
-            <td><a href="{{ repo.get_repo_url }}" target="_blank" title="browse repo content">browse</a></td>
         </tr>
         {% empty %}
             <td></td>
