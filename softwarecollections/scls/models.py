@@ -1,6 +1,5 @@
 import markdown2
 import os
-import shutil
 import subprocess
 import tagging
 import tempfile
@@ -354,10 +353,11 @@ class Repo(models.Model):
                 self.name
             )
             try:
-               # workaround BZ 1079387
-               shutil.rmtree('/var/tmp/yum-apache-*')
+                # workaround BZ 1079387
+                subprocess.call('rm -r /var/tmp/yum-apache-*', shell=True)
             except:
-               pass
+                pass
+
             try:
                 shutil.rmtree(cache_dir)
             except:
