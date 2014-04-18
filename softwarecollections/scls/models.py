@@ -1,6 +1,6 @@
 import markdown2
 import os
-import subprocess
+import shutil
 import tagging
 import tempfile
 from datetime import datetime
@@ -15,6 +15,7 @@ from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from flock import Flock, LOCK_EX
 from softwarecollections.copr import CoprProxy
+from subprocess import call, check_output, CalledProcessError
 from tagging.models import Tag
 from tagging.utils import edit_string_for_tags
 
@@ -119,6 +120,9 @@ class SoftwareCollection(models.Model):
     def get_copr_url(self):
         return os.path.join(settings.COPR_COPRS_URL, self.copr_username, self.copr_name)
 
+    def get_cache_root(self):
+        return os.path.join(settings.YUM_CACHE_ROOT, self.slug)
+
     def get_repos_root(self):
         return os.path.join(settings.REPOS_ROOT, self.slug)
 
@@ -173,7 +177,7 @@ class SoftwareCollection(models.Model):
         with self.lock:
             repos_config = open(self.get_repos_config(), 'w')
             repos_config.write(
-                "[main]\nreposdir=\ncachedir={cache_dir}\n\n".format(cache_dir=self.get_repos_root())
+                "[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n".format(cache_root=self.get_cache_root())
             )
             for name in repos:
                 repos_config.write(
@@ -193,18 +197,58 @@ class SoftwareCollection(models.Model):
             # save new repos
             Repo(scl=self, name=name, copr_url=repos[name]).save()
 
-    def sync(self):
+    def reposync(self, timeout=None):
+        # unfortunately reposync can not run parallel
+        with Flock(os.open(settings.REPOS_ROOT, 0), LOCK_EX):
+            with self.lock:
+                log = open(os.path.join(self.get_repos_root(), 'reposync.log'), 'w')
+
+                # workaround BZ 1079387
+                call('rm -rf /var/tmp/yum-apache-*', shell=True)
+
+                # remove cache_root
+                try:
+                    shutil.rmtree(self.get_cache_root())
+                except FileNotFoundError:
+                    pass
+
+                # run reposync
+                args = [
+                    'reposync', '-c', self.get_repos_config(),
+                    '-p', self.get_repos_root(),
+                ]
+                for repo in self.repos.all():
+                    args += ['-r', repo.name]
+                log.write(' '.join(args) + '\n')
+                log.flush()
+                return call(args, stdout=log, stderr=log, timeout=timeout)
+
+    def sync(self, timeout=None):
         self.sync_copr_repos()
         with self.lock:
-            download_count = 0
-            for repo in self.repos.all():
-                repo.sync()
-                download_count += repo.download_count
-            self.download_count = download_count
-            self.last_modified  = self.copr.last_modified \
-                and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
-                 or None
+            self.download_count = sum([repo.download_count for repo in self.repos.all()])
+            exit_code = self.reposync(timeout)
+            if exit_code == 0:
+                self.last_modified  = self.copr.last_modified \
+                    and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
+                     or None
+                for repo in self.repos.all():
+                    if not os.path.exists(repo.get_rpmfile_path()):
+                        exit_code += repo.rpmbuild(timeout)
+                    exit_code += repo.createrepo(timeout)
             self.save()
+            return exit_code
+
+    def provides(self, timeout=None):
+        with self.lock:
+            repos_root = self.get_repos_root()
+            with open(os.path.join(repos_root, 'provides'), 'w') as out:
+                return call(
+                    "set -o pipefail; " \
+                    "find '{repos_root}' -name '*.rpm' -exec rpm -qp --provides '{{}}' \\; " \
+                    "| sed 's/ .*//' | sort -u".format(repos_root=repos_root),
+                    shell=True, stdout=out, timeout=timeout
+                )
 
     @property
     def lock(self):
@@ -298,6 +342,9 @@ class Repo(models.Model):
             RELEASE,
         ]) + '.noarch.rpm'
 
+    def get_cache_dir(self):
+        return os.path.join(self.scl.get_cache_root(), self.name)
+
     def get_repo_root(self):
         return os.path.join(self.scl.get_repos_root(), self.name)
 
@@ -351,41 +398,17 @@ class Repo(models.Model):
                     '-D', '_binary_filedigest_algorithm 1',
                     '-D', '_binary_payload w9.gzdio',
                 ]
-            return subprocess.call(
+            return call(
                 ['rpmbuild', '-ba'] + defines + [ SPECFILE ],
                 stdout=log, stderr=log, timeout=timeout
             )
 
-    def reposync(self, timeout=None):
-        with self.lock:
-            log = open(os.path.join(self.get_repo_root(), 'reposync.log'), 'w')
-            try:
-                # workaround BZ 1079387
-                subprocess.call('rm -r /var/tmp/yum-apache-*', shell=True)
-            except:
-                pass
-
-            # run reposync
-            args = [
-                'reposync', '-c', self.scl.get_repos_config(),
-                '-p', self.scl.get_repos_root(), '-r', self.name,
-            ]
-            log.write(' '.join(args) + '\n')
-            log.flush()
-            return subprocess.call(args, stdout=log, stderr=log, timeout=timeout)
-
     def createrepo(self, timeout=None):
         with self.lock:
             log = open(os.path.join(self.get_repo_root(), 'createrepo.log'), 'w')
-            return subprocess.call([
+            return call([
                 'createrepo_c', '--database', '--update', self.get_repo_root()
             ], stdout=log, stderr=log, timeout=timeout)
-
-    def sync(self):
-        if os.path.exists(self.get_rpmfile_path()):
-            return self.reposync() + self.createrepo()
-        else:
-            return self.rpmbuild() + self.reposync() + self.createrepo()
 
     def save(self, *args, **kwargs):
         # ensure slug is correct
