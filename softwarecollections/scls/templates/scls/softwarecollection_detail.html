@@ -59,6 +59,51 @@
 <h2>Policy</h2>
 {{ scl.policy_text | markdown2 }}
 
+{% if scl.requires.all or scl.required_by.all %}
+    <h2>Related software collections</h2>
+    {% if scl.requires.all %}
+        <p>Some packages from this collection require packages provided by these collections:</p>
+        <ul>
+            {% for req in scl.requires.all %}
+            <li>
+                <a href="{{ req.get_absolute_url }}">{{ req.title }}</a>
+                <small>
+                    {% if req.approved %}
+                        <span class='glyphicon glyphicon-ok-circle approved'
+                            title='This collection has been approved'></span>
+                    {% endif %}
+                    by
+                    <a href="{% url "scls:list_user" req.maintainer.username %}">
+                        {% if req.maintainer.get_full_name %}{{ req.maintainer.get_full_name }}{% else %}{{ req.maintainer.username }}{% endif %}
+                    </a>
+                </small>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if scl.required_by.all %}
+        <p>This collection provides packages, which may be required by some package from these collections:</p>
+        <ul>
+            {% for req in scl.required_by.all %}
+            <li>
+                <a href="{{ req.get_absolute_url }}">{{ req.title }}</a>
+                <small>
+                    {% if req.approved %}
+                        <span class='glyphicon glyphicon-ok-circle approved'
+                            title='This collection has been approved'></span>
+                    {% endif %}
+                    by
+                    <a href="{% url "scls:list_user" req.maintainer.username %}">
+                        {% if req.maintainer.get_full_name %}{{ req.maintainer.get_full_name }}{% else %}{{ req.maintainer.username }}{% endif %}
+                    </a>
+                </small>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endif %}
+
 <h2>Yum Repositories
     {% if scl.last_modified %}
         <small>
