@@ -13,24 +13,15 @@ from softwarecollections.scls.models import SoftwareCollection
 logger = logging.getLogger(__name__)
 
 
-def sync(args):
+def find_related(args):
     scl, timeout = args
 
     # scl.sync()
-    logger.info('Syncing {}'.format(scl.slug))
-    sync_exit_code = scl.sync(timeout)
-    if sync_exit_code != 0:
-        logger.error('Failed to sync {}'.format(scl.slug))
+    logger.info('Searching relations {}'.format(scl.slug))
+    exit_code = scl.find_related(timeout)
+    if exit_code != 0:
+        logger.error('Failed to search relations {}'.format(scl.slug))
 
-    # scl.dump_provides()
-    logger.info('Dumping provides {}'.format(scl.slug))
-    dump_provides_exit_code = scl.dump_provides(timeout)
-    if dump_provides_exit_code != 0:
-        logger.error('Failed to dump provides {}'.format(scl.slug))
-    exit_code = sync_exit_code + dump_provides_exit_code
-    if not scl.auto_sync and exit_code != 0:
-        scl.need_sync = False
-        scl.save()
     return exit_code
 
 
@@ -46,13 +37,13 @@ class Command(BaseCommand):
         ),
     )
 
-    help = 'Sync SCLs with copr repos'
+    help = 'Find related collections'
 
     def handle(self, *args, **options):
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
             exit_code = sum(pool.map(
-                sync,
+                find_related,
                 [(scl, timeout) for scl in SoftwareCollection.objects.filter(need_sync=True)],
             ))
             if exit_code != 0:

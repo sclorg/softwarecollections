@@ -104,6 +104,8 @@ class SoftwareCollection(models.Model):
     collaborators   = models.ManyToManyField(User,
                         verbose_name=_('Collaborators'),
                         related_name='softwarecollection_set', blank=True)
+    requires        = models.ManyToManyField('self', symmetrical=False,
+                        related_name='required_by', blank=True)
 
     class Meta:
         # in fact, since slug is made of those and slug is unique,
@@ -239,16 +241,34 @@ class SoftwareCollection(models.Model):
             self.save()
             return exit_code
 
-    def provides(self, timeout=None):
+    def dump_provides(self, timeout=None):
         with self.lock:
             repos_root = self.get_repos_root()
-            with open(os.path.join(repos_root, 'provides'), 'w') as out:
+            with open(os.path.join(repos_root, '.provides'), 'w') as out:
                 return call(
                     "set -o pipefail; " \
                     "find '{repos_root}' -name '*.rpm' -exec rpm -qp --provides '{{}}' \\; " \
                     "| sed 's/ .*//' | sort -u".format(repos_root=repos_root),
                     shell=True, stdout=out, timeout=timeout
                 )
+
+    def find_related(self, timeout=None):
+        with self.lock:
+            try:
+                out = check_output(
+                    "set -o pipefail; " \
+                    "find '{repos_root}' -name '*.rpm' -exec rpm -qp --requires '{{}}' \\; " \
+                    "| sed 's/ .*//' | sort -u | while read req; do " \
+                    "egrep -l \"^$req$\" '{all_repos_root}'/*/*/.provides || :; " \
+                    "done | sed -r -e 's|^{all_repos_root}/||' -e 's|/.provides$||' | sort -u" \
+                    .format(all_repos_root=settings.REPOS_ROOT, repos_root=self.get_repos_root()),
+                    shell=True, universal_newlines=True, timeout=timeout
+                )
+            except CalledProcessError:
+                return 1
+            related_slugs = [slug for slug in out.split() if slug != self.slug]
+            self.requires = SoftwareCollection.objects.filter(slug__in=related_slugs)
+            return 0
 
     @property
     def lock(self):
