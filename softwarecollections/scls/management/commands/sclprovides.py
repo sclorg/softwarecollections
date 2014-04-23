@@ -13,12 +13,12 @@ from softwarecollections.scls.models import SoftwareCollection
 logger = logging.getLogger(__name__)
 
 
-def find_related(args):
+def dump_provides(args):
     scl, timeout = args
 
     # scl.sync()
     logger.info('Searching relations {}'.format(scl.slug))
-    exit_code = scl.find_related(timeout)
+    exit_code = scl.dump_provides(timeout)
     if exit_code != 0:
         logger.error('Failed to search relations {}'.format(scl.slug))
 
@@ -37,13 +37,13 @@ class Command(BaseCommand):
         ),
     )
 
-    help = 'Find related collections for all collections'
+    help = 'Dump provides for all collections'
 
     def handle(self, *args, **options):
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
             exit_code = sum(pool.map(
-                find_related,
+                dump_provides,
                 [(scl, timeout) for scl in SoftwareCollection.objects.all()],
             ))
             if exit_code != 0:
