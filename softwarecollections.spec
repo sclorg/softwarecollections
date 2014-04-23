@@ -5,7 +5,7 @@
 %global  httpd_group   apache
 
 Name:              softwarecollections
-Version:           0.8
+Version:           0.9
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -150,6 +150,25 @@ softwarecollections collectstatic --noinput
 
 
 %changelog
+* Wed Apr 23 2014 Jakub Dorňák <jdornak@redhat.com> 0.9-1
+- command sclprovides (jdornak@redhat.com)
+- list related collections on collection detail (jdornak@redhat.com)
+- find related collections (jdornak@redhat.com)
+- dummy migration related to 0c75cfcbf9c093554db748fea872c80339a6e044
+  (jdornak@redhat.com)
+- sclsync with multiprocessing generates lists of RPM provides
+  (jdornak@redhat.com)
+- share yum.config for all repos in one collection (jdornak@redhat.com)
+- fix workaround to really work (jdornak@redhat.com)
+- delete synced RPMs on repo.delete() (jdornak@redhat.com)
+- do not display browse link until synced (jdornak@redhat.com)
+- _new => _blank (jdornak@redhat.com)
+- rpmbuild params for EPEL5 packages (jdornak@redhat.com)
+- menu item active for all subpages (jdornak@redhat.com)
+- nice index header and current year in footer (jdornak@redhat.com)
+- fix chain file path (jdornak@redhat.com)
+- AddIcon rpm.png .rpm (jdornak@redhat.com)
+
 * Wed Apr 09 2014 Miroslav Suchý <msuchy@redhat.com> 0.8-1
 - add google analytics code (msuchy@redhat.com)
 - license (jdornak@redhat.com)
