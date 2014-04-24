@@ -1,1 +1,23 @@
-../static/500.html
+{% extends "home.html" %}
+
+{% block title %}Internal Server Error{% endblock %}
+
+{% block content %}
+    <div class='blam'>
+        <div class='jumbotron'>
+            <h1>Internal Server Error</h1>
+        </div>
+    </div>
+    <div class='demo-area'>
+        <div class='container'>
+            <div class='row'>
+                <div class='col-md-12'>
+                    <p>The server encountered an internal error or misconfiguration and was unable to complete your request.</p>
+                    <p>Please contact the server administrator at jdornak@redhat.com to inform them of the time this error occurred, and the actions you performed just before this error.</p>
+                    <p>More information about this error may be available in the server error log.</p>
+                </div>
+            </div>
+            <div class='row demos'></div>
+        </div>
+    </div>
+{% endblock %}

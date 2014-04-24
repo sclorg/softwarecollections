@@ -1,1 +1,21 @@
-../static/403.html
+{% extends "home.html" %}
+
+{% block title %}Forbidden{% endblock %}
+
+{% block content %}
+    <div class='blam'>
+        <div class='jumbotron'>
+            <h1>Forbidden</h1>
+        </div>
+    </div>
+    <div class='demo-area'>
+        <div class='container'>
+            <div class='row'>
+                <div class='col-md-12'>
+                    <p>You are not allowed to view requested content.</p>
+                </div>
+            </div>
+            <div class='row demos'></div>
+        </div>
+    </div>
+{% endblock %}

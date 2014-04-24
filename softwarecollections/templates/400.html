@@ -1,1 +1,21 @@
-../static/400.html
+{% extends "home.html" %}
+
+{% block title %}Bad Request{% endblock %}
+
+{% block content %}
+    <div class='blam'>
+        <div class='jumbotron'>
+            <h1>Bad Request</h1>
+        </div>
+    </div>
+    <div class='demo-area'>
+        <div class='container'>
+            <div class='row'>
+                <div class='col-md-12'>
+                    <p>The request could not be understood by the server due to malformed syntax.</p>
+                </div>
+            </div>
+            <div class='row demos'></div>
+        </div>
+    </div>
+{% endblock %}

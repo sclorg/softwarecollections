@@ -132,8 +132,9 @@ if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.
 fi
 
 service httpd condrestart
-su apache - -s /bin/bash -c "softwarecollections syncdb --migrate --noinput"
-softwarecollections collectstatic --noinput
+su apache - -s /bin/bash -c "softwarecollections syncdb --migrate --noinput" || :
+softwarecollections collectstatic --noinput                                  || :
+softwarecollections makeerrorpages                                           || :
 
 %files -f %{name}.files
 %doc LICENSE README.md
