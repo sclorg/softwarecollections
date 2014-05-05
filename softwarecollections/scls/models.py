@@ -26,7 +26,7 @@ User = get_user_model()
 
 SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
 VERSION = '1'
-RELEASE = '1'
+RELEASE = '2'
 
 DISTRO_ICONS = ('fedora', 'epel')
 
