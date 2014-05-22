@@ -216,7 +216,7 @@ class SoftwareCollection(models.Model):
 
                 # run reposync
                 args = [
-                    'reposync', '-c', self.get_repos_config(),
+                    'reposync', '--source', '-c', self.get_repos_config(),
                     '-p', self.get_repos_root(),
                 ]
                 for repo in self.repos.all():
