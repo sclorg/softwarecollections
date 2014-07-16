@@ -11,6 +11,9 @@
 {% block content %}
 
 <div class="scl-toolbar btn-group btn-group-sm">
+    {% if scl.issue_tracker %}
+    <a class='btn btn-default' href="{{ scl.issue_tracker }}">report a bug</a>
+    {% endif %}
     {% allowed 'edit' obj=scl %}
     <a class='btn btn-default' href="{% url "scls:edit" scl %}">edit</a>
     <a class='btn btn-default' href="{% url "scls:acl" scl %}">collaborators</a>
@@ -33,7 +36,7 @@
     {% endif %}
     <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
     {% notallowed %}
-    <a class='btn btn-default' href="{% url "scls:complain" scl %}">complain</a>
+    <a class='btn btn-default' href="{% url "scls:complain" scl %}">report abuse</a>
     {% endallowed %}
 </div>
 

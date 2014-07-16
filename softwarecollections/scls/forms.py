@@ -110,10 +110,11 @@ class CreateForm(_SclForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'policy']
+        fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'issue_tracker', 'policy']
         widgets = {
             'copr_username': forms.TextInput( attrs={'class': 'form-control'}),
             'copr_name':     forms.Select(    attrs={'class': 'form-control'}),
+            'issue_tracker': forms.TextInput( attrs={'class': 'form-control'}),
             'maintainer':    MaintainerWidget(attrs={'class': 'form-control'}),
             'name':          forms.TextInput( attrs={'class': 'form-control'}),
             'policy':        forms.RadioSelect(renderer=RadioSelectTableRenderer),
@@ -140,7 +141,7 @@ class UpdateForm(_SclForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['title', 'description', 'instructions', 'policy', 'copr_username', 'copr_name', 'auto_sync']
+        fields = ['title', 'description', 'instructions', 'issue_tracker', 'policy', 'copr_username', 'copr_name', 'auto_sync',
         widgets = {
             'title':         forms.TextInput(    attrs={'class': 'form-control'}),
             'description':   forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
@@ -148,6 +149,7 @@ class UpdateForm(_SclForm):
             'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=RadioSelectTableRenderer),
             'copr_username': forms.TextInput(    attrs={'class': 'form-control'}),
             'copr_name':     forms.Select(       attrs={'class': 'form-control'}),
+            'issue_tracker': forms.TextInput(    attrs={'class': 'form-control'}),
             'auto_sync':     forms.CheckboxInput(attrs={'class': 'form-control-static'}),
         }
 
