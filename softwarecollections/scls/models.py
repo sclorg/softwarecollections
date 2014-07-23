@@ -206,7 +206,7 @@ class SoftwareCollection(models.Model):
                 log = open(os.path.join(self.get_repos_root(), 'reposync.log'), 'w')
 
                 # workaround BZ 1079387
-                call('rm -rf /var/tmp/yum-apache-*', shell=True)
+                call('rm -rf /var/tmp/yum-*', shell=True)
 
                 # remove cache_root
                 try:
