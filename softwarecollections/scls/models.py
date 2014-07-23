@@ -245,7 +245,9 @@ class SoftwareCollection(models.Model):
                     args += ['-r', repo.name]
                 log.write(' '.join(args) + '\n')
                 log.flush()
-                check_call(args, stdout=log, stderr=log, timeout=timeout)
+                result = call(args, stdout=log, stderr=log, timeout=timeout)
+                log.write('return code {0}'.format(result))
+                return result
 
     def sync(self, timeout=None):
         self.sync_copr_repos()
