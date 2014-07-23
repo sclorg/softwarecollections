@@ -28,7 +28,7 @@ def sync(args):
     if dump_provides_exit_code != 0:
         logger.error('Failed to dump provides {}'.format(scl.slug))
     exit_code = sync_exit_code + dump_provides_exit_code
-    if not scl.auto_sync and exit_code != 0:
+    if not scl.auto_sync and exit_code == 0:
         scl.need_sync = False
         scl.save()
     return exit_code
