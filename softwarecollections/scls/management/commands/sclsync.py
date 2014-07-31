@@ -46,14 +46,20 @@ class Command(BaseCommand):
         ),
     )
 
-    help = 'Sync SCLs with copr repos'
+    args = '[ <scl_slug> ... ]'
+    help = 'Sync all SCLs (marked with need_sync flag) with Copr repos. '\
+           'Optionaly you may specify one or more slug of particular SCLs to be synced.'
 
     def handle(self, *args, **options):
+        if args:
+            scls = SoftwareCollection.objects.filter(slug__in=args)
+        else:
+            scls = SoftwareCollection.objects.filter(need_sync=True)
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
             exit_code = sum(pool.map(
                 sync,
-                [(scl, timeout) for scl in SoftwareCollection.objects.filter(need_sync=True)],
+                [(scl, timeout) for scl in scls],
             ))
             if exit_code != 0:
                 raise CommandError(exit_code)
