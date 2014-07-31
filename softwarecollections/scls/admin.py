@@ -3,8 +3,8 @@ from django.utils.translation import ungettext, ugettext as _
 from .models import SoftwareCollection, Score
 
 class SoftwareCollectionAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'title', 'get_copr_url_tag', 'review_req', 'approved', 'auto_sync', 'need_sync')
-    list_filter  = ('maintainer', 'review_req', 'approved')
+    list_display = ('slug', 'get_title_tag', 'get_copr_tag', 'review_req', 'approved', 'auto_sync', 'need_sync')
+    list_filter  = ('review_req', 'approved', 'maintainer')
     ordering     = ('slug',)
     actions      = ('approve',)
 

@@ -123,10 +123,23 @@ class SoftwareCollection(models.Model):
         return os.path.join(settings.COPR_COPRS_URL, self.copr_username, self.copr_name)
 
     # this is used in admin only
-    def get_copr_url_tag(self):
-        return '<a href="{url}" target="_blank">{url}</a>'.format(url=self.get_copr_url())
-    get_copr_url_tag.short_description = _('Copr url')
-    get_copr_url_tag.allow_tags = True
+    def get_copr_tag(self):
+        return '<a href="{url}" target="_blank">{username}/{name}</a>'.format(
+            url      = self.get_copr_url(),
+            username = self.copr_username,
+            name     = self.copr_name,
+        )
+    get_copr_tag.short_description = _('Copr')
+    get_copr_tag.allow_tags = True
+
+    # this is used in admin only
+    def get_title_tag(self):
+        return '<a href="{url}" target="_blank">{title}</a>'.format(
+            url   = self.get_absolute_url(),
+            title = self.title,
+        )
+    get_title_tag.short_description = _('Title')
+    get_title_tag.allow_tags = True
 
     def get_cache_root(self):
         return os.path.join(settings.YUM_CACHE_ROOT, self.slug)
