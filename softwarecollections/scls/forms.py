@@ -141,7 +141,7 @@ class UpdateForm(_SclForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['title', 'description', 'instructions', 'issue_tracker', 'policy', 'copr_username', 'copr_name', 'auto_sync',
+        fields = ['title', 'description', 'instructions', 'issue_tracker', 'policy', 'copr_username', 'copr_name', 'auto_sync',]
         widgets = {
             'title':         forms.TextInput(    attrs={'class': 'form-control'}),
             'description':   forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
