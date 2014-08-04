@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.utils.translation import ungettext, ugettext as _
-from .models import SoftwareCollection, Score
+from .models import SoftwareCollection, Repo, Score
 
 class SoftwareCollectionAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'get_title_tag', 'get_copr_tag', 'review_req', 'approved', 'auto_sync', 'need_sync')
+    list_display = ('slug', 'get_title_tag', 'get_copr_tag', 'review_req', 'approved', 'auto_sync', 'need_sync', 'last_synced', 'last_modified')
     list_filter  = ('review_req', 'approved', 'maintainer')
     ordering     = ('slug',)
     actions      = ('approve',)
@@ -18,4 +18,5 @@ class SoftwareCollectionAdmin(admin.ModelAdmin):
     approve.short_description = _('Approve selected software collections')
         
 admin.site.register(SoftwareCollection, SoftwareCollectionAdmin)
+admin.site.register(Repo)
 admin.site.register(Score)

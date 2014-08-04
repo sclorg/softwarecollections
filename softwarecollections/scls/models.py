@@ -84,9 +84,8 @@ class SoftwareCollection(models.Model):
     copr_name       = models.CharField(_('Copr Project'), max_length=200,
                         help_text=_('Name of Copr Project to import packages from'))
     # other attributes are local
-    issue_tracker   = models.URLField(_('Issue Tracker'),
-                                      default='https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org',
-                                      blank=True)
+    issue_tracker   = models.URLField(_('Issue Tracker'), blank=True,
+                        default='https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org')
     title           = models.CharField(_('Title'), max_length=200)
     description     = models.TextField(_('Description'))
     instructions    = models.TextField(_('Instructions'))
@@ -97,6 +96,7 @@ class SoftwareCollection(models.Model):
     download_count  = models.IntegerField(default=0, editable=False)
     create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
     last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
+    last_synced     = models.DateTimeField(_('Last synced'), null=True, editable=False)
     approved        = models.BooleanField(_('Approved'), default=False)
     review_req      = models.BooleanField(_('Review requested'), default=False)
     auto_sync       = models.BooleanField(_('Auto sync'), default=False,
@@ -253,9 +253,10 @@ class SoftwareCollection(models.Model):
             self.download_count = sum([repo.download_count for repo in self.repos.all()])
             exit_code = self.reposync(timeout)
             if exit_code == 0:
-                self.last_modified  = self.copr.last_modified \
+                self.last_modified = self.copr.last_modified \
                     and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
                      or None
+                self.last_synced = datetime.now().replace(tzinfo=utc)
                 for repo in self.repos.all():
                     if not os.path.exists(repo.get_rpmfile_path()):
                         exit_code += repo.rpmbuild(timeout)

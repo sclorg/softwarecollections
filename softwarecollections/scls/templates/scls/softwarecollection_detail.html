@@ -130,7 +130,7 @@
             <td class='img-cell'><img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/></td>
             <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>
             <td>{{ repo.arch }}</td>
-            {% if scl.last_modified %}
+            {% if scl.last_synced %}
                 <td>
                     <a href="{% url "scls:download" repo.slug %}{{ repo.rpmfile }}" title="{{ repo.rpmfile }}">RPM</a>
                     {{ repo.download_count }}x
