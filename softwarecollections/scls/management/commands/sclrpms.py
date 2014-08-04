@@ -17,18 +17,22 @@ def rpmbuild(args):
     repo, timeout = args
 
     # repo.rpmbuild()
-    logger.info('Building {}'.format(repo.rpmname))
-    rpmbuild_exit_code = repo.rpmbuild()
-    if rpmbuild_exit_code != 0:
-        logger.error('Failed to build {}'.format(repo.rpmname))
+    logger.info('Building RPM for {}'.format(repo.slug))
+    try:
+        repo.rpmbuild(timeout)
+    except Exception as e:
+        logger.error('Failed to build {}: {}'.format(repo.rpmname, e))
+        return 1
 
     # repo.createrepo()
     logger.info('Creating repo {}'.format(repo.slug))
-    createrepo_exit_code = repo.createrepo()
-    if createrepo_exit_code != 0:
-        logger.error('Failed to create repo {}'.format(repo.slug))
+    try:
+        repo.createrepo(timeout)
+    except Exception as e:
+        logger.error('Failed to create repo {}: {}'.format(repo.slug, e))
+        return 1
 
-    return rpmbuild_exit_code + createrepo_exit_code
+    return 0
 
 
 class Command(BaseCommand):
@@ -43,15 +47,23 @@ class Command(BaseCommand):
         ),
     )
 
-    help = 'Rebuild all release RPMs'
+    args = '[ <repo_slug> ... ]'
+    help = 'Rebuild all release RPMs, ' \
+           'Optionaly you may specify one or more slug of particular repo to be precessed.'
 
     def handle(self, *args, **options):
+        if args:
+            repos = []
+            for slug in args:
+                repos.append(Repo.objects.get(slug=slug))
+        else:
+            repos = Repo.objects.all()
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
             exit_code = sum(pool.map(
                 rpmbuild,
-                [(scl, timeout) for scl in Repo.objects.all()],
+                [(scl, timeout) for scl in repos],
             ))
             if exit_code != 0:
-                raise CommandError(exit_code)
+                raise CommandError('Failed to rebuild release RPMs: {} error(s)'.format(exit_code))
 

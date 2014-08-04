@@ -15,22 +15,27 @@ logger = logging.getLogger(__name__)
 
 def sync(args):
     scl, timeout = args
+    exit_code = 0
 
     # scl.sync()
     logger.info('Syncing {}'.format(scl.slug))
-    sync_exit_code = scl.sync(timeout)
-    if sync_exit_code != 0:
-        logger.error('Failed to sync {}'.format(scl.slug))
+    try:
+        scl.sync(timeout)
+        if not scl.auto_sync:
+            scl.need_sync = False
+            scl.save()
+    except Exception as e:
+        logger.error('Failed to sync {}: {}'.format(scl.slug, e))
+        exit_code += 1
 
     # scl.dump_provides()
-    logger.info('Dumping provides {}'.format(scl.slug))
-    dump_provides_exit_code = scl.dump_provides(timeout)
-    if dump_provides_exit_code != 0:
-        logger.error('Failed to dump provides {}'.format(scl.slug))
-    exit_code = sync_exit_code + dump_provides_exit_code
-    if not scl.auto_sync and exit_code == 0:
-        scl.need_sync = False
-        scl.save()
+    logger.info('Dumping provides for {}'.format(scl.slug))
+    try:
+        scl.dump_provides(timeout)
+    except Exception as e:
+        logger.error('Failed to dump provides for {}: {}'.format(scl.slug, e))
+        exit_code += 1
+
     return exit_code
 
 
@@ -52,7 +57,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if args:
-            scls = SoftwareCollection.objects.filter(slug__in=args)
+            scls = []
+            for slug in args:
+                scls.append(SoftwareCollection.objects.get(slug=slug))
         else:
             scls = SoftwareCollection.objects.filter(need_sync=True)
         timeout = options['timeout'] and int(options['timeout'])
@@ -62,5 +69,5 @@ class Command(BaseCommand):
                 [(scl, timeout) for scl in scls],
             ))
             if exit_code != 0:
-                raise CommandError(exit_code)
+                raise CommandError('Failed to sync SCLs: {} error(s)'.format(exit_code))
 

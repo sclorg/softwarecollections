@@ -15,7 +15,7 @@ from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from flock import Flock, LOCK_EX
 from softwarecollections.copr import CoprProxy
-from subprocess import call, check_output, CalledProcessError
+from subprocess import call, check_call, check_output, CalledProcessError
 from tagging.models import Tag
 from tagging.utils import edit_string_for_tags
 
@@ -245,30 +245,28 @@ class SoftwareCollection(models.Model):
                     args += ['-r', repo.name]
                 log.write(' '.join(args) + '\n')
                 log.flush()
-                return call(args, stdout=log, stderr=log, timeout=timeout)
+                check_call(args, stdout=log, stderr=log, timeout=timeout)
 
     def sync(self, timeout=None):
         self.sync_copr_repos()
         with self.lock:
             self.download_count = sum([repo.download_count for repo in self.repos.all()])
-            exit_code = self.reposync(timeout)
-            if exit_code == 0:
-                self.last_modified = self.copr.last_modified \
-                    and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
-                     or None
-                self.last_synced = datetime.now().replace(tzinfo=utc)
-                for repo in self.repos.all():
-                    if not os.path.exists(repo.get_rpmfile_path()):
-                        exit_code += repo.rpmbuild(timeout)
-                    exit_code += repo.createrepo(timeout)
+            self.reposync(timeout)
+            self.last_modified = self.copr.last_modified \
+                and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
+                 or None
+            self.last_synced = datetime.now().replace(tzinfo=utc)
+            for repo in self.repos.all():
+                if not os.path.exists(repo.get_rpmfile_path()):
+                    repo.rpmbuild(timeout)
+                repo.createrepo(timeout)
             self.save()
-            return exit_code
 
     def dump_provides(self, timeout=None):
         with self.lock:
             repos_root = self.get_repos_root()
             with open(os.path.join(repos_root, '.provides'), 'w') as out:
-                return call(
+                check_call(
                     "set -o pipefail; " \
                     "find '{repos_root}' -name '*.rpm' -exec rpm -qp --provides '{{}}' \\; " \
                     "| sed 's/ .*//' | sort -u".format(repos_root=repos_root),
@@ -277,21 +275,17 @@ class SoftwareCollection(models.Model):
 
     def find_related(self, timeout=None):
         with self.lock:
-            try:
-                out = check_output(
-                    "set -o pipefail; " \
-                    "find '{repos_root}' -name '*.rpm' -exec rpm -qp --requires '{{}}' \\; " \
-                    "| sed 's/ .*//' | sort -u | while read req; do " \
-                    "egrep -l \"^$req$\" '{all_repos_root}'/*/*/.provides || :; " \
-                    "done | sed -r -e 's|^{all_repos_root}/||' -e 's|/.provides$||' | sort -u" \
-                    .format(all_repos_root=settings.REPOS_ROOT, repos_root=self.get_repos_root()),
-                    shell=True, universal_newlines=True, timeout=timeout
-                )
-            except CalledProcessError:
-                return 1
+            out = check_output(
+                "set -o pipefail; " \
+                "find '{repos_root}' -name '*.rpm' -exec rpm -qp --requires '{{}}' \\; " \
+                "| sed 's/ .*//' | sort -u | while read req; do " \
+                "egrep -l \"^$req$\" '{all_repos_root}'/*/*/.provides || :; " \
+                "done | sed -r -e 's|^{all_repos_root}/||' -e 's|/.provides$||' | sort -u" \
+                .format(all_repos_root=settings.REPOS_ROOT, repos_root=self.get_repos_root()),
+                shell=True, universal_newlines=True, timeout=timeout
+            )
             related_slugs = [slug for slug in out.split() if slug != self.slug]
             self.requires = SoftwareCollection.objects.filter(slug__in=related_slugs)
-            return 0
 
     @property
     def lock(self):
@@ -441,7 +435,7 @@ class Repo(models.Model):
                     '-D', '_binary_filedigest_algorithm 1',
                     '-D', '_binary_payload w9.gzdio',
                 ]
-            return call(
+            check_call(
                 ['rpmbuild', '-ba'] + defines + [ SPECFILE ],
                 stdout=log, stderr=log, timeout=timeout
             )
@@ -449,7 +443,7 @@ class Repo(models.Model):
     def createrepo(self, timeout=None):
         with self.lock:
             log = open(os.path.join(self.get_repo_root(), 'createrepo.log'), 'w')
-            return call([
+            check_call([
                 'createrepo_c', '--database', '--update', self.get_repo_root()
             ], stdout=log, stderr=log, timeout=timeout)
 

@@ -16,13 +16,15 @@ logger = logging.getLogger(__name__)
 def dump_provides(args):
     scl, timeout = args
 
-    # scl.sync()
-    logger.info('Searching relations {}'.format(scl.slug))
-    exit_code = scl.dump_provides(timeout)
-    if exit_code != 0:
-        logger.error('Failed to search relations {}'.format(scl.slug))
+    # scl.dump_provides()
+    logger.info('Dumping provides for {}'.format(scl.slug))
+    try:
+        scl.dump_provides(timeout)
+    except Exception as e:
+        logger.error('Failed to dump provides for {}: {}'.format(scl.slug, e))
+        return 1
 
-    return exit_code
+    return 0
 
 
 class Command(BaseCommand):
@@ -37,15 +39,23 @@ class Command(BaseCommand):
         ),
     )
 
-    help = 'Dump provides for all collections'
+    args = '[ <scl_slug> ... ]'
+    help = 'Dump provides for all collections. ' \
+           'Optionaly you may specify one or more slug of particular SCLs to be dumped.'
 
     def handle(self, *args, **options):
+        if args:
+            scls = []
+            for slug in args:
+                scls.append(SoftwareCollection.objects.get(slug=slug))
+        else:
+            scls = SoftwareCollection.objects.all()
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
             exit_code = sum(pool.map(
                 dump_provides,
-                [(scl, timeout) for scl in SoftwareCollection.objects.all()],
+                [(scl, timeout) for scl in scls],
             ))
             if exit_code != 0:
-                raise CommandError(exit_code)
+                raise CommandError('Failed to dump provides: {} error(s)'.format(exit_code))
 

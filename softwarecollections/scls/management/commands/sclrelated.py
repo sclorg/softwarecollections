@@ -16,13 +16,15 @@ logger = logging.getLogger(__name__)
 def find_related(args):
     scl, timeout = args
 
-    # scl.sync()
-    logger.info('Searching relations {}'.format(scl.slug))
-    exit_code = scl.find_related(timeout)
-    if exit_code != 0:
-        logger.error('Failed to search relations {}'.format(scl.slug))
+    # scl.find_related()
+    logger.info('Searching relations for {}'.format(scl.slug))
+    try:
+        scl.find_related(timeout)
+    except Exception as e:
+        logger.error('Failed to search relations for {}: {}'.format(scl.slug, e))
+        return 1
 
-    return exit_code
+    return 0
 
 
 class Command(BaseCommand):
@@ -37,15 +39,23 @@ class Command(BaseCommand):
         ),
     )
 
-    help = 'Find related collections for all collections'
+    args = '[ <scl_slug> ... ]'
+    help = 'Find related collections for all collections. ' \
+           'Optionaly you may specify one or more slug of particular SCLs to be precessed.'
 
     def handle(self, *args, **options):
+        if args:
+            scls = []
+            for slug in args:
+                scls.append(SoftwareCollection.objects.get(slug=slug))
+        else:
+            scls = SoftwareCollection.objects.all()
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
             exit_code = sum(pool.map(
                 find_related,
-                [(scl, timeout) for scl in SoftwareCollection.objects.all()],
+                [(scl, timeout) for scl in scls],
             ))
             if exit_code != 0:
-                raise CommandError(exit_code)
+                raise CommandError('Failed to find relations: {} error(s)'.format(exit_code))
 
