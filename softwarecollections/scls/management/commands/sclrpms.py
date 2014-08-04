@@ -54,18 +54,23 @@ class Command(LoggingBaseCommand):
 
     def handle(self, *args, **options):
         self.configure_logging(options['verbosity'])
+        errors = 0
         if args:
             repos = []
             for slug in args:
-                repos.append(Repo.objects.get(slug=slug))
+                try:
+                    repos.append(Repo.objects.get(slug=slug))
+                except Exception as e:
+                    logging.error(str(e))
+                    errors += 1
         else:
             repos = Repo.objects.all()
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
-            exit_code = sum(pool.map(
+            errors += sum(pool.map(
                 rpmbuild,
                 [(scl, timeout) for scl in repos],
             ))
-            if exit_code != 0:
-                raise CommandError('Failed to rebuild release RPMs: {} error(s)'.format(exit_code))
+            if errors > 0:
+                raise CommandError('Failed to rebuild release RPMs: {} error(s)'.format(errors))
 

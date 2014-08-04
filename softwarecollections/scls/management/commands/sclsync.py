@@ -58,18 +58,23 @@ class Command(LoggingBaseCommand):
 
     def handle(self, *args, **options):
         self.configure_logging(options['verbosity'])
+        errors = 0
         if args:
             scls = []
             for slug in args:
-                scls.append(SoftwareCollection.objects.get(slug=slug))
+                try:
+                    scls.append(SoftwareCollection.objects.get(slug=slug))
+                except Exception as e:
+                    logging.error(str(e))
+                    errors += 1
         else:
             scls = SoftwareCollection.objects.filter(need_sync=True)
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
-            exit_code = sum(pool.map(
+            errors += sum(pool.map(
                 sync,
                 [(scl, timeout) for scl in scls],
             ))
-            if exit_code != 0:
-                raise CommandError('Failed to sync SCLs: {} error(s)'.format(exit_code))
+            if errors > 0:
+                raise CommandError('Failed to sync SCLs: {} error(s)'.format(errors))
 
