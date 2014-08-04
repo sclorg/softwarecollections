@@ -3,10 +3,11 @@ import os
 
 from optparse import make_option
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
 
 from multiprocessing import Pool, cpu_count
 
+from softwarecollections.management.commands import LoggingBaseCommand
 from softwarecollections.scls.models import SoftwareCollection
 
 
@@ -39,8 +40,8 @@ def sync(args):
     return exit_code
 
 
-class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
+class Command(LoggingBaseCommand):
+    option_list = LoggingBaseCommand.option_list + (
         make_option(
             '-P', '--max-procs', action='store', dest='max_procs', default=cpu_count(),
             help='Run up to MAX_PROCS processes at a time (default {})'.format(cpu_count())
@@ -56,6 +57,7 @@ class Command(BaseCommand):
            'Optionaly you may specify one or more slug of particular SCLs to be synced.'
 
     def handle(self, *args, **options):
+        self.configure_logging(options['verbosity'])
         if args:
             scls = []
             for slug in args:
