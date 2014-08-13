@@ -150,6 +150,10 @@
     </table>
 </div>
 
+{% if scl.upstream_url %}
+<a href="{{ scl.upstream_url }}">Upstream project</a>
+{% endif %}
+
 <h2>Tags</h2>
 <div class="scl-tags">
     {% for tag in scl.tags %}

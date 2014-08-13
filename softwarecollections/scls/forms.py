@@ -110,13 +110,14 @@ class CreateForm(_SclForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'issue_tracker', 'policy']
+        fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'issue_tracker', 'upstream_url' ,'policy']
         widgets = {
             'copr_username': forms.TextInput( attrs={'class': 'form-control'}),
             'copr_name':     forms.Select(    attrs={'class': 'form-control'}),
             'issue_tracker': forms.TextInput( attrs={'class': 'form-control'}),
             'maintainer':    MaintainerWidget(attrs={'class': 'form-control'}),
             'name':          forms.TextInput( attrs={'class': 'form-control'}),
+            'upstream_url':  forms.TextInput( attrs={'class': 'form-control'}),
             'policy':        forms.RadioSelect(renderer=RadioSelectTableRenderer),
         }
 
@@ -141,11 +142,12 @@ class UpdateForm(_SclForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['title', 'description', 'instructions', 'issue_tracker', 'policy', 'copr_username', 'copr_name', 'auto_sync',]
+        fields = ['title', 'description', 'instructions', 'issue_tracker', 'upstream_url', 'policy', 'copr_username', 'copr_name', 'auto_sync',]
         widgets = {
             'title':         forms.TextInput(    attrs={'class': 'form-control'}),
             'description':   forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
             'instructions':  forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
+            'upstream_url':  forms.TextInput(    attrs={'class': 'form-control'}),
             'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=RadioSelectTableRenderer),
             'copr_username': forms.TextInput(    attrs={'class': 'form-control'}),
             'copr_name':     forms.Select(       attrs={'class': 'form-control'}),
