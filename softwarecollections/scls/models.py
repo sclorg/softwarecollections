@@ -262,6 +262,10 @@ class SoftwareCollection(models.Model):
             for repo in self.repos.all():
                 if not os.path.exists(repo.get_rpmfile_path()):
                     repo.rpmbuild(timeout)
+                if os.path.exists(repo.get_rpmfile_symlink_path()):
+                    os.unlink(repo.get_rpmfile_symlink_path())
+                os.symlink(repo.get_rpmfile_symlink_relpath(),
+                           repo.get_rpmfile_symlink_path())
                 repo.createrepo(timeout)
             self.save()
 
@@ -382,6 +386,9 @@ class Repo(models.Model):
             RELEASE,
         ]) + '.noarch.rpm'
 
+    def rpmfile_symlink(self):
+        return self.rpmname + '.noarch.rpm'
+
     def get_cache_dir(self):
         return os.path.join(self.scl.get_cache_root(), self.name)
 
@@ -396,6 +403,13 @@ class Repo(models.Model):
 
     def get_rpmfile_url(self):
         return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
+
+    def get_rpmfile_symlink_path(self):
+        return os.path.join(self.scl.get_repos_root(), self.name, 'noarch',
+                self.rpmfile_symlink)
+
+    def get_rpmfile_symlink_relpath(self):
+        return os.path.join('noarch', self.rpmfile_symlink)
 
     def get_icon_url(self):
         return self.distro in DISTRO_ICONS \
@@ -447,7 +461,8 @@ class Repo(models.Model):
         with self.lock:
             log = open(os.path.join(self.get_repo_root(), 'createrepo.log'), 'w')
             check_call([
-                'createrepo_c', '--database', '--update', self.get_repo_root()
+                'createrepo_c', '--database', '--update', '--skip-symlinks',
+                self.get_repo_root()
             ], stdout=log, stderr=log, timeout=timeout)
 
     def save(self, *args, **kwargs):
