@@ -24,6 +24,16 @@ from .validators import validate_name
 User = get_user_model()
 
 
+def check_call_log(*args, **kwargs):
+    try:
+        check_call(*args, **kwargs)
+        kwargs['stderr'].write('OK\n')
+    except:
+        kwargs['stderr'].write('FAILED\n')
+        raise
+    
+
+
 SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
 VERSION = '1'
 RELEASE = '2'
@@ -246,9 +256,7 @@ class SoftwareCollection(models.Model):
                     args += ['-r', repo.name]
                 log.write(' '.join(args) + '\n')
                 log.flush()
-                result = call(args, stdout=log, stderr=log, timeout=timeout)
-                log.write('return code {0}'.format(result))
-                return result
+                check_call_log(args, stdout=log, stderr=log, timeout=timeout)
 
     def sync(self, timeout=None):
         self.sync_copr_repos()
@@ -438,7 +446,7 @@ class Repo(models.Model):
                     '-D', '_binary_filedigest_algorithm 1',
                     '-D', '_binary_payload w9.gzdio',
                 ]
-            check_call(
+            check_call_log(
                 ['rpmbuild', '-ba'] + defines + [ SPECFILE ],
                 stdout=log, stderr=log, timeout=timeout
             )
@@ -446,7 +454,7 @@ class Repo(models.Model):
     def createrepo(self, timeout=None):
         with self.lock:
             log = open(os.path.join(self.get_repo_root(), 'createrepo.log'), 'w')
-            check_call([
+            check_call_log([
                 'createrepo_c', '--database', '--update', self.get_repo_root()
             ], stdout=log, stderr=log, timeout=timeout)
 
