@@ -108,7 +108,7 @@
 {% endif %}
 
 <h2>Related COPR repo</h2>
-<a href="http://copr-fe.cloud.fedoraproject.org/coprs/{{ scl.copr_username }}/{{ scl.copr_name }}/">{{ scl.copr_username }}/{{ scl.copr_name }}</a>
+<a href="{{ scl.get_copr_url }}">{{ scl.copr_username }}/{{ scl.copr_name }}</a>
 
 <h2>Yum Repositories
     {% if scl.last_modified %}
