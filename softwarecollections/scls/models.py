@@ -390,6 +390,10 @@ class Repo(models.Model):
             RELEASE,
         ]) + '.noarch.rpm'
 
+    @property
+    def rpmfile_symlink(self):
+        return self.rpmname + '.noarch.rpm'
+
     def get_cache_dir(self):
         return os.path.join(self.scl.get_cache_root(), self.name)
 
@@ -404,6 +408,9 @@ class Repo(models.Model):
 
     def get_rpmfile_url(self):
         return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
+
+    def get_rpmfile_symlink_path(self):
+        return os.path.join(self.scl.get_repos_root(), self.name, 'noarch', self.rpmfile_symlink)
 
     def get_icon_url(self):
         return self.distro in DISTRO_ICONS \
@@ -450,12 +457,18 @@ class Repo(models.Model):
                 ['rpmbuild', '-ba'] + defines + [ SPECFILE ],
                 stdout=log, stderr=log, timeout=timeout
             )
+            try:
+                os.unlink(self.get_rpmfile_symlink_path())
+            except FileNotFoundError:
+                pass
+            os.symlink(self.rpmfile, self.get_rpmfile_symlink_path())
 
     def createrepo(self, timeout=None):
         with self.lock:
             log = open(os.path.join(self.get_repo_root(), 'createrepo.log'), 'w')
             check_call_log([
-                'createrepo_c', '--database', '--update', self.get_repo_root()
+                'createrepo_c', '--database', '--update', '--skip-symlinks',
+                self.get_repo_root()
             ], stdout=log, stderr=log, timeout=timeout)
 
     def save(self, *args, **kwargs):
