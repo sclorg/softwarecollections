@@ -8,21 +8,21 @@ from django.core.management.base import CommandError
 from multiprocessing import Pool, cpu_count
 
 from softwarecollections.management.commands import LoggingBaseCommand
-from softwarecollections.scls.models import SoftwareCollection
+from softwarecollections.scls.models import Repo
 
 
 logger = logging.getLogger(__name__)
 
 
-def find_related(args):
-    scl, timeout = args
+def createrepo(args):
+    repo, timeout = args
 
-    # scl.find_related()
-    logger.info('Searching relations for {}'.format(scl.slug))
+    # repo.createrepo()
+    logger.info('Creating repo {}'.format(repo.slug))
     try:
-        scl.find_related(timeout)
+        repo.createrepo(timeout)
     except:
-        logger.exception('Failed to search relations for {}'.format(scl.slug))
+        logger.exception('Failed to create repo {}'.format(repo.slug))
         return 1
 
     return 0
@@ -36,33 +36,33 @@ class Command(LoggingBaseCommand):
         ),
         make_option(
             '-t', '--timeout', action='store', dest='timeout', default=None,
-            help='Timeout in seconds for each step of sync (reposync, rpmbuild, createrepo)',
+            help='Timeout in seconds for each step of sync (reposync, createrepo, createrepo)',
         ),
     )
 
-    args = '[ <scl_slug> ... ]'
-    help = 'Find related collections for all collections. ' \
-           'Optionaly you may specify one or more slug of particular SCLs to be processed.'
+    args = '[ <repo_slug> ... ]'
+    help = 'Rebuild metadata for all repos. ' \
+           'Optionaly you may specify one or more slug of particular repo to be processed.'
 
     def handle(self, *args, **options):
         self.configure_logging(options['verbosity'])
         errors = 0
         if args:
-            scls = []
+            repos = []
             for slug in args:
                 try:
-                    scls.append(SoftwareCollection.objects.get(slug=slug))
+                    repos.append(Repo.objects.get(slug=slug))
                 except Exception as e:
                     logging.error(str(e))
                     errors += 1
         else:
-            scls = SoftwareCollection.objects.all()
+            repos = Repo.objects.all()
         timeout = options['timeout'] and int(options['timeout'])
         with Pool(processes=int(options['max_procs'])) as pool:
             errors += sum(pool.map(
-                find_related,
-                [(scl, timeout) for scl in scls],
+                createrepo,
+                [(scl, timeout) for scl in repos],
             ))
             if errors > 0:
-                raise CommandError('Failed to find relations: {} error(s)'.format(errors))
+                raise CommandError('Failed to rebuild release RPMs: {} error(s)'.format(errors))
 

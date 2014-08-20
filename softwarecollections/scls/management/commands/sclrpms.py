@@ -49,8 +49,8 @@ class Command(LoggingBaseCommand):
     )
 
     args = '[ <repo_slug> ... ]'
-    help = 'Rebuild all release RPMs, ' \
-           'Optionaly you may specify one or more slug of particular repo to be precessed.'
+    help = 'Rebuild all release RPMs. ' \
+           'Optionaly you may specify one or more slug of particular repo to be processed.'
 
     def handle(self, *args, **options):
         self.configure_logging(options['verbosity'])
