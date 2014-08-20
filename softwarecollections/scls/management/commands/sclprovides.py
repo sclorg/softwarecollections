@@ -21,8 +21,8 @@ def dump_provides(args):
     logger.info('Dumping provides for {}'.format(scl.slug))
     try:
         scl.dump_provides(timeout)
-    except Exception as e:
-        logger.error('Failed to dump provides for {}: {}'.format(scl.slug, e))
+    except:
+        logger.exception('Failed to dump provides for {}'.format(scl.slug))
         return 1
 
     return 0

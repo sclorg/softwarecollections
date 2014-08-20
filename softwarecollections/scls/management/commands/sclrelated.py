@@ -21,8 +21,8 @@ def find_related(args):
     logger.info('Searching relations for {}'.format(scl.slug))
     try:
         scl.find_related(timeout)
-    except Exception as e:
-        logger.error('Failed to search relations for {}: {}'.format(scl.slug, e))
+    except:
+        logger.exception('Failed to search relations for {}'.format(scl.slug))
         return 1
 
     return 0

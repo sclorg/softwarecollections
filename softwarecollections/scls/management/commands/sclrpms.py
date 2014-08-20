@@ -21,16 +21,16 @@ def rpmbuild(args):
     logger.info('Building RPM for {}'.format(repo.slug))
     try:
         repo.rpmbuild(timeout)
-    except Exception as e:
-        logger.error('Failed to build {}: {}'.format(repo.rpmname, e))
+    except:
+        logger.exception('Failed to build {}'.format(repo.rpmname))
         return 1
 
     # repo.createrepo()
     logger.info('Creating repo {}'.format(repo.slug))
     try:
         repo.createrepo(timeout)
-    except Exception as e:
-        logger.error('Failed to create repo {}: {}'.format(repo.slug, e))
+    except:
+        logger.exception('Failed to create repo {}'.format(repo.slug))
         return 1
 
     return 0
