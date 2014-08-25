@@ -7,8 +7,8 @@
         <li class='{% if request.path|slice:":9" == "/en/docs/" and request.path != "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
             <a href='/en/docs/'>docs</a>
         </li>
-        <li class='{% if request.path|slice:":13" == "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/faq/'>faq</a>
+        <li class='' role='menuitem'>
+            <a href='https://ask.softwarecollections.org/questions/'>ask a question</a>
         </li>
         <li class='{% if request.path|slice:":9" == "/en/scls/" %}active{% endif %}' role='menuitem'>
             <a href='/en/scls/'>collections</a>
