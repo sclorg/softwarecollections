@@ -56,6 +56,10 @@
 </div>
 {{ scl.description | markdown2:"safe" }}
 
+{% if scl.upstream_url %}
+<a href="{{ scl.upstream_url }}">Project homepage</a>
+{% endif %}
+
 <h2>Instructions</h2>
 {{ scl.instructions | markdown2:"safe" }}
 
@@ -149,10 +153,6 @@
         {% endfor %}
     </table>
 </div>
-
-{% if scl.upstream_url %}
-<a href="{{ scl.upstream_url }}">Upstream project</a>
-{% endif %}
 
 <h2>Tags</h2>
 <div class="scl-tags">

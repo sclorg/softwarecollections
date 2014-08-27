@@ -94,7 +94,7 @@ class SoftwareCollection(models.Model):
     copr_name       = models.CharField(_('Copr Project'), max_length=200,
                         help_text=_('Name of Copr Project to import packages from'))
     # other attributes are local
-    upstream_url    = models.URLField(_('Upstream URL'), blank=True)
+    upstream_url    = models.URLField(_('Project homepage'), blank=True)
     issue_tracker   = models.URLField(_('Issue Tracker'), blank=True,
                         default='https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org')
     title           = models.CharField(_('Title'), max_length=200)
