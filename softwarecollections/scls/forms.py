@@ -3,6 +3,7 @@ from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms.forms import pretty_name
+from django.forms.widgets import CheckboxFieldRenderer, RadioFieldRenderer
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from softwarecollections.copr import CoprProxy
@@ -36,11 +37,11 @@ class TableRenderer:
             header + '\n'.join(rows) + footer)
 
 
-class CheckboxSelectMultipleTableRenderer(TableRenderer, forms.CheckboxSelectMultiple.renderer):
+class CheckboxSelectMultipleTableRenderer(TableRenderer, CheckboxFieldRenderer):
     ''' Renders CheckboxSelectMultiple in a nice table '''
 
 
-class RadioSelectTableRenderer(TableRenderer, forms.RadioSelect.renderer):
+class RadioSelectTableRenderer(TableRenderer, RadioFieldRenderer):
     ''' Renders RadioSelect in a nice table '''
 
 
