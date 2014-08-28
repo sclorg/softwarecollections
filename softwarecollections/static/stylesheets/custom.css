@@ -183,6 +183,20 @@ a {
     float: right;
 }
 
+.icons {
+    float: right;
+    font-size: 24px;
+}
+
+.icons .glyphicon span {
+    display: none;
+}
+
+.icons a:hover,
+.icons a:active {
+    text-decoration: none;
+}
+
 table.yum-repos th,
 table.yum-repos td {
     padding: 5px;

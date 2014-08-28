@@ -6,11 +6,13 @@
 
 {% block content %}
 
-<div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
+<div class='page-header'>
+    <div class='icons'>
+        <a class='glyphicon glyphicon-arrow-left' href="{% url "scls:detail" form.instance %}"
+            title="go back to collection details"><span>back</span></a>
+    </div>
+    <h1>Report Malicious content</h1>
 </div>
-
-<h1 class='page-header'>Report Malicious content</h1>
 
 <p>
     Use this form to report malicious content.
