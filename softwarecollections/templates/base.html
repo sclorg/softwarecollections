@@ -58,17 +58,22 @@
 
         {% block base_content %}{% endblock %}
 
-        <div class='text-center' id='footer'>
-            &copy; 2013 &mdash; {% now "Y" %} Red Hat, Inc.
-            |
-            Hosted by
-            <a id="bh-logo" href="http://www.bluehost.com/" target="_blank">
-                <img src="/static/images/bh-logo.png" alt="Bluehost" />
-            </a>
-            |
-            <a href="https://github.com/misli/softwarecollections" target="_blank">Source code</a>
-            |
-            SoftwareCollections.org uses <a href="http://copr-fe.cloud.fedoraproject.org/coprs/mstuchli/SoftwareCollections/" target="_blank">COPR</a>
+        <div id='footer'>
+            <div class='container'>
+                <div class='text-center col-md-3 col-sm-6'>&copy; 2013 &mdash; {% now "Y" %} Red Hat, Inc.</div>
+                <div class='text-center col-md-3 col-sm-6'>
+                    Hosted by
+                    <a id="bh-logo" href="http://www.bluehost.com/" target="_blank">
+                        <img src="/static/images/bh-logo.png" alt="Bluehost" />
+                    </a>
+                </div>
+                <div class='text-center col-md-2 col-sm-6'>
+                    <a href="https://github.com/misli/softwarecollections" target="_blank">Source code</a>
+                </div>
+                <div class='text-center col-md-4 col-sm-6'>
+                    SoftwareCollections.org uses <a href="http://copr-fe.cloud.fedoraproject.org/coprs/mstuchli/SoftwareCollections/" target="_blank">COPR</a>
+                </div>
+            </div>
         </div>
 
         <script src="/static/javascripts/application.js" type="text/javascript"></script>
