@@ -216,8 +216,8 @@ class SoftwareCollection(models.Model):
             )
             for name in repos:
                 repos_config.write(
-                    "[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n".format(
-                        name=name, url=repos[name]
+                    "[{slug}_{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n".format(
+                        name=name, url=repos[name], slug=self.slug.replace("/", "_"),
                     )
                 )
         for repo in self.repos.all():
@@ -253,7 +253,7 @@ class SoftwareCollection(models.Model):
                     '-p', self.get_repos_root(),
                 ]
                 for repo in self.repos.all():
-                    args += ['-r', repo.name]
+                    args += ['-r', "{0}_{1}".format(self.slug.replace("/", "_"), repo.name)]
                 log.write(' '.join(args) + '\n')
                 log.flush()
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
