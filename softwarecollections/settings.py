@@ -28,6 +28,9 @@ TEMPLATE_DEBUG = True
 # Application definition
 
 INSTALLED_APPS = (
+    'softwarecollections',
+    'softwarecollections.scls',
+    'softwarecollections.auth',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.auth',
@@ -38,9 +41,6 @@ INSTALLED_APPS = (
     'django_markdown2',
     'tagging',
     'sekizai',
-    'softwarecollections',
-    'softwarecollections.scls',
-    'softwarecollections.auth',
     'south',
     'captcha',
 )
