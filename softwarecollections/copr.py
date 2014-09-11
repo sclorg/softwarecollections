@@ -13,32 +13,6 @@ class CoprException(Exception):
     pass
 
 
-class Copr(object):
-    _fields = [
-        'username',
-        'name',
-        'description',
-        'instructions',
-        'yum_repos',
-        'additional_repos',
-        'last_modified',
-    ]
-
-    def __init__(self, **kwargs):
-        for field in kwargs:
-            setattr(self, field, kwargs[field])
-
-    def __str__(self):
-        return 'copr://{}/{}'.format(self.username, self.name)
-
-    def __repr__(self):
-        return 'Copr({})'.format(', '.join(['{} = {}'.format(field, repr(getattr(self, field))) for field in self._fields]))
-
-    @property
-    def slug(self):
-        return '/'.join([self.username, self.name])
-
-
 class CoprProxy:
     def __init__(self, copr_url=COPR_API_URL):
         self.copr_url = copr_url[-1] == '/' and copr_url[:-1] or copr_url
@@ -57,12 +31,12 @@ class CoprProxy:
         except Exception as e:
             raise CoprException('Failed to get copr names: {}'.format(e))
 
-    def copr(self, username, coprname):
+    def coprdetail(self, username, coprname):
         """ return copr details """
         try:
             data = self._get('/coprs/{}/{}/detail/'.format(username, coprname))
             data['detail']['username'] = username
-            return Copr(**data['detail'])
+            return data['detail']
         except Exception as e:
             raise CoprException('Failed to get copr detail: {}'.format(e))
 

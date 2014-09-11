@@ -3,10 +3,11 @@ from django.utils.translation import ungettext, ugettext as _
 from .models import SoftwareCollection, Repo, Score
 
 class SoftwareCollectionAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'get_title_tag', 'get_copr_tag', 'review_req', 'approved', 'auto_sync', 'need_sync', 'last_synced', 'last_modified')
+    list_display = ('slug', 'get_title_tag', 'get_copr_tags', 'review_req', 'approved', 'auto_sync', 'need_sync', 'last_synced', 'last_modified')
     list_filter  = ('review_req', 'approved', 'maintainer')
     ordering     = ('slug',)
     actions      = ('approve', 'request_sync')
+    filter_horizontal = ('coprs', 'collaborators')
 
     def approve(self, request, queryset):
         rows_updated = queryset.update(review_req = False, approved = True)

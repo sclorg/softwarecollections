@@ -10,7 +10,7 @@ from softwarecollections.copr import CoprProxy
 from tagging.forms import TagField
 
 from .models import (
-    SoftwareCollection, Repo, Score,
+    SoftwareCollection, Copr, Repo, Score,
     POLICY_CHOICES_TEXT, POLICY_CHOICES_LABEL
 )
 
@@ -26,15 +26,31 @@ ORDER_BY_CHOICES = (
 
 class TableRenderer:
 
-    def render(self):
-        header = '<div class="panel panel-default"><table class="table"><tbody>'
+    def render_option(self, value, label, i):
+        widget = self.choice_input_class(self.name, self.value, self.attrs.copy(), (value, label), i)
         row    = '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label for="{}">{}</label></td></tr>'
-        footer = '</tbody></table></div>'
-        rows   = [row.format(w.tag(), w.attrs['id'], w.choice_label) for w in self]
+        return row.format(widget.tag(), widget.attrs['id'], widget.choice_label)
+
+    def render(self):
+        header  = '<div class="panel panel-default"><table class="table"><tbody>'
+        group   = '<tr><th colspan="2">{}</th></tr>'
+        footer  = '</tbody></table></div>'
+        rows    = []
+        i       = 0
+        for value, label in self.choices:
+            if isinstance(label, (list, tuple)):
+                rows.append(group.format(value))
+                for v, l in label:
+                    rows.append(self.render_option(v, l, i))
+                    i += 1
+            else:
+                rows.append(self.render_option(value, label, i))
+            i += 1
         if not rows:
             rows.append('<tr><td class="col-md-1 text-center td-gray"><input type="checkbox" disabled="disabled" /></td><td></td></tr>')
         return mark_safe(
-            header + '\n'.join(rows) + footer)
+            header + '\n'.join(rows) + footer
+        )
 
 
 class CheckboxSelectMultipleTableRenderer(TableRenderer, CheckboxFieldRenderer):
@@ -71,7 +87,6 @@ class _SclForm(forms.ModelForm):
                 ).order_by('-id')[0].copr_username
             except:
                 copr_username = self.request.user.get_username()
-            self.initial['copr_username'] = copr_username
         self.initial['copr_username'] = copr_username
         self.initial['maintainer']    = self.request.user
         if copr_username:
@@ -98,15 +113,19 @@ class _SclForm(forms.ModelForm):
 class CreateForm(_SclForm):
 
     def save(self, commit=True):
-        scl = super(CreateForm, self).save(False)
-        scl.slug       = '{}/{}'.format(scl.maintainer.username, scl.name)
-        scl.title      = pretty_name(scl.name)
-        scl.sync_copr_texts()
-        os.makedirs(scl.get_repos_root())
-        scl.save()
-        scl.sync_copr_repos()
+        copr = Copr.objects.get_or_create(
+            username = self.instance.copr_username,
+            name     = self.instance.copr_name,
+        )[0]
+        self.instance.slug          = '{}/{}'.format(self.instance.maintainer.username, self.instance.name)
+        self.instance.title         = pretty_name(self.instance.name)
+        self.instance.description   = copr.description
+        self.instance.instructions  = copr.instructions
+        os.makedirs(self.instance.get_repos_root())
+        scl = super(CreateForm, self).save(commit)
+        scl.coprs.add(copr)
         scl.add_auto_tags()
-        scl.collaborators.add(scl.maintainer)
+        scl.collaborators.add(self.instance.maintainer)
         return scl
 
     class Meta:
@@ -136,7 +155,11 @@ class UpdateForm(_SclForm):
 
     def save(self, commit=True):
         scl = super(UpdateForm, self).save(commit)
-        scl.sync_copr_repos()
+        copr = Copr.objects.get_or_create(
+            username = scl.copr_username,
+            name     = scl.copr_name,
+        )[0]
+        scl.coprs.add(copr)
         scl.tags = self.cleaned_data['tags']
         scl.add_auto_tags()
         return scl
@@ -193,7 +216,6 @@ class CollaboratorsForm(forms.ModelForm):
                 )
             )
         )
-        self.tags = self.instance.tags_edit_string()
 
     def clean(self):
         self.cleaned_data = super(CollaboratorsForm, self).clean()
@@ -209,12 +231,6 @@ class CollaboratorsForm(forms.ModelForm):
         self.cleaned_data['collaborators'].append(self.instance.maintainer)
         return self.cleaned_data
 
-    def save(self, commit=True):
-        scl = super(CollaboratorsForm, self).save(commit)
-        scl.tags = self.tags
-        scl.add_auto_tags()
-        return scl
-
     class Meta:
         model = SoftwareCollection
         fields = ['collaborators']
@@ -224,27 +240,54 @@ class CollaboratorsForm(forms.ModelForm):
 
 
 class ReposForm(forms.ModelForm):
-    repos = forms.MultipleChoiceField(label=_('Enabled repos'), required=False,
+    repos = forms.MultipleChoiceField(label=_('Enabled repos'),
                 widget=forms.widgets.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer))
 
     def __init__(self, *args, **kwargs):
         super(ReposForm, self).__init__(*args, **kwargs)
-        self.initial['repos'] = list(map(lambda r: r.id, self.instance.enabled_repos.all()))
-        self.fields['repos'].choices = tuple(
-            map(
-                lambda r: (r.id, mark_safe('<img src="{}" width="32" height="32" alt=""/> {} {} {}'.format(
-                    r.get_icon_url(), r.distro.title(), r.version, r.arch
-                ))),
-                self.instance.repos.all()
-            )
-        )
-        self.tags = self.instance.tags_edit_string()
+        self.initial['repos'] = [
+            '{}/{}/{}'.format(repo.copr.username, repo.copr.name, repo.name)
+            for repo in self.instance.all_repos
+        ]
+        self.fields['repos'].choices = [
+            (
+                copr.slug, 
+                [
+                    (
+                        '{}/{}/{}'.format(repo.copr.username, repo.copr.name, repo.name),
+                        mark_safe('<img src="{}" width="32" height="32" alt=""/> {} {} {}'.format(
+                            repo.get_icon_url(), repo.distro.title(), repo.version, repo.arch
+                        )),
+                    ) for repo in [
+                        Repo(
+                            scl      = self.instance,
+                            copr     = copr,
+                            name     = name,
+                            copr_url = url,
+                        ) for name, url in copr.yum_repos.items()
+                    ]
+                ]
+            ) for copr in self.instance.all_coprs
+        ]
 
     def save(self, commit=True):
-        scl  = super(ReposForm, self).save(False)
-        scl.repos.filter (id__in=self.cleaned_data['repos']).update(enabled=True)
-        scl.repos.exclude(id__in=self.cleaned_data['repos']).update(enabled=False)
-        scl.tags = self.tags
+        scl   = super(ReposForm, self).save(False)
+        coprs = dict((copr.slug, copr) for copr in scl.all_coprs)
+        ids   = []
+        for r in self.cleaned_data['repos']:
+            slug, name = r.rsplit('/',1)
+            copr = coprs[slug]
+            ids.append(
+                Repo.objects.get_or_create(
+                    scl=scl,
+                    copr=copr,
+                    name=name,
+                    copr_url=copr.yum_repos[name],
+                )[0].id
+            )
+        for repo in scl.repos.exclude(id__in=ids):
+            repo.delete()
+        del(scl._all_repos)
         scl.add_auto_tags()
         return scl
 

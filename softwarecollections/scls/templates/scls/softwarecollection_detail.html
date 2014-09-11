@@ -117,8 +117,12 @@
     {% endif %}
 {% endif %}
 
-<h2>Related COPR repo</h2>
-<a href="{{ scl.get_copr_url }}">{{ scl.copr_username }}/{{ scl.copr_name }}</a>
+<h2>Related COPR projects</h2>
+<ul>
+    {% for copr in scl.all_coprs %}
+    <li><a href="{{ copr.get_url }}">{{ copr.username }}/{{ copr.name }}</a></li>
+    {% endfor %}
+</ul>
 
 <h2>Yum Repositories
     {% if scl.last_modified %}
@@ -138,7 +142,7 @@
                 <th>Link</th>
             </tr>
         </thead>
-        {% for repo in scl.enabled_repos %}
+        {% for repo in scl.all_repos %}
         <tr>
             <td class='img-cell'><img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/></td>
             <td><strong>{{ repo.distro | capfirst }} {{ repo.version }}</strong></td>

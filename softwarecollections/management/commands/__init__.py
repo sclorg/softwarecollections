@@ -37,10 +37,15 @@ class LoggingBaseCommand(BaseCommand):
                     'formatter': 'console',
                     'stream': self.stderr
                 },
+                'mail_admins': {
+                    'level': 'ERROR',
+                    'class': 'django.utils.log.AdminEmailHandler',
+                },
+
             },
             'loggers': {
                 '': {
-                    'handlers': ['console'],
+                    'handlers': settings.DEBUG and ['console'] or ['console', 'mail_admins'],
                     'level': logging_levels[verbosity],
                     'propagate': True,
                 }

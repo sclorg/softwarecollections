@@ -82,18 +82,49 @@ POLICY_LABEL = {
 POLICY_CHOICES_TEXT = [(key, mark_safe(markdown2.markdown(POLICY_TEXT[key]))) for key in POLICIES]
 POLICY_CHOICES_LABEL = [(key, POLICY_LABEL[key]) for key in POLICIES]
 
+
+
+class Copr(models.Model):
+    username   = models.CharField(_('Copr User'), max_length=100,
+                    help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
+    name       = models.CharField(_('Copr Project'), max_length=200,
+                    help_text=_('Name of Copr Project to import packages from'))
+
+    class Meta:
+        unique_together = (('username', 'name'),)
+
+    def get_url(self):
+        return os.path.join(settings.COPR_COPRS_URL, self.username, self.name)
+
+    _detail = None
+    def __getattr__(self, name):
+        try:
+            if self._detail is None:
+                self._detail = CoprProxy().coprdetail(self.username, self.name)
+            return self._detail[name]
+        except Exception as e:
+            raise AttributeError(e)
+
+    def __str__(self):
+        return 'Copr(username={}, name={})'.format(self.username, self.name)
+
+    @property
+    def slug(self):
+        return '/'.join([self.username, self.name])
+
+
 class SoftwareCollection(models.Model):
     # automatic value (maintainer.username/name) used as unique key
     slug            = models.CharField(max_length=150, editable=False, db_index=True)
-    # local name is unique per local maintainer
+    # name is unique per maintainer
     name            = models.CharField(_('Name'), max_length=100, validators=[validate_name],
                         help_text=_('Name without spaces (It will be part of the url and RPM name.)'))
-    # copr_* are used to identify copr project
+    # TODO delete copr_username and copr_name
     copr_username   = models.CharField(_('Copr User'), max_length=100,
                         help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
     copr_name       = models.CharField(_('Copr Project'), max_length=200,
                         help_text=_('Name of Copr Project to import packages from'))
-    # other attributes are local
+    coprs           = models.ManyToManyField(Copr, verbose_name=_('Copr projects'))
     upstream_url    = models.URLField(_('Project homepage'), blank=True)
     issue_tracker   = models.URLField(_('Issue Tracker'), blank=True,
                         default='https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org')
@@ -112,14 +143,14 @@ class SoftwareCollection(models.Model):
     review_req      = models.BooleanField(_('Review requested'), default=False)
     auto_sync       = models.BooleanField(_('Auto sync'), default=False,
                         help_text=_('Enable periodic synchronization with related Copr project'))
-    need_sync       = models.BooleanField(_('Needs sync with copr'), default=True)
+    need_sync       = models.BooleanField(_('Needs sync with coprs'), default=True)
     maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
     collaborators   = models.ManyToManyField(User,
                         verbose_name=_('Collaborators'),
                         related_name='softwarecollection_set', blank=True)
     requires        = models.ManyToManyField('self', symmetrical=False,
-                        related_name='required_by', blank=True)
+                        related_name='required_by', editable=False)
 
     class Meta:
         # in fact, since slug is made of those and slug is unique,
@@ -133,18 +164,16 @@ class SoftwareCollection(models.Model):
     def get_absolute_url(self):
         return reverse('scls:detail', kwargs={'slug': self.slug})
 
-    def get_copr_url(self):
-        return os.path.join(settings.COPR_COPRS_URL, self.copr_username, self.copr_name)
-
-    # this is used in admin only
-    def get_copr_tag(self):
-        return '<a href="{url}" target="_blank">{username}/{name}</a>'.format(
-            url      = self.get_copr_url(),
-            username = self.copr_username,
-            name     = self.copr_name,
-        )
-    get_copr_tag.short_description = _('Copr')
-    get_copr_tag.allow_tags = True
+    def get_copr_tags(self):
+        return ', '.join([
+            '<a href="{url}" target="_blank">{username}/{name}</a>'.format(
+                url      = copr.get_url(),
+                username = copr.username,
+                name     = copr.name,
+            ) for copr in self.all_coprs
+        ])
+    get_copr_tags.short_description = _('Coprs')
+    get_copr_tags.allow_tags = True
 
     # this is used in admin only
     def get_title_tag(self):
@@ -172,16 +201,24 @@ class SoftwareCollection(models.Model):
         return POLICY_TEXT[self.policy]
 
     @property
-    def enabled_repos(self):
+    def all_coprs(self):
         try:
-            return self._enabled_repos
+            return self._all_coprs
         except AttributeError:
-            self._enabled_repos = self.repos.filter(enabled=True)
-        return self._enabled_repos
+            self._all_coprs = list(self.coprs.all())
+        return self._all_coprs
+
+    @property
+    def all_repos(self):
+        try:
+            return self._all_repos
+        except AttributeError:
+            self._all_repos = list(self.repos.all())
+        return self._all_repos
 
     def get_auto_tags(self):
         tags = set()
-        for repo in self.enabled_repos.all():
+        for repo in self.all_repos:
             tags.update([repo.distro_version])
         return list(tags)
 
@@ -192,47 +229,46 @@ class SoftwareCollection(models.Model):
     def tags_edit_string(self):
         return edit_string_for_tags(self.tags.exclude(name__in=self.get_auto_tags()))
 
-    @property
-    def copr(self):
-        try:
-            return self._copr
-        except AttributeError:
-            if self.copr_username and self.copr_name:
-                self._copr = CoprProxy().copr(self.copr_username, self.copr_name)
-                return self._copr
-            else:
-                return None
-
-    def sync_copr_texts(self):
-        self.description = self.copr.description
-        self.instructions = self.copr.instructions
-
     def sync_copr_repos(self):
-        repos = self.copr.yum_repos
+        """
+        * deletes repos, which do not exist in Copr any more
+        * updates repo urls
+        * updates last_modified and download count
+        * creates copr-repos.conf
+        * returns repos
+        """
         with self.lock:
+            repos = []
             repos_config = open(self.get_repos_config(), 'w')
             repos_config.write(
                 "[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n".format(cache_root=self.get_cache_root())
             )
-            for name in repos:
-                repos_config.write(
-                    "[{slug}_{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n".format(
-                        name=name, url=repos[name], slug=self.slug.replace("/", "_"),
-                    )
-                )
-        for repo in self.repos.all():
-            if repo.name not in repos:
-                # delete old repos
-                repo.delete()
-            else:
-                # update existing repos
-                repo.copr_url = repos.pop(repo.name)
-                repo.save()
-        for name in repos:
-            # save new repos
-            Repo(scl=self, name=name, copr_url=repos[name]).save()
+            last_modified = 0
+            for copr in self.all_coprs:
+                last_modified = max(last_modified, copr.last_modified or 0)
+                for repo in self.repos.filter(copr=copr):
+                    if repo.name not in copr.yum_repos:
+                        # delete old repos
+                        repo.delete()
+                    else:
+                        # update existing repos
+                        repo.copr_url = copr.yum_repos[repo.name]
+                        repo.save()
+                        repos_config.write(
+                            '[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n'.format(
+                                name = repo.repo_id,
+                                url  = repo.copr_url,
+                            )
+                        )
+                        repos.append(repo)
+            self.last_modified  = last_modified and datetime.utcfromtimestamp(last_modified).replace(tzinfo=utc) or None
+            self.download_count = sum([repo.download_count for repo in repos])
+            return repos
 
     def reposync(self, timeout=None):
+        """
+        * runs reposync
+        """
         # unfortunately reposync can not run parallel
         with Flock(os.open(settings.REPOS_ROOT, 0), LOCK_EX):
             with self.lock:
@@ -252,34 +288,26 @@ class SoftwareCollection(models.Model):
                     'reposync', '--source', '-c', self.get_repos_config(),
                     '-p', self.get_repos_root(),
                 ]
-                for repo in self.repos.all():
-                    args += ['-r', "{0}_{1}".format(self.slug.replace("/", "_"), repo.name)]
+                for repo in self.all_repos:
+                    args += ['-r', repo.repo_id]
                 log.write(' '.join(args) + '\n')
                 log.flush()
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
-                # FIXME we are downloading full repos again, this is download
-                # not sync
-                for repo in self.repos.all():
-                    source_dir = '{0}/{1}_{2}/'.format(self.get_repos_root(),
-                        self.slug.replace("/", "_"), repo.name)
-                    dest_dir = '{0}/{1}/'.format(self.get_repos_root(),
-                        repo.name)
-                    call(['/usr/bin/rsync',  '-r', source_dir, dest_dir])
-                    shutil.rmtree(source_dir)
 
     def sync(self, timeout=None):
-        self.sync_copr_repos()
+        """
+        high level method
+        * runs sync_copr_repos, reposync, rpmbuild, createrepo
+        * updates last_synced and saves scl
+        """
         with self.lock:
-            self.download_count = sum([repo.download_count for repo in self.repos.all()])
+            repos = self.sync_copr_repos()
             self.reposync(timeout)
-            self.last_modified = self.copr.last_modified \
-                and datetime.utcfromtimestamp(self.copr.last_modified).replace(tzinfo=utc) \
-                 or None
-            self.last_synced = datetime.now().replace(tzinfo=utc)
-            for repo in self.repos.all():
+            for repo in repos:
                 if not os.path.exists(repo.get_rpmfile_path()):
                     repo.rpmbuild(timeout)
                 repo.createrepo(timeout)
+            self.last_synced = datetime.now().replace(tzinfo=utc)
             self.save()
 
     def dump_provides(self, timeout=None):
@@ -349,10 +377,12 @@ class SoftwareCollection(models.Model):
 tagging.register(SoftwareCollection)
 
 
+
 class Repo(models.Model):
     # automatic value (scl.slug/name) used as unique key
     slug            = models.SlugField(max_length=150, editable=False)
     scl             = models.ForeignKey(SoftwareCollection, related_name='repos')
+    copr            = models.ForeignKey(Copr, related_name='repos')
     name            = models.CharField(_('Name'), max_length=50)
     copr_url        = models.CharField(_('Copr URL'), max_length=200)
     download_count  = models.IntegerField(default=0, editable=False)
@@ -403,10 +433,25 @@ class Repo(models.Model):
     def rpmfile_symlink(self):
         return self.rpmname + '.noarch.rpm'
 
+    @property
+    def repo_id(self):
+        try:
+            return self._repo_id
+        except AttributeError:
+            self._repo_id= '-'.join([
+                self.copr.username,
+                self.copr.name,
+                self.name
+            ])
+        return self._repo_id
+
     def get_cache_dir(self):
         return os.path.join(self.scl.get_cache_root(), self.name)
 
-    def get_repo_root(self):
+    def get_repo_dir(self):
+        return os.path.join(self.scl.get_repos_root(), self.repo_id)
+
+    def get_repo_symlink(self):
         return os.path.join(self.scl.get_repos_root(), self.name)
 
     def get_repo_url(self):
@@ -415,11 +460,11 @@ class Repo(models.Model):
     def get_rpmfile_path(self):
         return os.path.join(self.scl.get_repos_root(), self.name, 'noarch', self.rpmfile)
 
-    def get_rpmfile_url(self):
-        return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
-
     def get_rpmfile_symlink_path(self):
         return os.path.join(self.scl.get_repos_root(), self.name, 'noarch', self.rpmfile_symlink)
+
+    def get_rpmfile_url(self):
+        return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
 
     def get_icon_url(self):
         return self.distro in DISTRO_ICONS \
@@ -432,18 +477,25 @@ class Repo(models.Model):
             return self._lock
         except AttributeError:
             try:
-                self._lock = Flock(os.open(self.get_repo_root(), 0), LOCK_EX)
+                self._lock = Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
             except FileNotFoundError:
-                os.makedirs(self.get_repo_root())
-                self._lock = Flock(os.open(self.get_repo_root(), 0), LOCK_EX)
+                # create repo dir
+                os.makedirs(self.get_repo_dir())
+                # refresh repo symlink
+                try:
+                    os.unlink(self.get_repo_symlink())
+                except FileNotFoundError:
+                    pass
+                os.symlink(self.repo_id, self.get_repo_symlink())
+                self._lock = Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
             return self._lock
 
     def rpmbuild(self, timeout=None):
         with self.lock:
-            log = open(os.path.join(self.get_repo_root(), 'rpmbuild.log'), 'w')
+            log = open(os.path.join(self.get_repo_dir(), 'rpmbuild.log'), 'w')
             defines = [
                 '-D',         '_topdir {}'.format(settings.RPMBUILD_TOPDIR),
-                '-D',         '_rpmdir {}'.format(self.get_repo_root()),
+                '-D',         '_rpmdir {}'.format(self.get_repo_dir()),
                 '-D',            'dist {}'.format(self.distro_version),
                 '-D',        'scl_name {}'.format(self.scl.name),
                 '-D',       'scl_title {}'.format(self.scl.title),
@@ -474,28 +526,33 @@ class Repo(models.Model):
 
     def createrepo(self, timeout=None):
         with self.lock:
-            log = open(os.path.join(self.get_repo_root(), 'createrepo.log'), 'w')
+            log = open(os.path.join(self.get_repo_dir(), 'createrepo.log'), 'w')
             check_call_log([
                 'createrepo_c', '--database', '--update', '--skip-symlinks',
-                self.get_repo_root()
+                self.get_repo_dir()
             ], stdout=log, stderr=log, timeout=timeout)
 
     def save(self, *args, **kwargs):
-        # ensure slug is correct
-        self.slug = '/'.join((self.scl.slug, self.name))
-        super(Repo, self).save(*args, **kwargs)
+        with self.lock:
+            # ensure slug is correct
+            self.slug = '/'.join((self.scl.slug, self.name))
+            super(Repo, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         # rename of repo directory is faster than deleting
         # renamed directories will be deleted by command sclclean
         try:
             os.rename(
-                self.get_repo_root(),
+                self.get_repo_dir(),
                 os.path.join(
                     settings.REPOS_ROOT,
                     '.repo.{}.deleted'.format(self.id)
                 )
             )
+        except FileNotFoundError:
+            pass
+        try:
+            os.unlink(self.get_repo_symlink())
         except FileNotFoundError:
             pass
         # delete repo in the database

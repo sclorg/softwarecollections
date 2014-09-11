@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # localsettings is used to store site depandant settings
 from .localsettings import (
-    BASE_DIR, SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASES,
+    BASE_DIR, SECRET_KEY, DEBUG, DBDEBUG, ALLOWED_HOSTS, DATABASES,
     ADMINS, MANAGERS, SERVER_EMAIL,
     COPR_URL, COPR_API_URL, COPR_COPRS_URL,
     LANGUAGE_CODE, TIME_ZONE, LANGUAGES,
@@ -85,14 +85,18 @@ LOGGING = {
         }
     },
     'loggers': {
-        'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
+        '': {
+            'handlers': DEBUG and ['console'] or ['console', 'mail_admins'],
+            'level':    DEBUG and 'DEBUG'     or 'INFO',
             'propagate': True,
         },
         'django.request': {
             'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'level': DBDEBUG and 'DEBUG' or 'INFO',
             'propagate': True,
         },
     }
