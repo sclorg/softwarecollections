@@ -257,6 +257,15 @@ class SoftwareCollection(models.Model):
                 log.write(' '.join(args) + '\n')
                 log.flush()
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
+                # FIXME we are downloading full repos again, this is download
+                # not sync
+                for repo in self.repos.all():
+                    source_dir = '{0}/{1}_{2}/'.format(self.get_repos_root(),
+                        self.slug.replace("/", "_"), repo.name)
+                    dest_dir = '{0}/{1}/'.format(self.get_repos_root(),
+                        repo.name)
+                    call(['/usr/bin/rsync',  '-r', source_dir, dest_dir])
+                    shutil.rmtree(source_dir)
 
     def sync(self, timeout=None):
         self.sync_copr_repos()
