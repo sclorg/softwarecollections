@@ -1,82 +1,85 @@
 {% load sekizai_tags %}
 
-<div class='stars'>
+<span class='stars'>
     {% if active %}
         <form name="stars-{{scl.pk}}" method="POST" action="{% url "scls:rate" scl %}">
         {% csrf_token %}
         {{ form.as_p }}
     {% endif %}
-    {% for i in "12345" %}<img
+    {% for i in "12345" %}<span
         {% if active %}
             style="cursor: pointer"
             id="star-{{scl.pk}}-{{i}}"
         {% endif %}
         {% if forloop.counter <= score %}
-            alt="*" class="star" src="/static/images/star.png"
+            alt="*" class="glyphicon glyphicon-star star"
         {% else %}
-            alt="-" class="star_empty" src="/static/images/star_empty.png"
+            alt="-" class="glyphicon glyphicon-star empty_star"
         {% endif %}
-    />{% endfor %}
+    ></span>{% endfor %}
     {% if active %}
         </form>
     {% endif %}
-</div>
+</span>
 
-{% addtoblock "js" %}
-    <script type="text/javascript">
-        function makeStarId(scl_id, i) {
-            return 'star-' + scl_id + '-' + i
-        }
+{% if active %}
+    {% addtoblock "js" %}
+        <script type="text/javascript">
+            rating = {{ score }}
+            function makeStarId(scl_id, i) {
+                return 'star-' + scl_id + '-' + i
+            }
 
-        function emptyStar(imgObject) {
-            imgObject.attr('alt', '-')
-            imgObject.attr('src', '/static/images/star_empty.png')
-        }
+            function emptyStar(imgObject) {
+                imgObject.attr('alt', '-')
+                imgObject.attr('class', "glyphicon glyphicon-star empty_star")
+            }
 
-        function fillStar(imgObject) {
-            imgObject.attr('alt', '*')
-            imgObject.attr('src', '/static/images/star.png')
-        }
+            function fillStar(imgObject) {
+                imgObject.attr('alt', '*')
+                imgObject.attr('class', "glyphicon glyphicon-star star")
+            }
 
-        $(function() {
-            $('img[id^="star-"]').each(function() {
-                match = /star-(\d+)-(\d+)/.exec($(this).attr('id'))
-                var scl_id = match[1]
-                var score = match[2]
-                $(this).click(function() {
-                    for (var i = 1; i <= 5; i++) {
-                        img = $('img[id="' + makeStarId(scl_id, i) + '"]')
-                        if (i <= score) {
-                            fillStar(img)
-                        } else {
-                            emptyStar(img)
+            $(function() {
+                $('span[id^="star-"]').each(function() {
+                    match = /star-(\d+)-(\d+)/.exec($(this).attr('id'))
+                    var scl_id = match[1]
+                    var score = match[2]
+                    $(this).click(function() {
+                        for (var i = 1; i <= 5; i++) {
+                            img = $('span[id="' + makeStarId(scl_id, i) + '"]')
+                            if (i <= score) {
+                                fillStar(img)
+                            } else {
+                                emptyStar(img)
+                            }
                         }
-                    }
-                    form = $('form[name=stars-' + scl_id + ']')
-                    form.children('[name=score]').val(score)
-                    form.submit()
-                })
-                $(this).mouseover(function() {
-                    for (var i = 1; i <= 5; i++) {
-                        img = $('img[id="' + makeStarId(scl_id, i) + '"]')
-                        if (i <= score) {
-                            fillStar(img)
-                        } else {
-                            emptyStar(img)
+                        form = $('form[name=stars-' + scl_id + ']')
+                        form.children('[name=score]').val(score)
+                        form.submit()
+                    })
+                    $(this).mouseover(function() {
+                        for (var i = 1; i <= 5; i++) {
+                            img = $('span[id="' + makeStarId(scl_id, i) + '"]')
+                            if (i <= score) {
+                                fillStar(img)
+                            } else {
+                                emptyStar(img)
+                            }
                         }
-                    }
-                })
-                $(this).mouseleave(function() {
-                    for (var i = 1; i <= 5; i++) {
-                        img = $('img[id="' + makeStarId(scl_id, i) + '"]')
-                        if (img.attr('class') == 'star') {
-                            fillStar(img)
-                        } else {
-                            emptyStar(img)
+                    })
+                    $(this).mouseleave(function() {
+                        for (var i = 1; i <= 5; i++) {
+                            img = $('span[id="' + makeStarId(scl_id, i) + '"]')
+                            if (i <= rating) {
+                                fillStar(img)
+                            } else {
+                                emptyStar(img)
+                            }
                         }
-                    }
+                    })
                 })
             })
-        })
-    </script>
-{% endaddtoblock %}
+        </script>
+    {% endaddtoblock %}
+{% endif %}

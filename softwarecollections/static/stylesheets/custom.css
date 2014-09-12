@@ -7,6 +7,7 @@ body {
     font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'Sans Serif';
     font-size: 15px;
     line-height: 1.5;
+    margin-bottom: 40px;
 }
 
 code {
@@ -35,6 +36,25 @@ legend {
 
 p {
     padding-bottom: 1ex;
+}
+
+div.scl_preview div.page-header {
+    margin-bottom: 0px;
+}
+
+div.scl_preview div.preview_description p {
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eee;
+}
+
+div.scl_preview div.preview_footer p {
+    font-size: 0.8em;
+    color: #555;
+}
+
+div.scl_preview .approved {
+    font-weight: bold;
 }
 
 #footer {
@@ -225,8 +245,16 @@ table.yum-repos td {
     padding: 5px !important;
 }
 
-.approved {
-    color: #FFB428;
+div.scl_preview span.stars{
+    font-size: 0.7em;
+}
+
+span.stars span.empty_star {
+    color: #aaa;
+}
+
+.approved, span.stars span.star {
+    color: #c29248;
 }
 
 .approved-sign {
