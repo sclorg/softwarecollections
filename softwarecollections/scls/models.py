@@ -44,39 +44,32 @@ DISTRO_ICONS = ('fedora', 'epel')
 POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
 
 POLICY_TEXT = {
-    'DEV':  '**Unpublished**: '
-            'These SCLs are **not** listed publicly, so users browsing the '
-            'SoftwareCollections.org index will not see these packages or be '
-            'able to install them. This is for collections that are currently '
-            'in development prior to release to the public, or for packages '
-            'that are for your personal use.',
-    'Q-D':  '**Incubator**: '
-            'This software will be publicly listed, but users will be warned '
-            "they are potentially unstable and there's no assurance of any "
-            'effort to update the repository beyond the existing build. These '
-            'repositories may be suitable for trying software that is not '
-            'natively available for your system, but are considered not '
-            'suitable for long-term use - and certainly not for production deployments.',
-    'COM':  '**Community Repositories**: '
-            'These repositories are cared for, possibly by upstream communities '
-            'developing the software, but these are best-effort repositories '
-            'that should not be depended on for production deployments. They '
-            'are updated with bug fixes and security fixes, but the repository '
-            'owner is not making any statement about doing so in a timely manner.',
-    'PRO':  '**Professional**: '
-            'These repositories are being developed to be used in production '
-            'deployments. The individual or organization that maintains this '
-            'repository is planning to issue updates, bug fixes, and security '
-            'updates in a timely fashion.',
+    'DEV':  "**Private project**: "
+            "For personal or development use with no guarantee. "
+            "Not listed publicly. "
+            "Could be a good choice for projects in pre-release stage. ",
 
+    'Q-D':  "**Experimental project**: "
+            "An early-stage or experimental project. "
+            "Comes with no warranty. "
+            "Could be unstable - not for production use. ",
+
+    'COM':  "**Community project**: "
+            "Maintained by the upstream community of developers. "
+            "Should work well and be updated for bug and security fixes. "
+            "Still not recommended for use in production. ",
+
+    'PRO':  "**Professional project**: "
+            "Stable and secure release. "
+            "Receives regular bug and security fixes. "
+            "Ready for production deployments. ",
 }
 
-
 POLICY_LABEL = {
-    'DEV': 'Unpublished',
-    'Q-D': 'Incubator',
-    'COM': 'Community Repositories',
-    'PRO': 'Professional',
+    'DEV': 'Private project',
+    'Q-D': 'Experimental project',
+    'COM': 'Community project',
+    'PRO': 'Professional project',
 }
 
 POLICY_CHOICES_TEXT = [(key, mark_safe(markdown2.markdown(POLICY_TEXT[key]))) for key in POLICIES]
