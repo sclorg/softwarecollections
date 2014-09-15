@@ -28,7 +28,7 @@ class TableRenderer:
 
     def render_option(self, value, label, i):
         widget = self.choice_input_class(self.name, self.value, self.attrs.copy(), (value, label), i)
-        row    = '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label for="{}">{}</label></td></tr>'
+        row    = '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label style="font-weight:normal" for="{}">{}</label></td></tr>'
         return row.format(widget.tag(), widget.attrs['id'], widget.choice_label)
 
     def render(self):
