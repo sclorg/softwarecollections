@@ -10,31 +10,6 @@
 
 {% block content %}
 
-{% allowed 'edit' obj=scl %}
-<div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:edit" scl %}">edit</a>
-    <a class='btn btn-default' href="{% url "scls:acl" scl %}">collaborators</a>
-    <a class='btn btn-default' href="{% url "scls:repos" scl %}">repos</a>
-
-    {% if scl.auto_sync %}
-        <div class='btn btn-default disabled' title='automatic synchronization with copr repositories is enabled'>auto sync</div>
-    {% elif scl.need_sync %}
-        <div class='btn btn-default active' title='synchronization with copr repositories is requested'>sync requested</div>
-    {% else %}
-        <a class='btn btn-default' href="{% url "scls:sync_req" scl %}">request sync</a>
-    {% endif %}
-
-    {% if scl.approved %}
-    <span class='btn btn-default disabled'>approved</span>
-    {% elif scl.review_req %}
-    <span class='btn btn-default active'>review requested</span>
-    {% else %}
-    <a class='btn btn-default' href="{% url "scls:review_req" scl %}">review request</a>
-    {% endif %}
-    <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
-</div>
-{% endallowed %}
-
 <div class='page-header'>
     <div class='icons'>
         {% if scl.approved %}
@@ -59,7 +34,40 @@
             </a>
         </small>
     </h1>
+
+    {% allowed 'edit' obj=scl %}
+    <div class="scl-toolbar">
+        <div class="btn-toolbar">
+            <div class="btn-group btn-group-sm">
+                <a class='btn btn-default' href="{% url "scls:edit" scl %}">edit</a>
+                <a class='btn btn-default' href="{% url "scls:acl" scl %}">collaborators</a>
+                <a class='btn btn-default' href="{% url "scls:repos" scl %}">repos</a>
+            </div>
+            <div class="btn-group btn-group-sm">
+                {% if scl.auto_sync %}
+                    <div class='btn btn-default disabled' title='automatic synchronization with copr repositories is enabled'>auto sync</div>
+                {% elif scl.need_sync %}
+                    <div class='btn btn-default active' title='synchronization with copr repositories is requested'>sync requested</div>
+                {% else %}
+                    <a class='btn btn-default' href="{% url "scls:sync_req" scl %}">request sync</a>
+                {% endif %}
+
+                {% if scl.approved %}
+                <span class='btn btn-default disabled'>approved</span>
+                {% elif scl.review_req %}
+                <span class='btn btn-default active'>review requested</span>
+                {% else %}
+                <a class='btn btn-default' href="{% url "scls:review_req" scl %}">review request</a>
+                {% endif %}
+            </div>
+            <div class="btn-group btn-group-sm">
+                <a class='btn btn-default' href="{% url "scls:delete" scl %}">delete</a>
+            </div>
+        </div>
+    </div>
+    {% endallowed %}
 </div>
+
 {{ scl.description | markdown2:"safe" }}
 
 {% if scl.upstream_url %}
