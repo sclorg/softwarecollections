@@ -3,6 +3,7 @@ import os
 import shutil
 import tagging
 import tempfile
+from itertools import groupby
 from datetime import datetime
 from django.db import models
 from django.db.models import Avg
@@ -33,12 +34,11 @@ def check_call_log(*args, **kwargs):
         raise
     
 
-
 SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
 VERSION = '1'
 RELEASE = '2'
 
-DISTRO_ICONS = ('fedora', 'epel')
+DISTRO_ICONS = ('fedora', 'epel', 'rhel', 'centos')
 
 # Tuple is needed to preserve the order of policies
 POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
@@ -206,8 +206,17 @@ class SoftwareCollection(models.Model):
         try:
             return self._all_repos
         except AttributeError:
-            self._all_repos = list(self.repos.all())
+            self._all_repos = list(self.repos.all().order_by("name"))
         return self._all_repos
+
+    @property
+    def all_repos_grouped(self):
+        repo_groups = []
+        for key, group in groupby(self.all_repos, lambda x: x.distro_version):
+            repos = list(group)
+            oses = repos[0].get_oses_names_and_logos()
+            repo_groups.append((oses, repos))
+        return repo_groups
 
     def get_auto_tags(self):
         tags = set()
@@ -459,10 +468,18 @@ class Repo(models.Model):
     def get_rpmfile_url(self):
         return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
 
-    def get_icon_url(self):
-        return self.distro in DISTRO_ICONS \
-           and '{}/scls/icons/{}.png'.format(settings.STATIC_URL, self.distro) \
+    def get_icon_url(self, distro_name=None):
+        if not distro_name:
+            distro_name = self.distro
+        return distro_name in DISTRO_ICONS \
+           and '{}/scls/icons/{}.png'.format(settings.STATIC_URL, distro_name) \
             or '{}/scls/icons/empty.png'.format(settings.STATIC_URL)
+
+    def get_oses_names_and_logos(self):
+        if self.distro == "epel":
+            return [("RHEL {}".format(self.version), self.get_icon_url("rhel")),
+                    ("CentOS {}".format(self.version), self.get_icon_url("centos"))]
+        return [("{0} {1}".format(self.distro, self.version), self.get_icon_url)]
 
     @property
     def lock(self):

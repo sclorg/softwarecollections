@@ -241,7 +241,7 @@ table.yum-repos td {
 }
 
 .repos td {
-    vertical-align: middle;
+    vertical-align: middle !important;
 }
 
 .img-cell {
