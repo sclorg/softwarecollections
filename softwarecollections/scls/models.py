@@ -78,10 +78,11 @@ POLICY_CHOICES_LABEL = [(key, POLICY_LABEL[key]) for key in POLICIES]
 
 
 class Copr(models.Model):
-    username   = models.CharField(_('Copr User'), max_length=100,
+    username    = models.CharField(_('Copr User'), max_length=100,
                     help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
-    name       = models.CharField(_('Copr Project'), max_length=200,
+    name        = models.CharField(_('Copr Project'), max_length=200,
                     help_text=_('Name of Copr Project to import packages from'))
+    last_modified = models.DateTimeField(_('Last modified'), null=True, editable=False)
 
     class Meta:
         unique_together = (('username', 'name'),)
@@ -91,12 +92,15 @@ class Copr(models.Model):
 
     _detail = None
     def __getattr__(self, name):
+        if name.startswith('__'):
+            # prevent fetching Copr detail
+            raise AttributeError(name)
         try:
             if self._detail is None:
                 self._detail = CoprProxy().coprdetail(self.username, self.name)
             return self._detail[name]
         except Exception as e:
-            raise AttributeError(e)
+            raise AttributeError(name)
 
     def __str__(self):
         return 'Copr(username={}, name={})'.format(self.username, self.name)
@@ -106,17 +110,13 @@ class Copr(models.Model):
         return '/'.join([self.username, self.name])
 
 
+
 class SoftwareCollection(models.Model):
     # automatic value (maintainer.username/name) used as unique key
     slug            = models.CharField(max_length=150, editable=False, db_index=True)
     # name is unique per maintainer
     name            = models.CharField(_('Name'), max_length=100, validators=[validate_name],
                         help_text=_('Name without spaces (It will be part of the url and RPM name.)'))
-    # TODO delete copr_username and copr_name
-    copr_username   = models.CharField(_('Copr User'), max_length=100,
-                        help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
-    copr_name       = models.CharField(_('Copr Project'), max_length=200,
-                        help_text=_('Name of Copr Project to import packages from'))
     coprs           = models.ManyToManyField(Copr, verbose_name=_('Copr projects'))
     upstream_url    = models.URLField(_('Project homepage'), blank=True)
     issue_tracker   = models.URLField(_('Issue Tracker'), blank=True,
@@ -132,6 +132,7 @@ class SoftwareCollection(models.Model):
     create_date     = models.DateTimeField(_('Creation date'), auto_now_add=True)
     last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
     last_synced     = models.DateTimeField(_('Last synced'), null=True, editable=False)
+    has_content     = models.BooleanField(_('Has content'), default=False)
     approved        = models.BooleanField(_('Approved'), default=False)
     review_req      = models.BooleanField(_('Review requested'), default=False)
     auto_sync       = models.BooleanField(_('Auto sync'), default=False,
@@ -147,7 +148,7 @@ class SoftwareCollection(models.Model):
 
     class Meta:
         # in fact, since slug is made of those and slug is unique,
-        # this is not necessarry, but as a side effect, it create index,
+        # this is not necessarry, but as a side effect, it creates index,
         # which may be useful
         unique_together = (('maintainer', 'name'),)
 
@@ -194,6 +195,14 @@ class SoftwareCollection(models.Model):
         return POLICY_TEXT[self.policy]
 
     @property
+    def all_collaborators(self):
+        try:
+            return self._all_collaborators
+        except AttributeError:
+            self._all_collaborators = list(self.collaborators.all())
+        return self._all_collaborators
+
+    @property
     def all_coprs(self):
         try:
             return self._all_coprs
@@ -231,49 +240,43 @@ class SoftwareCollection(models.Model):
     def tags_edit_string(self):
         return edit_string_for_tags(self.tags.exclude(name__in=self.get_auto_tags()))
 
-    def sync_copr_repos(self):
-        """
-        * deletes repos, which do not exist in Copr any more
-        * updates repo urls
-        * updates last_modified and download count
-        * creates copr-repos.conf
-        * returns repos
-        """
+    def sync(self, timeout=None):
         with self.lock:
-            repos = []
-            repos_config = open(self.get_repos_config(), 'w')
-            repos_config.write(
-                "[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n".format(cache_root=self.get_cache_root())
-            )
-            last_modified = 0
-            for copr in self.all_coprs:
-                last_modified = max(last_modified, copr.last_modified or 0)
-                for repo in self.repos.filter(copr=copr):
-                    if repo.name not in copr.yum_repos:
-                        # delete old repos
-                        repo.delete()
-                    else:
-                        # update existing repos
-                        repo.copr_url = copr.yum_repos[repo.name]
-                        repo.save()
-                        repos_config.write(
-                            '[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n'.format(
-                                name = repo.repo_id,
-                                url  = repo.copr_url,
+            # create repos_config
+            with open(self.get_repos_config(), 'w') as repos_config:
+                repos_config = open(self.get_repos_config(), 'w')
+                repos_config.write(
+                    "[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n".format(cache_root=self.get_cache_root())
+                )
+                last_modified  = 0
+                download_count = 0
+                self._all_repos = []
+                for copr in self.all_coprs:
+                    last_modified = max(last_modified, copr.last_modified or 0)
+                    for repo in self.repos.filter(copr=copr):
+                        if repo.name not in copr.yum_repos:
+                            # delete old repos
+                            repo.delete()
+                        else:
+                            # update existing repos
+                            repo.copr_url = copr.yum_repos[repo.name]
+                            repo.save()
+                            repos_config.write(
+                                '[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n'.format(
+                                    name = repo.repo_id,
+                                    url  = repo.copr_url,
+                                )
                             )
-                        )
-                        repos.append(repo)
+                            self.all_repos.append(repo)
+                            download_count += repo.download_count
+                # despite expectations the file is empty
+                # if I do not call explicitly flush
+                repos_config.flush()
             self.last_modified  = last_modified and datetime.utcfromtimestamp(last_modified).replace(tzinfo=utc) or None
-            self.download_count = sum([repo.download_count for repo in repos])
-            return repos
+            self.download_count = download_count
 
-    def reposync(self, timeout=None):
-        """
-        * runs reposync
-        """
-        # unfortunately reposync can not run parallel
-        with Flock(os.open(settings.REPOS_ROOT, 0), LOCK_EX):
-            with self.lock:
+            # unfortunately reposync can not run parallel
+            with Flock(os.open(settings.REPOS_ROOT, 0), LOCK_EX):
                 log = open(os.path.join(self.get_repos_root(), 'reposync.log'), 'w')
 
                 # workaround BZ 1079387
@@ -295,21 +298,21 @@ class SoftwareCollection(models.Model):
                 log.write(' '.join(args) + '\n')
                 log.flush()
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
-
-    def sync(self, timeout=None):
-        """
-        high level method
-        * runs sync_copr_repos, reposync, rpmbuild, createrepo
-        * updates last_synced and saves scl
-        """
-        with self.lock:
-            repos = self.sync_copr_repos()
-            self.reposync(timeout)
-            for repo in repos:
+            self.last_synced = datetime.now().replace(tzinfo=utc)
+            # check repos content and build repo RPMs
+            has_content = False
+            for repo in self.all_repos:
                 if not os.path.exists(repo.get_rpmfile_path()):
                     repo.rpmbuild(timeout)
                 repo.createrepo(timeout)
-            self.last_synced = datetime.now().replace(tzinfo=utc)
+                repo.last_synced = self.last_synced
+                repo.has_content = list(filter(
+                    lambda name: name.endswith('.rpm'),
+                    os.listdir(repo.get_repo_dir())
+                )) and True or False
+                repo.save()
+                has_content |= repo.has_content
+            self.has_content = has_content
             self.save()
 
     def dump_provides(self, timeout=None):
@@ -388,11 +391,12 @@ class Repo(models.Model):
     name            = models.CharField(_('Name'), max_length=50)
     copr_url        = models.CharField(_('Copr URL'), max_length=200)
     download_count  = models.IntegerField(default=0, editable=False)
-    enabled         = models.BooleanField(_('Enabled'), default=True)
+    last_synced     = models.DateTimeField(_('Last synced'), null=True, editable=False)
+    has_content     = models.BooleanField(_('Has content'), default=False)
 
     class Meta:
         # in fact, since slug is made of those and slug is unique,
-        # this is not necessarry, but as a side effect, it create index,
+        # this is not necessarry, but as a side effect, it creates index,
         # which may be useful
         unique_together = (('scl', 'name'),)
 
@@ -541,12 +545,6 @@ class Repo(models.Model):
                 'createrepo_c', '--database', '--update', '--skip-symlinks',
                 self.get_repo_dir()
             ], stdout=log, stderr=log, timeout=timeout)
-
-    def save(self, *args, **kwargs):
-        with self.lock:
-            # ensure slug is correct
-            self.slug = '/'.join((self.scl.slug, self.name))
-            super(Repo, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         # rename of repo directory is faster than deleting

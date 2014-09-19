@@ -1,0 +1,75 @@
+{% extends "with_submenu.html" %}
+{% load sekizai_tags %}
+
+{% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
+
+{% block title %}Manage attached Copr projects{% endblock %}
+
+{% block content %}
+
+<div class="scl-toolbar btn-group btn-group-sm">
+    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
+</div>
+
+<h1 class='page-header'>Manage attached Copr projects</h1>
+
+<p>
+    Use this form to attach / unattach Copr projects.
+</p>
+
+{% for error in form.non_field_errors %}
+    <div class='alert alert-danger'>{{ error }}</div>
+{% endfor %}
+
+<form action="" method="post" class='form-horizontal'>{% csrf_token %}
+    {% for item in form %}
+        <div class='form-group'>
+            <label for='{{ item.id_for_label }}'
+                class='control-label col-md-3'>{{ item.label }}</label>
+            <div class='col-md-9{% if item.errors %} alert alert-danger{% endif %}'>
+                {{ item }}
+                {% for error in item.errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+
+                {% if item.help_text %}
+                    <span class='help-block'>{{ item.help_text }}</span>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- SUBMIT -->
+    <div class='form-group'>
+        <div class='col-md-9 col-md-offset-3'>
+            <input class='btn btn-default' type='submit' value='Save changes' />
+        </div>
+    </div>
+</form>
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+//<![CDATA[
+    var coprnames_url = "{% url 'scls:coprnames' '__copr_username__' %}"
+    $(function() {
+        // if name of scl project hasn't changed or is empty, change it to
+        // copr reponame on selection of copr repo
+        $("#id_copr_name").change(function() {
+            var name = $("#id_name");
+	    console.log(name.val())
+            if(!(name.val() && name.data("changed"))) {
+                name.val(this.value);
+		name.data("changed", false);
+            }
+        });
+        $(function() {
+            $("#id_name").change(function() { $(this).data("changed", true) });
+        });
+    });
+
+//]]>
+</script>
+<script src="/static/scls/javascripts/collection-add-edit.js" type="text/javascript"></script>
+{% endaddtoblock %}
+
+{% endblock %}

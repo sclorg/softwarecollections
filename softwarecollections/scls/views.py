@@ -21,10 +21,10 @@ from urllib.parse import urlsplit, urlunsplit
 
 from .forms import (
     FilterForm, CreateForm, UpdateForm, DeleteForm, RateForm,
-    CollaboratorsForm, ReposForm, ReviewReqForm, SyncReqForm,
+    CollaboratorsForm, CoprsForm, ReposForm, ReviewReqForm, SyncReqForm,
     ComplainForm
 )
-from .models import SoftwareCollection, Repo, Score
+from .models import Copr, SoftwareCollection, Repo, Score
 
 
 def _list(request, template, queryset, dictionary, **kwargs):
@@ -44,7 +44,7 @@ def _list(request, template, queryset, dictionary, **kwargs):
         if filter_form.cleaned_data['repo']:
             queryset = queryset.filter(
                 id__in=Repo.objects.filter(
-                    enabled=True,
+                    has_content=True,
                     name=filter_form.cleaned_data['repo']
                 ).values('scl_id')
             )
@@ -73,7 +73,7 @@ def _list(request, template, queryset, dictionary, **kwargs):
 
 
 def list_all(request, **kwargs):
-    queryset = SoftwareCollection.objects
+    queryset = SoftwareCollection.objects.filter(has_content=True)
     return _list(request, 'scls/list_all.html', queryset, {}, **kwargs)
 
 
@@ -86,7 +86,7 @@ def list_my(request, **kwargs):
 def list_user(request, username, **kwargs):
     User = get_user_model()
     user = get_object_or_404(User, **{User.USERNAME_FIELD: username})
-    queryset = user.softwarecollection_set
+    queryset = user.softwarecollection_set.filter(has_content=True)
     dictionary = {'user': user}
     return _list(request, 'scls/list_user.html', queryset, dictionary, **kwargs)
 
@@ -97,7 +97,7 @@ def list_tag(request, name, **kwargs):
     except:
         tag = Tag()
         tag.name = name
-    queryset = SoftwareCollection.tagged.with_all(tag)
+    queryset = SoftwareCollection.tagged.with_all(tag).filter(has_content=True)
     dictionary = {'tag': tag}
     return _list(request, 'scls/list_tag.html', queryset, dictionary, **kwargs)
 
@@ -107,7 +107,7 @@ def coprnames(request, copr_username, **kwargs):
         coprnames = CoprProxy().coprnames(copr_username)
     else:
         coprnames = []
-    return HttpResponse(json.dumps(coprnames), mimetype='application/json')
+    return HttpResponse(json.dumps(sorted(coprnames)), mimetype='application/json')
 
 
 class Detail(DetailView):
@@ -131,10 +131,17 @@ class New(CreateView):
     form_class = CreateForm
     template_name_suffix = '_new'
 
-    def get_form_kwargs(self):
-        kwargs = super(New, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
+    def get_initial(self):
+        initial = {
+            'maintainer': self.request.user
+        }
+        try:
+            initial['copr_username'] = Copr.objects.filter(
+                softwarecollection__maintainer=self.request.user
+            ).order_by('-id')[0].username
+        except:
+            initial['copr_username'] = initial['maintainer'].get_username()
+        return initial
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -147,11 +154,6 @@ class Edit(UpdateView):
     model = SoftwareCollection
     form_class = UpdateForm
     template_name_suffix = '_edit'
-
-    def get_form_kwargs(self):
-        kwargs = super(Edit, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
 
     def get_object(self, *args, **kwargs):
         scl = super(Edit, self).get_object(*args, **kwargs)
@@ -180,10 +182,29 @@ class Collaborators(UpdateView):
             raise PermissionDenied()
 
     def form_valid(self, form):
-        messages.success(self.request, _('The list of collaborators have been updated.'))
+        messages.success(self.request, _('The list of collaborators has been updated.'))
         return super(Collaborators, self).form_valid(form)
 
 acl = Collaborators.as_view()
+
+
+class Coprs(UpdateView):
+    model = SoftwareCollection
+    form_class = CoprsForm
+    template_name_suffix = '_coprs'
+
+    def get_object(self, *args, **kwargs):
+        scl = super(Coprs, self).get_object(*args, **kwargs)
+        if self.request.user.has_perm('edit', obj=scl):
+            return scl
+        else:
+            raise PermissionDenied()
+
+    def form_valid(self, form):
+        messages.success(self.request, _('The list of attached copr projects has been saved.'))
+        return super(Coprs, self).form_valid(form)
+
+coprs = Coprs.as_view()
 
 
 class Repos(UpdateView):
@@ -199,7 +220,7 @@ class Repos(UpdateView):
             raise PermissionDenied()
 
     def form_valid(self, form):
-        messages.success(self.request, _('The list of enabled repositories have been saved.'))
+        messages.success(self.request, _('The list of attached Copr repositories has been saved.'))
         return super(Repos, self).form_valid(form)
 
 repos = Repos.as_view()

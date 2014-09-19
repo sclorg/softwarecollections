@@ -71,69 +71,83 @@ class MaintainerWidget(forms.HiddenInput):
         return mark_safe(html)
 
 
-class _SclForm(forms.ModelForm):
 
-    def __init__(self, request, **kwargs):
-        self.request = request
-        super(_SclForm, self).__init__(**kwargs)
-        if 'copr_username' in self.request.REQUEST:
-            copr_username = self.request.REQUEST['copr_username']
-        elif self.instance.copr_username:
-            copr_username = self.instance.copr_username
-        else:
+class _CoprForm(forms.ModelForm):
+    copr_username   = forms.CharField(label=_('Copr User'),
+                        widget=forms.TextInput(attrs={'class': 'form-control'}),
+                        help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
+    copr_name       = forms.ChoiceField(label=_('Copr Project'),
+                        widget=forms.Select(attrs={'class': 'form-control'}),
+                        help_text=_('Name of Copr Project to attach'))
+
+    def __init__(self, **kwargs):
+        super(_CoprForm, self).__init__(**kwargs)
+        try:
+            copr_username = kwargs['data']['copr_username']
+        except:
             try:
-                copr_username = SoftwareCollection.objects.filter(
-                    maintainer=self.request.user
-                ).order_by('-id')[0].copr_username
+                copr_username = kwargs['initial']['copr_username']
             except:
-                copr_username = self.request.user.get_username()
-        self.initial['copr_username'] = copr_username
-        self.initial['maintainer']    = self.request.user
+                copr_username = ''
         if copr_username:
             self.coprnames = CoprProxy().coprnames(copr_username)
         else:
             self.coprnames = []
-        copr_name_choices = tuple((name, name) for name in self.coprnames)
-        self.fields['copr_name'].widget.choices = copr_name_choices
+        self.fields['copr_name'].choices = tuple(
+            (name, name) for name in sorted(self.coprnames)
+        )
 
     def clean_copr_username(self):
-        if not len(self.coprnames):
+        if self.fields['copr_username' ].required and not self.coprnames:
             raise forms.ValidationError(_('No SCL project found for this Copr user.'))
         return self.cleaned_data['copr_username']
 
-    def clean_maintainer(self):
-        return self.request.user
-
     def clean_copr_name(self):
-        if self.coprnames and self.cleaned_data['copr_name'] not in self.coprnames:
+        if self.fields['copr_username' ].required and self.coprnames \
+            and self.cleaned_data['copr_name'] not in self.coprnames:
             raise forms.ValidationError(_('This field is mandatory.'))
         return self.cleaned_data['copr_name']
 
+    def clean(self):
+        self.cleaned_data = super(_CoprForm, self).clean()
+        if self.cleaned_data['copr_username'] and self.cleaned_data['copr_name']:
+            self.cleaned_data['copr'] = Copr.objects.get_or_create(
+                username  = self.cleaned_data['copr_username'],
+                name      = self.cleaned_data['copr_name'],
+            )[0]
+            if 'coprs' in self.cleaned_data:
+                self.cleaned_data['coprs'] = list(self.cleaned_data['coprs'])
+                self.cleaned_data['coprs'].append(self.cleaned_data['copr'])
+        return self.cleaned_data
 
-class CreateForm(_SclForm):
+
+
+class CreateForm(_CoprForm):
+
+    def clean_maintainer(self):
+        """
+        We need to include maintainer field
+        (for unique check of maintainer/name pair)
+        but we do not allow user to change it
+        """
+        return self.initial['maintainer']
 
     def save(self, commit=True):
-        copr = Copr.objects.get_or_create(
-            username = self.instance.copr_username,
-            name     = self.instance.copr_name,
-        )[0]
-        self.instance.slug          = '{}/{}'.format(self.instance.maintainer.username, self.instance.name)
+        self.instance.slug          = '{}/{}'.format(self.instance.maintainer.get_username(), self.instance.name)
         self.instance.title         = pretty_name(self.instance.name)
-        self.instance.description   = copr.description
-        self.instance.instructions  = copr.instructions
+        self.instance.description   = self.cleaned_data['copr'].description
+        self.instance.instructions  = self.cleaned_data['copr'].instructions
         os.makedirs(self.instance.get_repos_root())
-        scl = super(CreateForm, self).save(commit)
-        scl.coprs.add(copr)
-        scl.add_auto_tags()
-        scl.collaborators.add(self.instance.maintainer)
-        return scl
+        self.instance.save()
+        self.instance.coprs.add(self.cleaned_data['copr'])
+        self.instance.add_auto_tags()
+        self.instance.collaborators.add(self.instance.maintainer)
+        return self.instance
 
     class Meta:
         model = SoftwareCollection
         fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'issue_tracker', 'upstream_url' ,'policy']
         widgets = {
-            'copr_username': forms.TextInput( attrs={'class': 'form-control'}),
-            'copr_name':     forms.Select(    attrs={'class': 'form-control'}),
             'issue_tracker': forms.TextInput( attrs={'class': 'form-control'}),
             'maintainer':    MaintainerWidget(attrs={'class': 'form-control'}),
             'name':          forms.TextInput( attrs={'class': 'form-control'}),
@@ -142,7 +156,7 @@ class CreateForm(_SclForm):
         }
 
 
-class UpdateForm(_SclForm):
+class UpdateForm(forms.ModelForm):
     tags = TagField(required=False, help_text=_(
         'Enter space separated list of single word tags ' \
         'or comma separated list of tags containing spaces. ' \
@@ -155,26 +169,19 @@ class UpdateForm(_SclForm):
 
     def save(self, commit=True):
         scl = super(UpdateForm, self).save(commit)
-        copr = Copr.objects.get_or_create(
-            username = scl.copr_username,
-            name     = scl.copr_name,
-        )[0]
-        scl.coprs.add(copr)
         scl.tags = self.cleaned_data['tags']
         scl.add_auto_tags()
         return scl
 
     class Meta:
         model = SoftwareCollection
-        fields = ['title', 'description', 'instructions', 'issue_tracker', 'upstream_url', 'policy', 'copr_username', 'copr_name', 'auto_sync',]
+        fields = ['title', 'description', 'instructions', 'issue_tracker', 'upstream_url', 'policy', 'auto_sync',]
         widgets = {
             'title':         forms.TextInput(    attrs={'class': 'form-control'}),
             'description':   forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
             'instructions':  forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
             'upstream_url':  forms.TextInput(    attrs={'class': 'form-control'}),
             'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=RadioSelectTableRenderer),
-            'copr_username': forms.TextInput(    attrs={'class': 'form-control'}),
-            'copr_name':     forms.Select(       attrs={'class': 'form-control'}),
             'issue_tracker': forms.TextInput(    attrs={'class': 'form-control'}),
             'auto_sync':     forms.CheckboxInput(attrs={'class': 'form-control-static'}),
         }
@@ -201,20 +208,16 @@ class DeleteForm(forms.ModelForm):
 
 class CollaboratorsForm(forms.ModelForm):
     add = forms.fields.CharField(required=False,
+            widget=forms.TextInput(attrs={'class': 'form-control'}),
             help_text=_('Enter username of user You want to add.'))
 
     def __init__(self, *args, **kwargs):
         super(CollaboratorsForm, self).__init__(*args, **kwargs)
-        self.fields['add'].widget.attrs={'class': 'form-control'}
         self.fields['collaborators'].help_text = _('Unselect users You want to remove.')
         self.fields['collaborators'].choices = tuple(
-            map(
-                lambda u: (u.id, '{} ({})'.format(u.get_full_name(), u.get_username())),
-                filter(
-                    lambda u: u != self.instance.maintainer,
-                    self.instance.collaborators.all()
-                )
-            )
+            (u.id, '{} ({})'.format(u.get_full_name(), u.get_username()))
+            for u in self.instance.all_collaborators
+            if  u != self.instance.maintainer
         )
 
     def clean(self):
@@ -239,61 +242,122 @@ class CollaboratorsForm(forms.ModelForm):
         }
 
 
-class ReposForm(forms.ModelForm):
-    repos = forms.MultipleChoiceField(label=_('Enabled repos'),
-                widget=forms.widgets.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer))
+class CoprsForm(_CoprForm):
 
     def __init__(self, *args, **kwargs):
-        super(ReposForm, self).__init__(*args, **kwargs)
-        self.initial['repos'] = [
-            '{}/{}/{}'.format(repo.copr.username, repo.copr.name, repo.name)
-            for repo in self.instance.all_repos
-        ]
-        self.fields['repos'].choices = [
-            (
-                copr.slug, 
-                [
-                    (
-                        '{}/{}/{}'.format(repo.copr.username, repo.copr.name, repo.name),
-                        mark_safe('<img src="{}" width="32" height="32" alt=""/> {} {} {}'.format(
-                            repo.get_icon_url(), repo.distro.title(), repo.version, repo.arch
-                        )),
-                    ) for repo in [
-                        Repo(
-                            scl      = self.instance,
-                            copr     = copr,
-                            name     = name,
-                            copr_url = url,
-                        ) for name, url in copr.yum_repos.items()
-                    ]
-                ]
-            ) for copr in self.instance.all_coprs
-        ]
+        super(CoprsForm, self).__init__(*args, **kwargs)
+        self.fields['copr_username'].required = False
+        self.fields['copr_name'    ].required = False
+        self.fields['coprs'].help_text = _('Unselect Copr projects You want to remove.')
+        self.fields['coprs'].choices = tuple(
+            (copr.id, '{} / {}'.format(copr.username, copr.name))
+            for copr in self.instance.all_coprs
+        )
 
     def save(self, commit=True):
-        scl   = super(ReposForm, self).save(False)
-        coprs = dict((copr.slug, copr) for copr in scl.all_coprs)
-        ids   = []
-        for r in self.cleaned_data['repos']:
-            slug, name = r.rsplit('/',1)
-            copr = coprs[slug]
-            ids.append(
-                Repo.objects.get_or_create(
-                    scl=scl,
-                    copr=copr,
-                    name=name,
-                    copr_url=copr.yum_repos[name],
-                )[0].id
-            )
-        for repo in scl.repos.exclude(id__in=ids):
+        scl = super(CoprsForm, self).save()
+        try:
+            del(scl._all_coprs)
+        except:
+            pass
+        try:
+            del(scl._all_repos)
+        except:
+            pass
+        for repo in self.instance.repos.exclude(copr__in=scl.coprs.all()):
             repo.delete()
-        del(scl._all_repos)
         scl.add_auto_tags()
         return scl
 
     class Meta:
         model = SoftwareCollection
-        fields = []
+        fields = ['coprs']
+        widgets = {
+            'coprs': forms.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer),
+        }
+
+
+class ReposForm(forms.ModelForm):
+    repos = forms.MultipleChoiceField(label=_('Enabled repos'), required=False,
+                widget=forms.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer))
+
+    def __init__(self, *args, **kwargs):
+        super(ReposForm, self).__init__(*args, **kwargs)
+        self.current_repos = dict(
+            ('{}/{}/{}'.format(repo.copr.username, repo.copr.name, repo.name), repo)
+            for repo in self.instance.all_repos
+        )
+        self.available_repos = {}
+        self.fields['repos'].choices = []
+        for copr in self.instance.all_coprs:
+            label   = '{} / {}'.format(copr.username, copr.name)
+            choices = []
+            for name, url in sorted(copr.yum_repos.items()):
+                slug = '{}/{}'.format(copr.slug, name)
+                if slug in self.current_repos:
+                    repo = self.current_repos[slug]
+                else:
+                    repo = Repo(
+                        slug     = '{}/{}'.format(self.instance.slug, name),
+                        scl      = self.instance,
+                        copr     = copr,
+                        name     = name,
+                        copr_url = url,
+                    )
+                choices.append((
+                    slug,
+                    mark_safe('<img src="{}" width="32" height="32" alt=""/> {} {} {}'.format(
+                        repo.get_icon_url(), repo.distro.title(), repo.version, repo.arch
+                    )),
+                ))
+                self.available_repos[slug] = repo
+            self.fields['repos'].choices.append((label, choices))
+        self.initial['repos'] = self.current_repos.keys()
+
+    def clean_copr_username(self):
+        if self.fields['copr_username'].required and not self.coprnames:
+            raise forms.ValidationError(_('No SCL project found for this Copr user.'))
+        return self.cleaned_data['copr_username']
+
+    def clean_copr_name(self):
+        if self.fields['copr_username'].required and self.coprnames \
+            and self.cleaned_data['copr_name'] not in self.coprnames:
+            raise forms.ValidationError(_('This field is mandatory.'))
+        return self.cleaned_data['copr_name']
+
+    def clean_repos(self):
+        repos = {}
+        for slug in self.cleaned_data['repos']:
+            copr_slug, name = slug.rsplit('/',1)
+            if name in repos:
+                raise forms.ValidationError(_('There may not be two repositories with the same name attached to one SCL.'))
+            repos[name] = self.available_repos[slug]
+        self.cleaned_data['repos'] = repos.values()
+        return self.cleaned_data['repos']
+
+    def save(self, commit=True):
+        ids             = []
+        download_count  = 0
+        # save attached repos
+        for repo in self.cleaned_data['repos']:
+            if not repo.id:
+                repo.save()
+            ids.append(repo.id)
+            download_count += repo.download_count
+        # delete unattached repos
+        for repo in self.instance.repos.exclude(id__in=ids):
+            repo.delete()
+        # drop repos cache
+        del(self.instance._all_repos)
+        # add auto tags
+        self.instance.add_auto_tags()
+        # update download count
+        self.instance.download_count = download_count
+        return super(ReposForm, self).save(commit)
+
+    class Meta:
+        model = SoftwareCollection
+        fields = ['repos']
 
 
 class ReviewReqForm(forms.ModelForm):
@@ -369,10 +433,8 @@ class FilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(FilterForm, self).__init__(*args, **kwargs)
-        self.fields['repo'].choices = [('', 'All')] + list(
-            map(
-                lambda r: (r['name'], r['name'].capitalize().replace('-', ' ', 1).replace('-', ' - ')),
-                Repo.objects.values('name').distinct()
-            )
-        )
+        self.fields['repo'].choices = [('', 'All')] + sorted([
+            (r['name'], r['name'].capitalize().replace('-', ' ', 1).replace('-', ' - '))
+            for r in Repo.objects.values('name').distinct()
+        ])
 
