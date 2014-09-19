@@ -25,14 +25,19 @@ from .validators import validate_name
 User = get_user_model()
 
 
-def check_call_log(*args, **kwargs):
+def check_call_log(args, **kwargs):
     try:
-        check_call(*args, **kwargs)
+        kwargs['stderr'].write(' '.join(args) + '\n')
+        kwargs['stderr'].flush()
+        check_call(args, **kwargs)
         kwargs['stderr'].write('OK\n')
     except:
         kwargs['stderr'].write('FAILED\n')
         raise
-    
+    finally:
+        kwargs['stderr'].flush()
+
+
 
 SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
 VERSION = '1'
@@ -295,8 +300,6 @@ class SoftwareCollection(models.Model):
                 ]
                 for repo in self.all_repos:
                     args += ['-r', repo.repo_id]
-                log.write(' '.join(args) + '\n')
-                log.flush()
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
             self.last_synced = datetime.now().replace(tzinfo=utc)
             # check repos content and build repo RPMs
