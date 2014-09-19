@@ -48,7 +48,7 @@ class Command(LoggingBaseCommand):
         ),
         make_option(
             '-t', '--timeout', action='store', dest='timeout', default=None,
-            help='Timeout in seconds for each step of sync (reposync, rpmbuild, createrepo)',
+            help='Timeout in seconds for each step of sync (reposync, rpmbuild, createrepo, dump_provides)',
         ),
     )
 
