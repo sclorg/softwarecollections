@@ -76,7 +76,7 @@ install -p -D -m 0644 htdocs/wsgi.py \
     %{buildroot}%{scls_statedir}/htdocs/wsgi.py
 
 # install directories for static content and site media
-install -p -d -m 0755 htdocs/static \
+install -p -d -m 0775 htdocs/static \
     %{buildroot}%{scls_statedir}/htdocs/static
 install -p -d -m 0775 htdocs/media \
     %{buildroot}%{scls_statedir}/htdocs/media
@@ -132,9 +132,9 @@ if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.
 fi
 
 service httpd condrestart
-su apache - -s /bin/bash -c "softwarecollections syncdb --migrate --noinput" || :
-softwarecollections collectstatic --noinput                                  || :
-softwarecollections makeerrorpages                                           || :
+softwarecollections syncdb --migrate --noinput || :
+softwarecollections collectstatic --noinput    || :
+softwarecollections makeerrorpages             || :
 
 %files -f %{name}.files
 %doc LICENSE README.md
@@ -144,8 +144,8 @@ softwarecollections makeerrorpages                                           || 
 %config(noreplace) %{httpd_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
 %{scls_statedir}/htdocs/wsgi.py*
-%dir %{scls_statedir}/htdocs/static
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/repos
+%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/static
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/media
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/data
 
