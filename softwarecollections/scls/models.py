@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
@@ -199,29 +200,17 @@ class SoftwareCollection(models.Model):
     def policy_text(self):
         return POLICY_TEXT[self.policy]
 
-    @property
+    @cached_property
     def all_collaborators(self):
-        try:
-            return self._all_collaborators
-        except AttributeError:
-            self._all_collaborators = list(self.collaborators.all())
-        return self._all_collaborators
+        return list(self.collaborators.all())
 
-    @property
+    @cached_property
     def all_coprs(self):
-        try:
-            return self._all_coprs
-        except AttributeError:
-            self._all_coprs = list(self.coprs.all())
-        return self._all_coprs
+        return list(self.coprs.all())
 
-    @property
+    @cached_property
     def all_repos(self):
-        try:
-            return self._all_repos
-        except AttributeError:
-            self._all_repos = list(self.repos.all().order_by("name"))
-        return self._all_repos
+        return list(self.repos.all().order_by('name'))
 
     @property
     def all_repos_grouped(self):
@@ -255,7 +244,7 @@ class SoftwareCollection(models.Model):
                 )
                 last_modified  = 0
                 download_count = 0
-                self._all_repos = []
+                self.all_repos = []
                 for copr in self.all_coprs:
                     last_modified = max(last_modified, copr.last_modified or 0)
                     for repo in self.repos.filter(copr=copr):
@@ -274,6 +263,9 @@ class SoftwareCollection(models.Model):
                             )
                             self.all_repos.append(repo)
                             download_count += repo.download_count
+                # scl.all_repos are expected to be sorted by name
+                self.all_repos.sort(key=lambda repo: repo.name)
+
                 # despite expectations the file is empty
                 # if I do not call explicitly flush
                 repos_config.flush()

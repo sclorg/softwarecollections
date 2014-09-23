@@ -256,14 +256,8 @@ class CoprsForm(_CoprForm):
 
     def save(self, commit=True):
         scl = super(CoprsForm, self).save()
-        try:
-            del(scl._all_coprs)
-        except:
-            pass
-        try:
-            del(scl._all_repos)
-        except:
-            pass
+        del(scl.all_coprs)
+        del(scl.all_repos)
         for repo in self.instance.repos.exclude(copr__in=scl.coprs.all()):
             repo.delete()
         scl.add_auto_tags()
