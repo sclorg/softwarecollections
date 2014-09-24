@@ -47,7 +47,8 @@ Create local configuration:
 
 Initialize development database:
 
-    ./manage.py syncdb --migrate --noinput
+    ./manage.py syncdb --all
+    ./manage.py migrate --fake
 
 Run development server:
 
@@ -75,13 +76,19 @@ You may also need to install some new requirements (see the spec file).
 RPM build
 ---------
 
-To create RPM from the latest tagged release type:
+To create and build RPM from the latest tagged release type:
 
     tito build --rpm
+    tito release copr
 
 To create RPM from the last commit (it does not have to be pushed to the repo) type:
 
     tito build --rpm --test
+    tito release copr-test
+
+Note that you need rel-eng/releasers.conf:
+
+    sed "s/<USERNAME>/$USERNAME/" < rel-eng/releasers.conf.template > rel-eng/releasers.conf
 
 
 Help

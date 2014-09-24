@@ -1,7 +1,7 @@
-localsettings.py
-db.sqlite3
+softwarecollections/localsettings.py
+rel-eng/releasers.conf
+data/db.sqlite3
 *.pyc
 *.pyo
 softwarecollections-*.tar.gz
 *.swp
-update.sh
