@@ -342,7 +342,7 @@ class ReposForm(forms.ModelForm):
         for repo in self.instance.repos.exclude(id__in=ids):
             repo.delete()
         # drop repos cache
-        del(self.instance._all_repos)
+        del(self.instance.all_repos)
         # add auto tags
         self.instance.add_auto_tags()
         # update download count
