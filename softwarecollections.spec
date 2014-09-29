@@ -132,9 +132,16 @@ if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.
 fi
 
 service httpd condrestart
-softwarecollections syncdb --migrate --noinput || :
-softwarecollections collectstatic --noinput    || :
-softwarecollections makeerrorpages             || :
+if [ -e %{scls_statedir}/data/db.sqlite3 ]; then
+    # update database
+    softwarecollections syncdb --migrate --noinput || :
+else
+    # install database
+    softwarecollections syncdb --all --noinput || :
+    softwarecollections migrate --fake         || :
+fi
+softwarecollections collectstatic --noinput || :
+softwarecollections makeerrorpages          || :
 
 %files -f %{name}.files
 %doc LICENSE README.md
