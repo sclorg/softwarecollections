@@ -142,7 +142,8 @@ class SoftwareCollection(models.Model):
                         default='https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org')
     title           = models.CharField(_('Title'), max_length=200)
     description     = models.TextField(_('Description'))
-    instructions    = models.TextField(_('Instructions'))
+    instructions    = models.TextField(_('Instructions'), blank=True,
+                         help_text=_('Leave empty to use generic instructions'))
     policy          = models.CharField(_('Policy'), max_length=3, null=False,
                         choices=POLICY_CHOICES_TEXT, default='DEV')
     score           = models.SmallIntegerField(null=True, editable=False)
@@ -239,6 +240,20 @@ class SoftwareCollection(models.Model):
         for repo in self.all_repos:
             tags.update([repo.distro_version])
         return list(tags)
+
+    def get_default_instructions(self):
+        return '''    # 1. Install the Software Collections tools:
+    yum install scl-utils
+
+    # 2. Install repo configuration for Your system (see section Yum Repositories bellow)
+    yum install {maintainer}-{name}-*.noarch.rpm
+
+    # 2. Install a collection
+    yum install {name}
+
+    # 3. Start using software collections
+    scl enable {name}
+'''.format(name=self.name, maintainer=self.maintainer.get_username(), slug=self.slug)
 
     def add_auto_tags(self):
         for tag in self.get_auto_tags():
@@ -373,6 +388,8 @@ class SoftwareCollection(models.Model):
     def save(self, *args, **kwargs):
         if self.auto_sync:
             self.need_sync = True
+        if not self.instructions.strip():
+            self.instructions = self.get_default_instructions()
         super(SoftwareCollection, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
