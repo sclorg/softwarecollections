@@ -356,16 +356,9 @@ class SoftwareCollection(models.Model):
             related_slugs = [slug for slug in out.split() if slug != self.slug]
             self.requires = SoftwareCollection.objects.filter(slug__in=related_slugs)
 
-    @property
+    @cached_property
     def lock(self):
-        try:
-            return self._lock
-        except AttributeError:
-            # do not try to create the repos root if it does not exist
-            # it is always created before the collection is saved
-            # so if it does not exist, it means that the collection was deleted
-            self._lock = Flock(os.open(self.get_repos_root(), 0), LOCK_EX)
-            return self._lock
+        return Flock(os.open(self.get_repos_root(), 0), LOCK_EX)
 
     def has_perm(self, user, perm):
         if perm in ['edit', 'delete']:
@@ -501,24 +494,9 @@ class Repo(models.Model):
                     ('CentOS {}'.format(self.version), self.get_icon_url('centos'))]
         return [('{0} {1}'.format(self.distro, self.version), self.get_icon_url)]
 
-    @property
+    @cached_property
     def lock(self):
-        try:
-            return self._lock
-        except AttributeError:
-            try:
-                self._lock = Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
-            except FileNotFoundError:
-                # create repo dir
-                os.makedirs(self.get_repo_dir())
-                # refresh repo symlink
-                try:
-                    os.unlink(self.get_repo_symlink())
-                except FileNotFoundError:
-                    pass
-                os.symlink(self.repo_id, self.get_repo_symlink())
-                self._lock = Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
-            return self._lock
+        return Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
 
     def rpmbuild(self, timeout=None):
         with self.lock:
