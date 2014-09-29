@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# vim: ft=python
+
 """
 Django settings for softwarecollections project.
 
