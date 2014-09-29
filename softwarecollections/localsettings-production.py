@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['www.softwarecollections.org']
 ADMINS = (
     ('Jakub Dorňák',   'jdornak@redhat.com'),
     ('Miroslav Suchý', 'msuchy@redhat.com'),
+    ('Adam Samalik',   'asamalik@redhat.com'),
 )
 MANAGERS = ADMINS
 SERVER_EMAIL = 'admin@softwarecollections.org'
