@@ -88,7 +88,6 @@ class Copr(models.Model):
                     help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
     name        = models.CharField(_('Copr Project'), max_length=200,
                     help_text=_('Name of Copr Project to import packages from'))
-    last_modified = models.DateTimeField(_('Last modified'), null=True, editable=False)
 
     class Meta:
         unique_together = (('username', 'name'),)
@@ -96,17 +95,31 @@ class Copr(models.Model):
     def get_url(self):
         return os.path.join(settings.COPR_COPRS_URL, self.username, self.name)
 
-    _detail = None
-    def __getattr__(self, name):
-        if name.startswith('__'):
-            # prevent fetching Copr detail
-            raise AttributeError(name)
-        try:
-            if self._detail is None:
-                self._detail = CoprProxy().coprdetail(self.username, self.name)
-            return self._detail[name]
-        except Exception as e:
-            raise AttributeError(name)
+    @cached_property
+    def detail(self):
+        return CoprProxy().coprdetail(self.username, self.name)
+
+    @property
+    def additional_repos(self):
+        return self.detail['additional_repos'].split(' ')
+
+    @property
+    def last_modified(self):
+        return self.detail['last_modified'] \
+           and datetime.utcfromtimestamp(self.detail['last_modified']).replace(tzinfo=utc) \
+            or None
+
+    @property
+    def description(self):
+        return self.detail['description']
+
+    @property
+    def instructions(self):
+        return self.detail['instructions']
+
+    @property
+    def yum_repos(self):
+        return self.detail['yum_repos']
 
     def __str__(self):
         return 'Copr(username={}, name={})'.format(self.username, self.name)
@@ -242,11 +255,15 @@ class SoftwareCollection(models.Model):
                 repos_config.write(
                     "[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n".format(cache_root=self.get_cache_root())
                 )
-                last_modified  = 0
+                last_modified  = None
                 download_count = 0
-                self.all_repos = []
+                all_repos      = []
                 for copr in self.all_coprs:
-                    last_modified = max(last_modified, copr.last_modified or 0)
+                    if copr.last_modified:
+                        if last_modified:
+                            last_modified = max(last_modified, copr.last_modified)
+                        else:
+                            last_modified = copr.last_modified
                     for repo in self.repos.filter(copr=copr):
                         if repo.name not in copr.yum_repos:
                             # delete old repos
@@ -261,15 +278,18 @@ class SoftwareCollection(models.Model):
                                     url  = repo.copr_url,
                                 )
                             )
-                            self.all_repos.append(repo)
+                            all_repos.append(repo)
                             download_count += repo.download_count
-                # scl.all_repos are expected to be sorted by name
-                self.all_repos.sort(key=lambda repo: repo.name)
-
                 # despite expectations the file is empty
                 # if I do not call explicitly flush
                 repos_config.flush()
-            self.last_modified  = last_modified and datetime.utcfromtimestamp(last_modified).replace(tzinfo=utc) or None
+
+            # scl.all_repos are expected to be sorted by name
+            all_repos.sort(key=lambda repo: repo.name)
+
+            # store newly computed values
+            self.all_repos      = all_repos
+            self.last_modified  = last_modified
             self.download_count = download_count
 
             # unfortunately reposync can not run parallel
@@ -294,6 +314,7 @@ class SoftwareCollection(models.Model):
                     args += ['-r', repo.repo_id]
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
             self.last_synced = datetime.now().replace(tzinfo=utc)
+
             # check repos content and build repo RPMs
             has_content = False
             for repo in self.all_repos:
