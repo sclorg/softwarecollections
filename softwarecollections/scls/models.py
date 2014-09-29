@@ -50,25 +50,25 @@ DISTRO_ICONS = ('fedora', 'epel', 'rhel', 'centos')
 POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
 
 POLICY_TEXT = {
-    'DEV':  "**Private project**: "
-            "For personal or development use with no guarantee. "
-            "Not listed publicly. "
-            "Could be a good choice for projects in pre-release stage. ",
+    'DEV':  '**Private project**: '
+            'For personal or development use with no guarantee. '
+            'Not listed publicly. '
+            'Could be a good choice for projects in pre-release stage. ',
 
-    'Q-D':  "**Experimental project**: "
-            "An early-stage or experimental project. "
-            "Comes with no warranty. "
-            "Could be unstable - not for production use. ",
+    'Q-D':  '**Experimental project**: '
+            'An early-stage or experimental project. '
+            'Comes with no warranty. '
+            'Could be unstable - not for production use. ',
 
-    'COM':  "**Community project**: "
-            "Maintained by the upstream community of developers. "
-            "Should work well and be updated for bug and security fixes. "
-            "Still not recommended for use in production. ",
+    'COM':  '**Community project**: '
+            'Maintained by the upstream community of developers. '
+            'Should work well and be updated for bug and security fixes. '
+            'Still not recommended for use in production. ',
 
-    'PRO':  "**Professional project**: "
-            "Stable and secure release. "
-            "Receives regular bug and security fixes. "
-            "Ready for production deployments. ",
+    'PRO':  '**Professional project**: '
+            'Stable and secure release. '
+            'Receives regular bug and security fixes. '
+            'Ready for production deployments. ',
 }
 
 POLICY_LABEL = {
@@ -253,7 +253,7 @@ class SoftwareCollection(models.Model):
             with open(self.get_repos_config(), 'w') as repos_config:
                 repos_config = open(self.get_repos_config(), 'w')
                 repos_config.write(
-                    "[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n".format(cache_root=self.get_cache_root())
+                    '[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n'.format(cache_root=self.get_cache_root())
                 )
                 last_modified  = None
                 download_count = 0
@@ -496,10 +496,10 @@ class Repo(models.Model):
             or '{}/scls/icons/empty.png'.format(settings.STATIC_URL)
 
     def get_oses_names_and_logos(self):
-        if self.distro == "epel":
-            return [("RHEL {}".format(self.version), self.get_icon_url("rhel")),
-                    ("CentOS {}".format(self.version), self.get_icon_url("centos"))]
-        return [("{0} {1}".format(self.distro, self.version), self.get_icon_url)]
+        if self.distro == 'epel':
+            return [('RHEL {}'.format(self.version), self.get_icon_url('rhel')),
+                    ('CentOS {}'.format(self.version), self.get_icon_url('centos'))]
+        return [('{0} {1}'.format(self.distro, self.version), self.get_icon_url)]
 
     @property
     def lock(self):
