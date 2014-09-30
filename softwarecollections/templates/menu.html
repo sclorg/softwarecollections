@@ -5,22 +5,13 @@
             <a href='/en/'>home</a>
         </li>
         <li class='{% if request.path|slice:":9" == "/en/docs/" and request.path != "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/docs/'>docs</a>
+            <a href='/en/docs/'>documentation</a>
         </li>
         <li class='' role='menuitem'>
             <a href='https://ask.softwarecollections.org/questions/'>ask a question</a>
         </li>
         <li class='{% if request.path|slice:":9" == "/en/scls/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/scls/'>collections</a>
+            <a href='/en/scls/'>available collections</a>
         </li>
-        {% if request.user.is_authenticated %}
-        <li class='' role='menuitem'>
-            <a href='{% url "fas:logout" %}'>{{ request.user.get_username }} logout</a>
-        </li>
-        {% else %}
-        <li class='' role='menuitem'>
-            <a href='{% url "fas:login" %}?next={{ request.path }}'>login</a>
-        </li>
-        {% endif %}
     </ul>
 </nav>

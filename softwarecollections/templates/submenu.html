@@ -1,22 +1,19 @@
 <nav role='navigation'>
     <ul class='docbrowser nav nav-vertical'>
-        <li>
-        <p clas='navbar-text'>Overview</p>
-        </li>
-        <li class='{% if request.path == "/en/docs/quick-start/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/docs/quick-start/'>Quick Start</a>
-        </li>
-        <li class='{% if request.path == "/en/docs/add-to-catalogue/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/docs/add-to-catalogue/'>Adding Collection to Catalogue</a>
-        </li>
         <li class='{% if request.path == "/en/docs/building/" %}active{% endif %}' role='menuitem'>
             <a href='/en/docs/building/'>Building Collections</a>
         </li>
         <li class='{% if request.path == "/en/docs/licensing/" %}active{% endif %}' role='menuitem'>
             <a href='/en/docs/licensing/'>Licensing Guidelines</a>
         </li>
+        <li class='{% if request.path == "/en/docs/add-to-catalogue/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/add-to-catalogue/'>Adding Collections to the Catalogue</a>
+        </li>
         <li class='{% if request.path == "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
             <a href='/en/docs/faq/'>FAQ</a>
+        </li>
+        <li class='{% if request.path == "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/about/'>About This Website</a>
         </li>
     </ul>
 </nav>

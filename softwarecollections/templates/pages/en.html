@@ -6,33 +6,29 @@
 <!-- JUMBOTRON -->
 <div class='blam'>
     <div class='jumbotron'>
-        <h1> A new way to use fast-paced<br />
-        and unique software</h1>
+        <h1>Software Collections</h1>
         <div class='lead'>
-            Software Collections give you power to build, install, and use
-            multiple versions of software on the same system, without
-            affecting system-wide installed packages.
+            Software Collections give you the power to build, install, and use multiple versions of software on the same system, without affecting system-wide installed packages.
         </div>
     </div>
-</div>
-
-<!-- AWARD -->
-<div class='award visible-xs visible-sm'>
-    <div class='container text-center'>
-        <p><img src='/static/images/coding-environments.png' /><br />
-        DeveloperWeek Award for Top Innovator</p>
-    </div>
-</div>
-<div class='award hidden-xs hidden-sm'>
-    <div class='container text-center'>
-        <p><span style='display: inline-block'>DeveloperWeek Award</span>
-            <img src='/static/images/coding-environments.png' />
-    <span style='display: inline-block'>for Top Innovator</span></p>
-    </div>
+    <div class='container'>
+        <div class='row'>
+            <div class='col-xs-12 col-md-6'>
+                <h3>Using a default package</h3>
+                <p><code>$ python -V<br>
+                         Python 2.7.5</code></p>
+            </div>
+            <div class='col-xs-12 col-md-6'>
+                <h3>Using a Software Collection</h3>
+                <p><code>$ scl enable python33 'python -V'<br>
+                         Python 3.3.2</code></p>
+            </div>
+        </div>
+    </div>    
 </div>
 
 <!-- DEMO PANE -->
-<div class='demo-area'>
+<!--<div class='demo-area'>
     <div class='container'>
         <div class='row'>
             <div class='col-md-12'>
@@ -62,12 +58,12 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
 
 <div class='container'>
     <div class='row'>
         <div class='col-md-6'>
-            <h2>It&#39;s easy to set up</h2>
+            <h2>It's easy to set up</h2>
 
             <ol>
                 <li><p>Install the Software Collections tools:</p>
@@ -85,7 +81,7 @@
         </div>
 
         <div class='col-md-6'>
-            <h2>It&#39;s easy to develop for:</h2>
+            <h2>It's easy to develop for:</h2>
 
             <ol>
                 <li><p>Red Hat Enterprise Linux (RHEL)</p></li>
@@ -97,11 +93,11 @@
             and use Software Collections for production systems, proof-of-concept systems,
             and development testbeds.</p>
 
-            <p>Developers can build on existing SCLs, so they don&#39;t need to re-invent the
+            <p>Developers can build on existing SCLs, so they don't need to re-invent the
             wheel or take responsibility for packaging unnecessary dependencies. Need a
             newer version of Java or Python with your app? Use an existing SCL instead.</p>
 
-            <p>Ready to go? <a href="/docs/quick-start/">Let&#39;s get started!</a></p>
+            <p>Ready to go? <a href="/docs/quick-start/">Let's get started!</a></p>
         </div>
     </div>
 
@@ -110,7 +106,7 @@
             <h2>Find Your Collections</h2>
 
             <p>Looking for a new release of Ruby, Python, Perl, or want to
-            install Node.js on your RHEL 6 system? How about an alternative to
+            install Node.js on your RHEL 6 or 7 system? How about an alternative to
             MySQL, MariaDB 5.5, or PostgreSQL 9.2? You can find the components
             you need in the <a href="scls">SoftwareCollections.org directory</a>.</p>
         </div>
@@ -121,22 +117,17 @@
             <p>Need to create a Software Collection for your project or product?
             Get started with our <a href="docs/quick-start">SCL walkthrough</a>,
             which will show you how to modify the RPM spec file(s) for your
-            project and create an easy to install Software Collection.</p>
+            project and create an easy-to-install Software Collection.</p>
         </div>
     </div>
 
     <div class='row'>
         <div class='col-md-6'>
-            <h2>Supported SCLs</h2>
+            <h2>SCL with technical support</h2>
 
-            <p>For supported Software Collections for RHEL, you&#39;ll find
-            <a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Developer_Guide/chap-RHSCL.html">documentation on the Red Hat Customer Portal</a>,
-            and access the Red Hat Software Collection channels
-            <a href="http://www.redhat.com/GetRedHatSoftwareCollections.html">on the Red Hat Network</a>
-            (RHN).</p>
+            <p>For professionally supported Software Collections for Red&nbsp;Hat Enterprise&nbsp;Linux, <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Software_Collections/1-Beta/html/Packaging_Guide/chap-Introducing_Software_Collections.html">documentation is provided on the Red Hat Customer Portal</a>. Red&nbsp;Hat Software&nbsp;Collections channels are available through Red&nbsp;Hat Subscription&nbsp;Management or the Red&nbsp;Hat Network</a> (RHN).</p>
 
-            <p>Note that a qualifying subscription for Red Hat Software
-            Collections is required.</p>
+            <p>Note that a qualifying subscription for Red&nbsp;Hat Software&nbsp;Collections is required.</p>
         </div>
 
         <div class='col-md-6'>
@@ -146,6 +137,21 @@
             <a href='mailto:sclorg@redhat.com'>sclorg@redhat.com</a> (more info at
             <a href='https://www.redhat.com/mailman/listinfo/sclorg' target='_blank'>https://www.redhat.com/mailman/listinfo/sclorg</a>).</p>
         </div>
+    </div>
+</div>
+
+<!-- AWARD -->
+<div class='award visible-xs visible-sm'>
+    <div class='container text-center'>
+        <p><img src='/static/images/coding-environments.png' /><br />
+        DeveloperWeek Award for Top Innovator</p>
+    </div>
+</div>
+<div class='award hidden-xs hidden-sm'>
+    <div class='container text-center'>
+        <p><span style='display: inline-block'>DeveloperWeek Award</span>
+            <img src='/static/images/coding-environments.png' />
+    <span style='display: inline-block'>for Top Innovator</span></p>
     </div>
 </div>
 
