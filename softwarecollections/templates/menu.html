@@ -1,17 +1,17 @@
 {% load url from future %}
 <nav role='navigation'>
     <ul class='nav nav-justified'>
-        <li class='{% if request.path == "/en/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/'>home</a>
+        <li class='{% if request.path|slice:":10" == "/en/about/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/about/'>about</a>
         </li>
-        <li class='{% if request.path|slice:":9" == "/en/docs/" and request.path != "/en/docs/faq/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/docs/'>docs</a>
+        <li class='{% if request.path|slice:":9" == "/en/docs/" %}active{% endif %}' role='menuitem'>
+            <a href='/en/docs/'>docs & guides</a>
         </li>
         <li class='' role='menuitem'>
             <a href='https://ask.softwarecollections.org/questions/'>ask a question</a>
         </li>
         <li class='{% if request.path|slice:":9" == "/en/scls/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/scls/'>collections</a>
+            <a href='/en/scls/'>browse</a>
         </li>
         {% if request.user.is_authenticated %}
         <li class='' role='menuitem'>

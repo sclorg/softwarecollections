@@ -1,0 +1,14 @@
+{% load menu_item %}
+<nav role='navigation'>
+    <ul class='docbrowser nav nav-pills nav-stacked'>
+        {% menu_item "en/about"                "About the project" %}
+        {% menu_item "en/about/licensing"      "Licensing Guidelines" %} 
+        {% menu_item "en/about/faq"            "FAQ" %} 
+
+        {% comment %}
+            {% menu_item "en/about/distros"        "Distros" %} 
+            {% menu_item "en/about/users"          "Users" %} 
+            {% menu_item "en/about/developers"     "Developers" %} 
+        {% endcomment %}
+    </ul>
+</nav>
