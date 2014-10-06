@@ -113,11 +113,12 @@ div.scl_preview .approved {
 
 .blam .jumbotron h1 {
     text-align: center;
-    font-size: 36pt;
+    font-size: 28pt;
 }
 
 .blam .jumbotron .lead {
-    padding-top: 48px;
+    padding-top: 18px;
+    text-align: center;
 }
 
 .main-content, .submenu {
