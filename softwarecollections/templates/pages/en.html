@@ -9,7 +9,9 @@
         <h1> All versions of any software<br />
         on your system. Together.</h1>
         <div class='lead'>
-            Use multiple versions of software and libraries on the same system.
+            Software Collections give you power to build, install, and use
+            multiple versions of software on the same system, without
+            affecting system-wide installed packages.
         </div>
     </div>
 </div>
@@ -31,11 +33,28 @@
 
 <div class='container homepage-container'> 
     <div class="row">
-        <div class="col-md-7">
-            <h2><strong>Life cycle is independent</strong> of the distribution</h2>
-            <p>With the level of stability, support and updates you choose.</p>
+        <div class='col-md-4'>
+            <div class="terminal-preview">
+                <ul>
+                    <li> $ scl enable python27 bash </li>
+                    <li> $ python --version </li>
+                    <li> Python 2.7.5 </li>
+                </ul>
+                <ul>
+                    <li> $ scl enable python33 bash </li>
+                    <li> $ python --version </li>
+                    <li> Python 3.3.2 </li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-8">
+            <h2><strong>Life cycle is independent</strong> of the distribution</h2>
+        </div>
+    </div>
+
+    <div class='row'>
+        <div class='col-md-12'>
+            <div style="float: right">
             <div class="distribution-logo">
                 <img src="/static/scls/icons/fedora.png" width="70" height="70">
                 <p>Fedora 19, 20, 21</p>
@@ -48,37 +67,8 @@
                 <img src="/static/scls/icons/centos.png" width="70" height="70">
                 <p>CentOS 5, 6, 7</p>
             </div>
-        </div>
-    </div>
-
-    <div class='row'>
-        <div class='col-md-6'>
-            <h2>It&#39;s easy to set up</h2>
-
-            <ol>
-                <li><p>Install the Software Collections tools:</p>
-                <p><code>yum install scl-utils</code></p></li>
-
-                <li><p>Browse available versions:</p>
-                <p><code>yum list available | grep rhscl</code></p></li>
-
-                <li><p>Install a collection:</p>
-                <p><code>yum install python33-*</code></p></li>
-
-                <li><p>Start using software collections!</p>
-                <p><code>scl enable python33 idle</code></p></li>
-            </ol>
-        </div>
-
-        <div class='col-md-6'>
+            </div>
             <h2>It&#39;s easy to develop for:</h2>
-
-            <ol>
-                <li><p>Red Hat Enterprise Linux (RHEL)</p></li>
-                <li><p>CentOS and Scientific Linux</p></li>
-                <li><p>Fedora Linux</p></li>
-            </ol>
-
             <p>SoftwareCollections.org is designed to be a community of people who create
             and use Software Collections for production systems, proof-of-concept systems,
             and development testbeds.</p>
@@ -90,6 +80,7 @@
             <p>Ready to go? <a href="/docs/quick-start/">Let&#39;s get started!</a></p>
         </div>
     </div>
+
 
     <div class='row'>
         <div class='col-md-6'>

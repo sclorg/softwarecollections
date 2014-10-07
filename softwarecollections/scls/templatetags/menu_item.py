@@ -5,6 +5,7 @@ register = template.Library()
 
 @register.simple_tag(takes_context = True)
 def menu_item(context, path, name):
+    path = path.strip("/")
     request = context["request"]
     active = "active" if request.path == "/{path}/".format(path=path) else ""
     item = "<li class='{active}' role='menuitem'>" \
