@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
 {% block base_content %}
-    <div class='content container' id='content'>
-        <!--[if lt IE 7]>
-        <p class="chromeframe">You are using an outdated browser.
-        <a href="http://browsehappy.com/">Upgrade your browser today</a> or
-        <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-        <![endif]-->
-        {% block content %}{% endblock %}
-        <div id='root-footer'></div>
+    <div class='content' id='content'>
+        <div class="container">
+            <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser.
+            <a href="http://browsehappy.com/">Upgrade your browser today</a> or
+            <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+            <![endif]-->
+            {% block content %}{% endblock %}
+            <div id='root-footer'></div>
+        </div>
     </div>
 {% endblock %}
