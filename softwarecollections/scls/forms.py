@@ -14,13 +14,13 @@ from .models import (
     POLICY_CHOICES_TEXT, POLICY_CHOICES_LABEL
 )
 
-PER_PAGE_CHOICES = ((10, '10'), (25, '25'), (50, '50'))
+PER_PAGE_CHOICES = ((10, '10 per page'), (25, '25 per page'), (50, '50 per page'))
 
 ORDER_BY_CHOICES = (
-    ('-download_count', _('download count')),
-    ('-score',          _('score')),
-    ('title',           _('title')),
-    ('-last_modified',  _('recently built')),
+    ('-download_count', _('Sort: download count')),
+    ('-score',          _('Sort: score')),
+    ('title',           _('Sort: title')),
+    ('-last_modified',  _('Sort: recently built')),
 )
 
 
@@ -413,27 +413,29 @@ class RateForm(forms.ModelForm):
 class FilterForm(forms.Form):
     search      = forms.CharField(required=False, max_length=999,
                     widget=forms.TextInput(attrs={'class': 'form-control',
-                        'placeholder': 'Search Text'}))
+                        'placeholder': 'Search collections'}))
     search_desc = forms.BooleanField(required=False, label='search description')
     approved    = forms.BooleanField(required=False,
-                    help_text='Display only collections, which have passed a review.')
+                    help_text='Display only collections, which have passed a review.',
+                    widget=forms.CheckboxInput(attrs={'class': ''}))
     per_page    = forms.ChoiceField(required=False, label='Per page',
                     initial=PER_PAGE_CHOICES[0][0],
                     choices=PER_PAGE_CHOICES,
-                    widget=forms.Select(attrs={'class': 'form-control'}))
+                    widget=forms.Select(attrs={'class': 'form-control input-sm'}))
     order_by    = forms.ChoiceField(required=False, label='Order',
                     initial=ORDER_BY_CHOICES[0][0],
                     choices=ORDER_BY_CHOICES,
-                    widget=forms.Select(attrs={'class': 'form-control'}))
+                    widget=forms.Select(attrs={'class': 'form-control input-sm'}))
     policy      = forms.ChoiceField(required=False, label='Policy',
-                    choices=[('', 'All')] + POLICY_CHOICES_LABEL,
-                    widget=forms.Select(attrs={'class': 'form-control'}))
+                    choices=[('', 'All policies')] + POLICY_CHOICES_LABEL,
+                    widget=forms.Select(attrs={'class': 'form-control input-sm'}),
+                    help_text= "policy help text")
     repo        = forms.ChoiceField(required=False, label='Repository',
-                    widget=forms.Select(attrs={'class': 'form-control'}))
+                    widget=forms.Select(attrs={'class': 'form-control input-sm'}))
 
     def __init__(self, *args, **kwargs):
         super(FilterForm, self).__init__(*args, **kwargs)
-        self.fields['repo'].choices = [('', 'All')] + sorted([
+        self.fields['repo'].choices = [('', 'All repos')] + sorted([
             (r['name'], r['name'].capitalize().replace('-', ' ', 1).replace('-', ' - '))
             for r in Repo.objects.values('name').distinct()
         ])

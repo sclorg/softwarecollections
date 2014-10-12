@@ -3,14 +3,11 @@
 
 <div class='panel panel-default'>
     <div class='panel-body'>
-        <form id='filter-form' class='form-horizontal' role='form'>
-            <legend>Filter collections</legend>
+        <form id='filter-form' role='form'>
+            <div class='form-group form-inline'>
+            <div class="row">
 
-            <!-- FIRST ROW -->
-            <div class='form-group'>
-
-                <!-- SEARCH -->
-                <div class='col-md-12 col-sm-12 col-xs-12'>
+                <div class="form-group col-sm-10">
                     <div class='input-group'>
                         {{ filter_form.search }}
                         <span class='input-group-addon'>
@@ -19,79 +16,52 @@
                         </span>
                     </div>
                 </div>
-            </div>
 
-            <!-- SECOND ROW -->
-            <div class='form-group'>
-                <div class='row'>
-
-                    <!-- POLICY -->
-                    <div class='col-md-4 col-sm-7 col-xs-12'>
-                        <label for='{{ filter_form.policy.id_for_label }}'
-                            class='control-label col-md-4 col-sm-4 col-xs-4'>Policy</label>
-                        <div class='col-md-8 col-sm-8 col-xs-8'>
-                            {{ filter_form.policy }}
-                        </div>
-                    </div>
-
-                    <!-- REPO -->
-                    <div class='col-md-5 col-sm-5 col-xs-12'>
-                        <label for='{{ filter_form.repo.id_for_label }}'
-                            class='control-label col-md-4 col-sm-4 col-xs-4'>Repo</label>
-                        <div class='col-md-8 col-sm-8 col-xs-8'>
-                            {{ filter_form.repo }}
-                        </div>
-                    </div>
-
-                    <!-- APPROVED -->
-                    <div class='col-md-3 col-sm-7 col-xs-12'>
-                        <label for='{{ filter_form.approved.id_for_label }}'
-                            class='control-label col-md-8 col-sm-4 col-xs-4'>{{ filter_form.approved.label }}
-                        </label>
-                        <div class='col-md-4 col-sm-8 col-xs-8 form-control-static'>
-                            {{ filter_form.approved }}
-                        </div>
-                    </div>
+                <div class="form-group col-sm-2 hidden-xs">
+                    <button  class='btn btn-primary btn-block' type='submit'>
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
                 </div>
             </div>
-
-            <!-- THIRD ROW -->
-            <div class='form-group'>
-                <div class='row'>
-
-                    <!-- ORDER BY -->
-                    <div class='col-md-4 col-sm-7 col-xs-12'>
-                        <label for='{{ filter_form.order_by.id_for_label}}'
-                            class='control-label col-md-4 col-sm-4 col-xs-4'>{{ filter_form.order_by.label }}</label>
-                        <div class='col-md-8 col-sm-8 col-xs-8'>
-                            {{ filter_form.order_by }}
-                        </div>
-                    </div>
-
-                    <!-- PER PAGE -->
-                    <div class='col-md-5 col-sm-5 col-xs-12'><!-- style='background-color: red'>-->
-                        <label for='{{ filter_form.per_page.id_for_label}}'
-                            class='control-label col-md-4 col-sm-6 col-xs-4'>{{ filter_form.per_page.label }}</label>
-                        <div class='col-md-8 col-sm-6 col-xs-8'>
-                            {{ filter_form.per_page }}
-                        </div>
-                    </div>
-
-                    <!-- SUBMIT -->
-                    <div class='col-md-3 col-sm-12 visible-lg visible-md text-right'>
-                        <div class='col-md-12 col-sm-12'>
-                            <input class='btn btn-default' type='submit' value='{% trans 'Apply filter' %}'/>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- SEPARATE SUBMIT BUTTON FOR SMALL SCREENS -->
-            <div class='form-group visible-sm visible-xs'>
+            <div class='form-inline'>
 
-                <!-- SUBMIT -->
-                <div class='col-md-12 col-sm-12 text-right'>
-                    <input class='btn btn-default' type='submit' value='{% trans 'Apply filter' %}'/>
+                <div class="form-group">
+                    <label for='{{ filter_form.policy.id_for_label }}' class='sr-only'>Policy</label>
+                    {{ filter_form.policy }}
+                </div>
+
+                <div class="form-group">
+                    <label for='{{ filter_form.repo.id_for_label }}' class='sr-only'>Repo</label>
+                    {{ filter_form.repo }}
+                </div>
+
+                <div class="form-group">
+                    <label for='{{ filter_form.order_by.id_for_label}}'class='sr-only'>
+                        {{ filter_form.order_by.label }}
+                    </label>
+                    {{ filter_form.order_by }}
+                </div>
+
+                <div class="form-group">
+                    <label for='{{ filter_form.per_page.id_for_label}}' class='sr-only'>
+                        {{ filter_form.per_page.label }}
+                    </label>
+                    {{ filter_form.per_page }}
+                </div>
+
+                <div class="form-group">
+                    <label for='{{ filter_form.approved.id_for_label }}'class='sr-only'>
+                        {{ filter_form.approved.label }}
+                    </label>
+                    {{ filter_form.approved }} approved only
+                </div>
+
+                <div class="form-group visible-xs ">
+                    <button  class='btn btn-primary btn-block' type='submit'>
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
                 </div>
             </div>
         </form>
