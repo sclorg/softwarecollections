@@ -90,19 +90,19 @@ div.scl_preview .approved {
 
 .homepage-container .row:first-child h2 {
     color: black;
+    font-weight: bold;
 }
 
 .homepage-container .row:first-child p {
     color: black;
-    font-size: 1.2em;
 }
 
 .homepage-container .row:first-child {
     color: black;
-    font-family: "Dosis";
     background-color: #ddd;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
+    padding-bottom: 10px;
 }
 
 .homepage-container .row {
@@ -120,7 +120,7 @@ div.scl_preview .approved {
 .distribution-logo {
     text-align: center;
     font-weight: bold;
-    padding: 40px 15px 0 15px;
+    padding: 0 15px 0 15px;
     float: left;
 }
 
@@ -129,7 +129,7 @@ div.scl_preview .approved {
     color: #b3b3b3;
     border-radius: 5px;
     margin-top: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     padding: 10px;
 }
 
@@ -165,7 +165,7 @@ div.scl_preview .approved {
     color: white;
 }
 
-.btn, .td-gray {
+.td-gray {
     background-color: #EEE;
 }
 
