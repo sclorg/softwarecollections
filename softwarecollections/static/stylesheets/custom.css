@@ -153,7 +153,9 @@ div.scl_preview .approved {
 }
 
 .award img {
-    height: 92px;
+    height: 55px;
+    margin: 10px;
+    float: right;
 }
 
 .award p {
@@ -163,6 +165,7 @@ div.scl_preview .approved {
 
 .award h2 {
     color: white;
+    margin-bottom: 0;
 }
 
 .td-gray {
