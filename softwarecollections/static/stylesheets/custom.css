@@ -45,10 +45,10 @@ div.scl_preview div.page-header {
 div.scl_preview div.preview_description p {
     margin-bottom: 4px;
     padding-bottom: 4px;
-    border-bottom: 1px solid #eee;
 }
 
 div.scl_preview div.preview_footer p {
+    border-top: 1px solid #eee;
     font-size: 0.8em;
     color: #555;
 }
