@@ -417,7 +417,7 @@ class FilterForm(forms.Form):
     search_desc = forms.BooleanField(required=False, label='search description')
     approved    = forms.BooleanField(required=False,
                     help_text='Display only collections, which have passed a review.',
-                    widget=forms.CheckboxInput(attrs={'class': ''}))
+                    widget=forms.CheckboxInput(attrs={'class': ''}),)
     per_page    = forms.ChoiceField(required=False, label='Per page',
                     initial=PER_PAGE_CHOICES[0][0],
                     choices=PER_PAGE_CHOICES,
@@ -429,7 +429,7 @@ class FilterForm(forms.Form):
     policy      = forms.ChoiceField(required=False, label='Policy',
                     choices=[('', 'All policies')] + POLICY_CHOICES_LABEL,
                     widget=forms.Select(attrs={'class': 'form-control input-sm'}),
-                    help_text= "policy help text")
+                    help_text= "Policy is the level of stability, support and updates.")
     repo        = forms.ChoiceField(required=False, label='Repository',
                     widget=forms.Select(attrs={'class': 'form-control input-sm'}))
 
