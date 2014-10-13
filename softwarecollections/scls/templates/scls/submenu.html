@@ -1,19 +1,16 @@
 {% load url from future %}
+{% load menu_item %}
 <nav role='navigation'>
-    <ul class='docbrowser nav nav-vertical'>
+    <ul class='docbrowser nav nav-pills nav-stacked'>
         {% url 'scls:list_all' as url_scls_all %}
-        <li class='{% if request.path == url_scls_all %}active{% endif %}' role='menuitem'>
-            <a href='{{ url_scls_all }}'>All Software Collections</a>
-        </li>
+        {% menu_item url_scls_all "All Software Collections" %}
+
         {% if request.user.is_authenticated %}
-        {% url 'scls:list_my' as url_scls_my %}
-        <li class='{% if request.path == url_scls_my %}active{% endif %}' role='menuitem'>
-            <a href='{{ url_scls_my }}'>My Software Collections</a>
-        </li>
-        {% url 'scls:new' as url_scls_new %}
-        <li class='{% if request.path == url_scls_new %}active{% endif %}' role='menuitem'>
-            <a href='{{ url_scls_new }}'>Import New</a>
-        </li>
+            {% url 'scls:list_my' as url_scls_my %}
+            {% menu_item url_scls_my "My Software Collections" %}
+
+            {% url 'scls:new' as url_scls_new %}
+            {% menu_item url_scls_new "Import new" %}
         {% endif %}
     </ul>
 </nav>

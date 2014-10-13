@@ -2,12 +2,29 @@
 @import url(https://fonts.googleapis.com/css?family=Dosis:400,600|Open+Sans|Oxygen+Mono);
 
 /* GLOBAL STYLES */
+html {
+  position: relative;
+  min-height: 100%;
+}
 body {
+  margin-bottom: 65px;
+}
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 65px;
+}
+
+body {
+    background-size: cover;
+    background-attachment: fixed;
+    background-image: url('../images/blurr4.jpg');
     color: #333;
     font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'Sans Serif';
     font-size: 15px;
     line-height: 1.5;
-    margin-bottom: 40px;
+    height: 100%
 }
 
 code {
@@ -59,37 +76,99 @@ div.scl_preview .approved {
 
 #footer {
     width: 100%;
-    background-color: #333;
+    background-color: #111;
     color: #EFF0F2;
-    padding: 20px 2ex 20px;
-    line-height: 200%;
+    padding: 20px 0;
 }
 
 #footer a {
     color: #64d5e6;
 }
 
-#content {
-    padding-bottom: 5ex;
+.homepage-container {
+}
+
+.homepage-container .row:first-child h2 {
+    color: black;
+    font-weight: bold;
+}
+
+.homepage-container .row:first-child p {
+    color: black;
+}
+
+.homepage-container .row:first-child {
+    color: black;
+    background-color: #ddd;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    padding-bottom: 10px;
+}
+
+.homepage-container .row {
+    background-color: white;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.content {
+    background-size: cover;
+    background-attachment: fixed;
+    background-image: url('../images/blurr4.jpg');
+}
+
+.distribution-logo {
+    text-align: center;
+    font-weight: bold;
+    padding: 0 15px 0 15px;
+    float: left;
+}
+
+.terminal-preview {
+    background-color: #333333;
+    color: #b3b3b3;
+    border-radius: 5px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.terminal-preview ul:first-child {
+    margin: 0;
+}
+
+.terminal-preview ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 15px 0 0 0;
+    font-family: monospace;
 }
 
 .award {
-    background-color: #FF3978;
+    background-color: #a02c5a;
+    color: white;
+    border-radius: 5px;
+    padding: 0 10px 0 10px;
+    text-align: right
 }
 
 .award img {
-    height: 92px;
+    height: 55px;
+    margin: 10px;
+    float: right;
 }
 
 .award p {
-    font-size: 250%;
     font-family: 'Dosis';
-    margin: 16px;
-    padding: 0;
-    line-height: 1.5;
+    font-size: 1.2em;
 }
 
-.btn, .td-gray {
+.award h2 {
+    color: white;
+    margin-bottom: 0;
+}
+
+.td-gray {
     background-color: #EEE;
 }
 
@@ -109,19 +188,30 @@ div.scl_preview .approved {
     font-size: 22.5px;
     max-width: 62ex;
     margin: 0px auto;
+    padding: 10px;
 }
 
 .blam .jumbotron h1 {
     text-align: center;
-    font-size: 36pt;
+    font-size: 24pt;
 }
 
 .blam .jumbotron .lead {
-    padding-top: 48px;
+    padding-top: 10px;
+    text-align: center;
 }
 
-.main-content, .submenu {
-    margin-top: 1ex;
+.submenu-content-wrap {
+    background-color: #ddd;
+}
+
+.main-content {
+    background-color: white;
+    min-height: 300px;
+}
+
+.submenu {
+    margin-top: 20px;
 }
 
 .demo-area {
@@ -149,28 +239,43 @@ div.scl_preview .approved {
     color: white;
 }
 
+.masthead-top {
+    background-color: rgba(0,0,0,0.45);
+    text-align: right;
+}
+
+.masthead-top a {
+    color: white;
+}
+
+.masthead-main {
+    background-color: rgba(0,0,0,0.25);
+}
+
 .masthead .nav a, .masthead .nav a:hover {
     color: #FFF;
-    border-top: 7px solid transparent;
     display: block;
     font-size: 130%;
-    opacity: 0.8;
-    padding: 10px 2ex 20px;
+    padding: 10px 20px 10px;
     text-transform: lowercase;
 }
 
-.masthead .nav {
+.masthead .nav form {
+    padding: 10px 20px 10px;
+    float: left;
+}
+
+.masthead .nav li {
+    width: auto;
+    vertical-align: bottom;
 }
 
 .masthead .nav a:hover, .masthead .nav a:active {
-    border-top: 7px solid rgba(255, 255, 255, 0.5);
-    background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) repeat scroll 0% 0% transparent;
+    background-color:  rgba(0, 0, 0, 0.4);
 }
 
 .masthead .active a {
-    opacity: 1;
-    border-top: 7px solid rgba(255, 255, 255, 0.5);
-    background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) repeat scroll 0% 0% transparent;
+    background-color:  rgba(0, 0, 0, 0.4);
 }
 
 .masthead .nav a, .demo-area h3 {

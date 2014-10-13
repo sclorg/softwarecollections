@@ -1,6 +1,7 @@
 {% load url from future %}
 <nav role='navigation'>
     <ul class='nav nav-justified'>
+        <li><a href="/"><img class="logo" alt="" width="94" height="39" src="/static/images/logo.png" /></a></li>
         <li class='{% if request.path|slice:":10" == "/en/about/" %}active{% endif %}' role='menuitem'>
             <a href='/en/about/'>about</a>
         </li>
@@ -11,16 +12,19 @@
             <a href='https://ask.softwarecollections.org/questions/'>ask a question</a>
         </li>
         <li class='{% if request.path|slice:":9" == "/en/scls/" %}active{% endif %}' role='menuitem'>
-            <a href='/en/scls/'>browse</a>
+            <a href='/en/scls/'>browse collections</a>
         </li>
-        {% if request.user.is_authenticated %}
-        <li class='' role='menuitem'>
-            <a href='{% url "fas:logout" %}'>{{ request.user.get_username }} logout</a>
+<!--        <li>
+            <form class="form-inline" role="search">
+                <div class="form-group">
+                    <div class="input-append">
+                        <input type="text" class="form-control" placeholder="Search collections">
+                        <button type="submit" class="btn btn-default">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
         </li>
-        {% else %}
-        <li class='' role='menuitem'>
-            <a href='{% url "fas:login" %}?next={{ request.path }}'>login</a>
-        </li>
-        {% endif %}
-    </ul>
+    </ul> -->
 </nav>

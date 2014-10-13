@@ -2,20 +2,22 @@
 {% extends "base.html" %}
 
 {% block base_content %}
-    <div class='container content' id='content'>
-        <!--[if lt IE 7]>
-        <p class="chromeframe">You are using an outdated browser.
-        <a href="http://browsehappy.com/">Upgrade your browser today</a> or
-        <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-        <![endif]-->
-        <div class="row">
-            <div class="col-sm-9 main-content">
-                {% block content %}{% endblock %}
+    <div class='content' id='content'>
+        <div class="container">
+            <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser.
+            <a href="http://browsehappy.com/">Upgrade your browser today</a> or
+            <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+            <![endif]-->
+            <div class="row submenu-content-wrap">
+                <div class="col-sm-3 submenu">
+                    {% block submenu %}{% endblock %}
+                </div>
+                <div class="col-sm-9 main-content">
+                    {% block content %}{% endblock %}
+                </div>
             </div>
-            <div class="col-sm-3 submenu">
-                {% block submenu %}{% endblock %}
-            </div>
+            <div id='root-footer'></div>
         </div>
-        <div id='root-footer'></div>
     </div>
 {% endblock %}
