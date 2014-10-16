@@ -3,6 +3,8 @@
 %global  cron_confdir  %{_sysconfdir}/cron.d
 %global  httpd_confdir %{_sysconfdir}/httpd/conf.d
 %global  httpd_group   apache
+%global  guide_name    software-collections-guide
+%global  guide_version 1
 
 Name:              softwarecollections
 Version:           0.9
@@ -13,9 +15,11 @@ Group:             System Environment/Daemons
 License:           BSD
 URL:               http://softwarecollections.org/
 Source0:           http://github.srcurl.net/misli/%{name}/%{version}/%{name}-%{version}.tar.gz
+Source1:           %{guide_name}-%{guide_version}.tar.gz
 
 BuildArch:         noarch
 
+BuildRequires:     publican
 BuildRequires:     python3-devel
 BuildRequires:     python3-setuptools
 
@@ -45,6 +49,7 @@ Software Collections Management Website and Utils
 
 %prep
 %setup -q
+%setup -qn %{name}-%{version} -D -T -a 1
 
 
 %build
@@ -52,6 +57,9 @@ rm %{name}/localsettings-development.py
 mv %{name}/localsettings-production.py localsettings
 mv %{name}/wsgi.py htdocs/
 %{__python3} setup.py build
+
+./guide-build %{guide_name}-%{guide_version}
+./guide-import %{guide_name}-%{guide_version}
 
 
 %install
@@ -101,10 +109,6 @@ while read FILE; do
     [ -d "%{buildroot}/$FILE" ] && echo "%dir /$FILE" || echo "/$FILE"
 done | grep %{python3_sitelib} > %{name}.files
 
-# add language files
-# (uncomment next two lines to process language files)
-#%find_lang django
-#cat django.lang >> %{name}.files
 
 %post
 # create secret key

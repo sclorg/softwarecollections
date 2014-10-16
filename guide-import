@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ ! -f "$1/publican.cfg" ]; then
+    echo >&2 "Usage: $0 <path_to_guide_repo>"
+    exit 1
+fi
+
+rm -rf  softwarecollections/static/guide
+mkdir   softwarecollections/static/guide
+cp -a   "$1/tmp/en-US/html"/{images,Common_Content} \
+        softwarecollections/static/guide/
+
+rm -rf  softwarecollections/templates/pages/en/docs/guide{,.html}
+mkdir   softwarecollections/templates/pages/en/docs/guide
+
+for path in "$1/tmp/en-US/html"/*.html; do
+    file="$(basename "$path")"
+    sed -r \
+        -e 's|"index.html"|"/en/docs/guide/"|g' \
+        -e 's|"([^"/]+)\.html(#[^"]*)?"|"/en/docs/guide/\1/\2"|g' \
+        -e 's@"(Common_Content|images)/@"/static/guide/\1/@g' \
+        "$path" \
+    | ./guide-templatize > softwarecollections/templates/pages/en/docs/guide/$file
+done
+
+mv softwarecollections/templates/pages/en/docs/guide{/index,}.html

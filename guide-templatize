@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+
+import sys
+
+out = ['{% extends "section_docs_guide.html" %}']
+
+content = sys.stdin.read()
+
+# skip to title
+_, content = content.split('<title xmlns:d="http://docbook.org/ns/docbook">')
+
+# parse title
+title, content = content.split('</title>')
+
+# add title to output
+out.append('{% block title %}')
+out.append(title)
+out.append('{% endblock %}')
+
+# skip to body
+_, content = content.split('<body>')
+
+# cut end
+content, _ = content.split('</body>')
+
+# add content to output
+out.append('{% block content %}')
+out.append(content)
+out.append('{% endblock %}')
+
+# print output
+sys.stdout.write('\n'.join(out))

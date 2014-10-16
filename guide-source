@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ ! -f "$1/publican.cfg" ]; then
+    echo >&2 "Usage: $0 <path_to_guide_repo>"
+    exit 1
+fi
+
+# change dir to guide repo
+pushd "$1" > /dev/null
+
+# get information about source
+NAME="software-collections-guide"
+VERSION="$(egrep ^version: publican.cfg | sed -r 's/version:\s*//')"
+TIMESTAMP="$(git log -n 1 --format='%ct')"
+
+# create reproducible archive
+git archive --format=tar --prefix=$NAME-$VERSION/ HEAD \
+| tar-fixup-stamp-comment.pl $TIMESTAMP \
+| gzip -n -c - > ${NAME}-${VERSION}.tar.gz
+
+# change dir back
+popd > /dev/null
+
+# move source to current directory
+mv "$1/${NAME}-${VERSION}.tar.gz" ./
+

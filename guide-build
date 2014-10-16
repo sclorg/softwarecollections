@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ ! -f "$1/publican.cfg" ]; then
+    echo >&2 "Usage: $0 <path_to_guide_repo>"
+    exit 1
+fi
+
+# change dir to guide repo
+pushd "$1" > /dev/null
+
+# publican build
+publican build --brand_dir=. --formats=html --langs=all --publish
+
+# change dir back
+popd > /dev/null
+

@@ -9,7 +9,7 @@ Installation
 
 Enable yum repository from copr:
 
-    sudo wget -O /etc/yum.repos.d/SoftwareCollections.repo http://copr-fe.cloud.fedoraproject.org/coprs/mstuchli/SoftwareCollections/repo/fedora-19-x86_64/
+    sudo wget -O /etc/yum.repos.d/SoftwareCollections.repo http://copr-fe.cloud.fedoraproject.org/coprs/mstuchli/SoftwareCollections/repo/fedora-20-x86_64/
 
 Install package softwarecollections:
 
@@ -40,6 +40,15 @@ Clone the git repository:
 
     git clone git@github.com:misli/softwarecollections.git
     cd softwarecollections
+
+Clone the software-collections-guide repository
+
+    git clone https://git.fedorahosted.org/cgit/docs/software-collections-guide.git
+
+Import software-collections-guide
+
+    ./guide-build  software-collections-guide
+    ./guide-import software-collections-guide
 
 Create local configuration:
 
