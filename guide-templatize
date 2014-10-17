@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
+import io
 import sys
 
 out = ['{% extends "section_docs_guide.html" %}']
 
-content = sys.stdin.read()
+content = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8').read()
 
 # skip to title
 _, content = content.split('<title xmlns:d="http://docbook.org/ns/docbook">')
@@ -29,4 +30,4 @@ out.append(content)
 out.append('{% endblock %}')
 
 # print output
-sys.stdout.write('\n'.join(out))
+io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8').write('\n'.join(out))
