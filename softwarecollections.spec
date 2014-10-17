@@ -15,7 +15,9 @@ Group:             System Environment/Daemons
 License:           BSD
 URL:               http://softwarecollections.org/
 Source0:           http://github.srcurl.net/misli/%{name}/%{version}/%{name}-%{version}.tar.gz
-Source1:           %{guide_name}-%{guide_version}.tar.gz
+# Additional sources are not yet supported by tito
+# TODO: uncomment next line
+#Source1:          %{guide_name}-%{guide_version}.tar.gz
 
 BuildArch:         noarch
 
@@ -49,17 +51,23 @@ Software Collections Management Website and Utils
 
 %prep
 %setup -q
-%setup -qn %{name}-%{version} -D -T -a 1
+# Additional sources are not yet supported by tito
+# TODO: uncomment next line
+#%setup -qn %{name}-%{version} -D -T -a 1
 
 
 %build
 rm %{name}/localsettings-development.py
 mv %{name}/localsettings-production.py localsettings
 mv %{name}/wsgi.py htdocs/
-%{__python3} setup.py build
 
-./guide-build %{guide_name}-%{guide_version}
+# Additional sources are not yet supported by tito
+# TODO: remove next line
+tar -xzf       %{guide_name}-%{guide_version}.tar.gz
+./guide-build  %{guide_name}-%{guide_version}
 ./guide-import %{guide_name}-%{guide_version}
+
+%{__python3} setup.py build
 
 
 %install
