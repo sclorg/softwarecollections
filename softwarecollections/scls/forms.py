@@ -256,8 +256,14 @@ class CoprsForm(_CoprForm):
 
     def save(self, commit=True):
         scl = super(CoprsForm, self).save()
-        del(scl.all_coprs)
-        del(scl.all_repos)
+        try:
+            del(scl.all_coprs)
+        except AttributeError:
+            pass
+        try:
+            del(scl.all_repos)
+        except AttributeError:
+            pass
         for repo in self.instance.repos.exclude(copr__in=scl.coprs.all()):
             repo.delete()
         scl.add_auto_tags()
@@ -348,7 +354,10 @@ class ReposForm(forms.ModelForm):
         for repo in self.instance.repos.exclude(id__in=ids):
             repo.delete()
         # drop repos cache
-        del(self.instance.all_repos)
+        try:
+            del(self.instance.all_repos)
+        except AttributeError:
+            pass
         # add auto tags
         self.instance.add_auto_tags()
         # update download count
