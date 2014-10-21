@@ -168,7 +168,7 @@ div.scl_preview .approved {
     margin-bottom: 0;
 }
 
-.td-gray {
+.btn-default, .td-gray {
     background-color: #EEE;
 }
 
@@ -208,6 +208,7 @@ div.scl_preview .approved {
 .main-content {
     background-color: white;
     min-height: 300px;
+    padding-bottom: 50px;
 }
 
 .submenu {
@@ -315,7 +316,7 @@ a {
 
 .icons {
     float: right;
-    font-size: 24px;
+    margin-top: 25px;
 }
 
 .icons .glyphicon span {

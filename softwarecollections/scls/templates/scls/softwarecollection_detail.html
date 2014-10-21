@@ -13,18 +13,8 @@
 <div class='page-header'>
     <div class='icons'>
         {% if scl.approved %}
-        <span class='glyphicon glyphicon-ok-circle approved'
-            title='This collection has been approved'><span>approved</span></span>
+        <span class="approved"><span class="glyphicon glyphicon-ok"> </span> approved</span>
         {% endif %}
-        {% if scl.issue_tracker %}
-        <a class='glyphicon glyphicon-exclamation-sign report-bug' href="{{ scl.issue_tracker }}"
-            title="report a bug"><span>report a bug</span></a>
-        {% endif %}
-        {% allowed 'edit' obj=scl %}
-        {% notallowed %}
-        <a class='glyphicon glyphicon-ban-circle report-abuse' href="{% url "scls:complain" scl %}"
-            title="report abuse"><span>report abuse</span></a>
-        {% endallowed %}
     </div>
     <h1>{{ scl.title }}
         <small>
@@ -72,7 +62,12 @@
 {{ scl.description | markdown2:"safe" }}
 
 {% if scl.upstream_url %}
-<a href="{{ scl.upstream_url }}">Project homepage</a>
+<a class="btn btn-default" href="{{ scl.upstream_url }}" target="_blank"><span class="glyphicon glyphicon-home"></span> Project homepage</a>
+{% endif %}
+
+{% if scl.issue_tracker %}
+<a class="btn btn-default" href="{{ scl.issue_tracker }}" target="_blank" title="report a bug">
+    <span class="glyphicon glyphicon-exclamation-sign"> </span> Issue Tracker</a>
 {% endif %}
 
 <h2>Instructions</h2>
@@ -207,5 +202,10 @@
         {% endallowed %}
     </div>
 </div>
+        {% allowed 'edit' obj=scl %}
+        {% notallowed %}
+        <a href="{% url "scls:complain" scl %}"
+            title="report abuse" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-ban-circle report-abuse'></span> Report malicious content</a>
+        {% endallowed %}
 
 {% endblock %}
