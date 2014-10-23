@@ -7,11 +7,7 @@ register = template.Library()
 def menu_item(context, path, name):
     path = path.strip("/")
     request = context["request"]
-    # hack for software-collections-guide
-    if path == 'en/docs/guide':
-        active = "active" if request.path.startswith("/{path}/".format(path=path)) else ""
-    else:
-        active = "active" if request.path == "/{path}/".format(path=path) else ""
+    active = "active" if request.path == "/{path}/".format(path=path) else ""
     item = "<li class='{active}' role='menuitem'>" \
            "    <a href='/{path}/'>{name}</a>" \
            "</li>".format(name=name, path=path, active=active)

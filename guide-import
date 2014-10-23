@@ -7,13 +7,13 @@ fi
 
 rm -rf  softwarecollections/static/guide
 mkdir   softwarecollections/static/guide
-cp -a   "$1/tmp/en-US/html"/{images,Common_Content} \
+cp -a   "$1/tmp/en-US/html-single"/{images,Common_Content} \
         softwarecollections/static/guide/
 
 rm -rf  softwarecollections/templates/pages/en/docs/guide{,.html}
 mkdir   softwarecollections/templates/pages/en/docs/guide
 
-for path in "$1/tmp/en-US/html"/*.html; do
+for path in "$1/tmp/en-US/html-single"/*.html; do
     file="$(basename "$path")"
     sed -r \
         -e 's|"index.html"|"/en/docs/guide/"|g' \
