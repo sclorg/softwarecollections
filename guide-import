@@ -10,17 +10,8 @@ mkdir   softwarecollections/static/guide
 cp -a   "$1/tmp/en-US/html-single"/{images,Common_Content} \
         softwarecollections/static/guide/
 
-rm -rf  softwarecollections/templates/pages/en/docs/guide{,.html}
-mkdir   softwarecollections/templates/pages/en/docs/guide
+sed -r \
+    -e 's@"(Common_Content|images)/@"/static/guide/\1/@g' \
+    "$1/tmp/en-US/html-single/index.html" \
+| ./guide-templatize > softwarecollections/templates/pages/en/docs/guide.html
 
-for path in "$1/tmp/en-US/html-single"/*.html; do
-    file="$(basename "$path")"
-    sed -r \
-        -e 's|"index.html"|"/en/docs/guide/"|g' \
-        -e 's|"([^"/]+)\.html(#[^"]*)?"|"/en/docs/guide/\1/\2"|g' \
-        -e 's@"(Common_Content|images)/@"/static/guide/\1/@g' \
-        "$path" \
-    | ./guide-templatize > softwarecollections/templates/pages/en/docs/guide/$file
-done
-
-mv softwarecollections/templates/pages/en/docs/guide{/index,}.html

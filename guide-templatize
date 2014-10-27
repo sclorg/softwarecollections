@@ -3,31 +3,37 @@
 import io
 import sys
 
-out = ['{% extends "section_docs_guide.html" %}']
-
+# read utf-8 content
 content = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8').read()
 
-# skip to title
-_, content = content.split('<title xmlns:d="http://docbook.org/ns/docbook">')
-
-# parse title
-title, content = content.split('</title>')
-
-# add title to output
-out.append('{% block title %}')
-out.append(title)
-out.append('{% endblock %}')
-
-# skip to body
-_, content = content.split('<body>')
+# cut header
+_, content = content.split('<div class="toc">', 1)
 
 # cut end
 content, _ = content.split('</body>')
 
-# add content to output
-out.append('{% block content %}')
-out.append(content)
-out.append('{% endblock %}')
+# format output
+out = '''
+{% extends "section_docs_guide.html" %}}
+
+{% block title %}Software Collections Guide{% endblock %}
+
+{% block content %}
+
+<h1>Software Collections Guide</h1>
+
+<p class="author">
+    Author: <span class="firstname">Petr</span> <span class="surname">Kovář</span>
+</p>
+<div class="affiliation">
+    <span xmlns:d="http://docbook.org/ns/docbook" class="orgname">Red Hat</span>
+    <span xmlns:d="http://docbook.org/ns/docbook" class="orgdiv">Engineering Content Services</span>
+</div>
+
+<div class="toc">''' + content + '''
+
+{% endblock %}'''
 
 # print output
-io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8').write('\n'.join(out))
+io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8').write(out)
+
