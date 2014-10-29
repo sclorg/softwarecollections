@@ -54,7 +54,6 @@ div.section {
 
 p, div.para {
 	padding-top: 0px;
-	margin-top: 1em;
 	padding-bottom: 0px;
 	margin-bottom: 1em;
 }
@@ -79,7 +78,6 @@ a {
 .main-content a:link {
 	text-decoration: none;
 	border-bottom: 1px dotted ;
-	color:#3366cc;
 }
 
 body.pdf a:link {
@@ -89,7 +87,6 @@ body.pdf a:link {
 a:visited {
 	text-decoration:none;
 	border-bottom: 1px dotted ;
-	color:#003366;
 }
 
 div.longdesc-link {
@@ -107,138 +104,139 @@ div.longdesc-link {
 	border-bottom: 1px dotted;
 }
 
-/*headings*/
-h1, h2, h3, h4, h5, h6 {
-	page-break-inside: avoid;
-	page-break-after: avoid;
-	word-wrap: break-word;
-}
 
-.titlepage h1.title {
-	text-align:left;
-}
-
-.book > .titlepage h1.title {
-	text-align: center;
-}
-
-.article > .titlepage h1.title,
-.article > .titlepage h2.title {
-	text-align: center;
-}
-
-.set .titlepage > div > div > h1.title {
-	text-align: center;
-}
-
-.part > .titlepage h1.title {
-	text-align: center;
-	font-size: 24px;
-}
-
-div.producttitle {
-	margin-top: 0px;
-	margin-bottom: 20px;
-	font-size: 48px;
-	font-weight: bold;
-/* 	background: #003d6e url(../guide/Common_Content/images/h1-bg.png) top left repeat-x; */
-	color:  #336699;
-	text-align: center;
-	padding-top: 12px;
-}
-
-.titlepage .corpauthor {
-	margin-top: 1em;
-	text-align: center;
-}
-
-.section h1.title {
-	font-size: 18px;
-	padding: 0px;
-	color: #336699;
-	text-align: left;
-	background: white;
-}
-
-h2 {
-	font-size: 20px;
-	margin-top: 30px;
-}
-
-
-.book div.subtitle, .book h2.subtitle, .book h3.subtitle {
-	margin-top: 1em;
-	margin-bottom: 1em;
-	font-size: 18px;
-	text-align: center;
-}
-
-div.subtitle {
-	color:  #336699;
-	font-weight: bold;
-}
-
-h1.legalnotice {
-	font-size: 24px;
-}
-
-.preface > div > div > div > h2.title,
-.preface > div > div > div > h1.title {
-	margin-top: 1em;
-	font-size: 24px;
-}
-
-.appendix h2 {
-	font-size: 24px;
-}
-
-
-
-h3 {
-	font-size: 14px;
-	padding-top:0px;
-	padding-bottom: 0px;
-	margin-bottom: 0px;
-}
-h4 {
-	font-size: 14px;
-	padding-top:0px;
-	padding-bottom:0px;
-}
-
-h5 {
-	font-size: 14px;
-}
-
-h6 {
-	font-size: 14px;
-	margin-bottom: 0px;
-}
-
-.abstract h6 {
-	margin-top:1em;
-	margin-bottom:.5em;
-	font-size: 24px;
-}
-
-.index > div > div > div > h2.title {
-	font-size: 24px;
-}
-
-.chapter > div > div > div > h2.title {
-	font-size: 24px;
-}
-
-.section > div > div > div > h2.title {
-	font-size: 21px;
-	page-break-inside: avoid;
-	page-break-before: avoid;
-	page-break-after: avoid;
-}
-
-.section > div > div > div > h3.title {
-	font-size: 17px;
-}
+///*headings*/
+//h1, h2, h3, h4, h5, h6 {
+//	page-break-inside: avoid;
+//	page-break-after: avoid;
+//	word-wrap: break-word;
+//}
+//
+//.titlepage h1.title {
+//	text-align:left;
+//}
+//
+//.book > .titlepage h1.title {
+//	text-align: center;
+//}
+//
+//.article > .titlepage h1.title,
+//.article > .titlepage h2.title {
+//	text-align: center;
+//}
+//
+//.set .titlepage > div > div > h1.title {
+//	text-align: center;
+//}
+//
+//.part > .titlepage h1.title {
+//	text-align: center;
+//	font-size: 24px;
+//}
+//
+//div.producttitle {
+//	margin-top: 0px;
+//	margin-bottom: 20px;
+//	font-size: 48px;
+//	font-weight: bold;
+///* 	background: #003d6e url(../guide/Common_Content/images/h1-bg.png) top left repeat-x; */
+//	color:  #336699;
+//	text-align: center;
+//	padding-top: 12px;
+//}
+//
+//.titlepage .corpauthor {
+//	margin-top: 1em;
+//	text-align: center;
+//}
+//
+//.section h1.title {
+//	font-size: 18px;
+//	padding: 0px;
+//	color: #336699;
+//	text-align: left;
+//	background: white;
+//}
+//
+//h2 {
+//	font-size: 20px;
+//	margin-top: 30px;
+//}
+//
+//
+//.book div.subtitle, .book h2.subtitle, .book h3.subtitle {
+//	margin-top: 1em;
+//	margin-bottom: 1em;
+//	font-size: 18px;
+//	text-align: center;
+//}
+//
+//div.subtitle {
+//	color:  #336699;
+//	font-weight: bold;
+//}
+//
+//h1.legalnotice {
+//	font-size: 24px;
+//}
+//
+//.preface > div > div > div > h2.title,
+//.preface > div > div > div > h1.title {
+//	margin-top: 1em;
+//	font-size: 24px;
+//}
+//
+//.appendix h2 {
+//	font-size: 24px;
+//}
+//
+//
+//
+//h3 {
+//	font-size: 14px;
+//	padding-top:0px;
+//	padding-bottom: 0px;
+//	margin-bottom: 0px;
+//}
+//h4 {
+//	font-size: 14px;
+//	padding-top:0px;
+//	padding-bottom:0px;
+//}
+//
+//h5 {
+//	font-size: 14px;
+//}
+//
+//h6 {
+//	font-size: 14px;
+//	margin-bottom: 0px;
+//}
+//
+//.abstract h6 {
+//	margin-top:1em;
+//	margin-bottom:.5em;
+//	font-size: 24px;
+//}
+//
+//.index > div > div > div > h2.title {
+//	font-size: 24px;
+//}
+//
+//.chapter > div > div > div > h2.title {
+//	font-size: 24px;
+//}
+//
+//.section > div > div > div > h2.title {
+//	font-size: 21px;
+//	page-break-inside: avoid;
+//	page-break-before: avoid;
+//	page-break-after: avoid;
+//}
+//
+//.section > div > div > div > h3.title {
+//	font-size: 17px;
+//}
 
 /*element rules*/
 hr {
@@ -776,11 +774,6 @@ pre {
 	white-space: -o-pre-wrap; /* Opera 7 */
 	word-wrap: break-word; /* Internet Explorer 5.5+ */
 	font-size: 0.9em;
-	border-style:none;
-	box-shadow: 0 2px 5px #AAAAAA inset;
-	-moz-box-shadow:  0 2px 5px #AAAAAA inset;
-	-webkit-box-shadow: 0 2px 5px #AAAAAA inset;
-	-o-box-shadow: 0 2px 5px #AAAAAA inset;
 }
 
 body.pdf pre {
@@ -801,6 +794,8 @@ code {
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	font-weight:bold;
+        color: black;
+        background: none;
 }
 
 .parameter code {
@@ -1130,7 +1125,7 @@ table.lt-4-cols.gt-14-rows tr:nth-child(odd) {
 
 dl {
 	margin-top: 0px;
-	margin-left: 28px;
+	margin-left: 0px;
 }
 
 .toc dl {
@@ -1568,14 +1563,6 @@ div.progress span.fuzzy {
 	margin-top:-1.3em;
 	padding:0px;
 	border:none;
-}
-
-/* Dirty EVIL Mozilla hack for round corners */
-pre {
-	-moz-border-radius:11px;
-	-webkit-border-radius:11px;
-	border-radius: 11px;
-/*	page-break-inside: avoid; */
 }
 
 .example {

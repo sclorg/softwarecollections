@@ -27,17 +27,9 @@ body {
     height: 100%
 }
 
-code {
-    font-family: 'Oxygen Mono', 'Monospace';
-    background-color: #EFF0F2;
-    padding: 1.5ex;
-    line-height: 1;
-    display: inline-block;
-}
-
 h1, h2, h3 {
     font-family: 'Dosis', 'sans-serif';
-    color: #999;
+    color: #226d78;
     padding-top: 0.5ex;
     padding-bottom: 0.1ex;
 }
@@ -55,8 +47,8 @@ p {
     padding-bottom: 1ex;
 }
 
-div.scl_preview div.page-header {
-    margin-bottom: 0px;
+div.scl_preview div.preview_header h2 {
+    border-bottom: 1px solid #eee;
 }
 
 div.scl_preview div.preview_description p {
@@ -72,6 +64,13 @@ div.scl_preview div.preview_footer p {
 
 div.scl_preview .approved {
     font-weight: bold;
+}
+
+blockquote {
+    font-size: 1em;
+    margin: 0px;
+    padding: 0 20px;
+    border: none;
 }
 
 #footer {
