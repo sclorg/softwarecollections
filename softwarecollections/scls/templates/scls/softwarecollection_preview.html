@@ -6,8 +6,8 @@
 {% load policy_name %}
 
 <div class="scl_preview">
-    <div class='page-header collections-list'>
-        <h1><a href='{{ scl.get_absolute_url }}'>{{ scl.title }}</a>
+    <div class='preview_header'>
+        <h2><a href='{{ scl.get_absolute_url }}'>{{ scl.title }}</a>
             <small>
                 by
                 <a href="{% url "scls:list_user" scl.maintainer.username %}">
@@ -17,7 +17,7 @@
                     {% rating_stars 'passive' scl %}
                 {% endif %}
             </small>
-        </h1>
+        </h2>
     </div>
 
     <div class='row'>
