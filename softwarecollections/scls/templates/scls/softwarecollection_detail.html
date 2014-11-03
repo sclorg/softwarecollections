@@ -153,21 +153,23 @@
                     {% if not forloop.last %} <small> and </small> {% endif %}
                 {% endfor %}
             </td>
-            {% if scl.last_synced %}
-                <td>
-                    {% for repo in group.1 %}
+            <td>
+                {% for repo in group.1 %}
+                    {% if repo.last_synced %}
                         <a href="{% url "scls:download" repo.slug %}{{ repo.rpmfile_symlink }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-download-alt"> {{ repo.arch }} </span></a>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for repo in group.1 %}
+                    {% else %}
+                        <span class="btn btn-default btn-sm disabled"><span class="glyphicon glyphicon-refresh"> {{ repo.arch }} <small>not synced</small></span></span>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% for repo in group.1 %}
+                    {% if repo.last_synced %}
                         <a href="{{ repo.get_repo_url }}">{{ repo.arch }}</a>
                         {% if not forloop.last %} | {% endif %}
-                    {% endfor %}
-                </td>
-            {% else %}
-                <td colspan="2">Waiting for synchronization.</td>
-            {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         {% empty %}
             <td></td>
