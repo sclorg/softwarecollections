@@ -34,9 +34,10 @@
                 <div class="masthead-top">
                     <div class='container'>
                         {% if request.user.is_authenticated %}
-                            <a href='{% url "fas:logout" %}'>{{ request.user.get_username }} logout</a>
+                            <span> {{ request.user.first_name }} {{ request.user.last_name }} </span>
+                            <small> -  <a href='{% url "fas:logout" %}'> Log out </a> </small>
                         {% else %}
-                            <a href='{% url "fas:login" %}?next={{ request.path }}'>login</a>
+                            <small> <a href='{% url "fas:login" %}?next={{ request.path }}'>Log in</a> </small>
                         {% endif %}
 
                     </div>
