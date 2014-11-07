@@ -9,7 +9,6 @@ fi
 pushd "$1" > /dev/null
 
 # publican build
-sed -i /^brand:/d  publican.cfg
 publican build --formats=html-single --langs=en-US
 
 # change dir back

@@ -41,14 +41,14 @@ Clone the git repository:
     git clone git@github.com:misli/softwarecollections.git
     cd softwarecollections
 
-Clone the software-collections-guide repository
+Clone the packaging-guide repository
 
-    git clone https://git.fedorahosted.org/cgit/docs/software-collections-guide.git
+    git clone git@github.com:pmkovar/packaging-guide.git
 
-Import software-collections-guide
+Import packaging-guide
 
-    ./guide-build  software-collections-guide
-    ./guide-import software-collections-guide
+    ./guide-build  packaging-guide
+    ./guide-import packaging-guide
 
 Create local configuration:
 
