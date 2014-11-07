@@ -3,7 +3,7 @@
 %global  cron_confdir  %{_sysconfdir}/cron.d
 %global  httpd_confdir %{_sysconfdir}/httpd/conf.d
 %global  httpd_group   apache
-%global  guide_name    software-collections-guide
+%global  guide_name    packaging-guide
 %global  guide_version 1
 
 Name:              softwarecollections

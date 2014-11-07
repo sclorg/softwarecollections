@@ -9,7 +9,7 @@ fi
 pushd "$1" > /dev/null
 
 # get information about source
-NAME="software-collections-guide"
+NAME="packaging-guide"
 VERSION="$(egrep ^version: publican.cfg | sed -r 's/version:\s*//')"
 TIMESTAMP="$(git log -n 1 --format='%ct')"
 
