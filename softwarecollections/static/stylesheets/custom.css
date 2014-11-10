@@ -98,7 +98,7 @@ blockquote {
 
 .homepage-container .row:first-child {
     color: black;
-    background-color: #ddd;
+    background-color: rgba(230, 230, 230, .85);
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
     padding-bottom: 10px;
@@ -171,6 +171,16 @@ blockquote {
     background-color: #EEE;
 }
 
+.btn-primary {
+    background-color: #226d78;
+    border-color: #226d78;
+}
+
+.btn-primary:hover {
+    background-color: #428d98;
+    border-color: #428d98;
+}
+
 .btn-default:hover,
 .btn-default:focus,
 .btn-default:active {
@@ -202,6 +212,7 @@ blockquote {
 
 .submenu-content-wrap {
     background-color: #ddd;
+    background-color: rgba(230, 230, 230, .85)
 }
 
 .main-content {
@@ -211,7 +222,24 @@ blockquote {
 }
 
 .submenu {
-    margin-top: 20px;
+    margin: 20px 0;
+    padding: 0px;
+    font-size: 1.1em;
+}
+
+.submenu li a {
+    padding-left: 20px;
+    color: #226d78;
+}
+
+.submenu li a:hover {
+    background-color: #428d98;
+    color: white;
+}
+
+.submenu li.active a {
+    background-color: #226d78;
+    color: white;
 }
 
 .demo-area {
@@ -225,7 +253,6 @@ blockquote {
 }
 
 .docbrowser {
-    padding: 1ex;
 }
 
 .masthead h1 {
@@ -287,7 +314,6 @@ blockquote {
 }
 .nav > li > a, .nav > li > p {
     display: block;
-    padding: 10px 15px;
     position: relative;
 }
 .nav > li > p {

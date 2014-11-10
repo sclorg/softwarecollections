@@ -11,7 +11,11 @@
             <![endif]-->
             <div class="row submenu-content-wrap">
                 <div class="col-sm-3 submenu">
-                    {% block submenu %}{% endblock %}
+                    <nav role='navigation'>
+                        <ul class='docbrowser nav nav-stacked'>
+                            {% block submenu %}{% endblock %}
+                        </ul>
+                    </nav>
                 </div>
                 <div class="col-sm-9 main-content">
                     {% block content %}{% endblock %}
