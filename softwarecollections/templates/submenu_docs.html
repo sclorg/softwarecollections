@@ -1,9 +1,6 @@
 {% load menu_item %}
-<nav role='navigation'>
-    <ul class='docbrowser nav nav-pills nav-stacked'>
-        {% menu_item "en/docs"                   "Quick Start" %}
-        {% menu_item "en/docs/add-to-catalogue"  "Adding Collection to Catalogue" %}
-        {% menu_item "en/docs/building"          "Building Collections" %}
-        {% menu_item "en/docs/guide"             "Software Collections Guide" %}
-    </ul>
-</nav>
+
+    {% menu_item "en/docs"                   "Quick Start" %}
+    {% menu_item "en/docs/add-to-catalogue"  "Adding a new Collection" %}
+    {% menu_item "en/docs/building"          "Building a Collection" %}
+    {% menu_item "en/docs/guide"             "Packaging Guide" %}
