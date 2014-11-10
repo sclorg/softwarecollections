@@ -219,6 +219,7 @@ blockquote {
     background-color: white;
     min-height: 300px;
     padding-bottom: 50px;
+    padding-top: 20px;
 }
 
 .submenu {
