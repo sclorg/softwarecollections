@@ -84,6 +84,30 @@ blockquote {
     color: #64d5e6;
 }
 
+nav.paginator {
+    text-align: center;
+}
+
+nav.paginator li a:hover {
+    background-color: #428d98;
+    border-color: #428d98;
+    color: white;
+}
+
+nav.paginator li.active a {
+    background-color: #226d78;
+    border-color: #226d78;
+}
+
+nav.paginator li.active a:hover {
+    background-color: #226d78;
+    border-color: #226d78;
+}
+
+nav.paginator a {
+    color: #226d78;
+}
+
 .homepage-container {
 }
 
