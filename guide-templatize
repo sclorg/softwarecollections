@@ -16,18 +16,18 @@ content, _ = content.split('</body>')
 out = '''
 {% extends "section_docs_guide.html" %}}
 
-{% block title %}Software Collections Guide{% endblock %}
+{% block title %}Packaging Guide{% endblock %}
 
 {% block content %}
 
-<h1>Software Collections Guide</h1>
+<h1>Packaging Guide</h1>
 
-<p class="author">
-    Author: <span class="firstname">Petr</span> <span class="surname">Kovář</span>
-</p>
-<div class="affiliation">
-    <span xmlns:d="http://docbook.org/ns/docbook" class="orgname">Red Hat</span>
-    <span xmlns:d="http://docbook.org/ns/docbook" class="orgdiv">Engineering Content Services</span>
+<div class="para">
+    The Packaging Guide provides an explanation of Software Collections and
+    details how to build and package them. Developers and system administrators
+    who have a basic understanding of software packaging with RPM packages, but
+    who are new to the concept of Software Collections, can use this Guide to
+    get started with Software Collections.
 </div>
 
 <div class="toc">''' + content + '''
