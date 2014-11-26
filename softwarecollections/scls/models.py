@@ -331,31 +331,27 @@ class SoftwareCollection(models.Model):
             self.last_synced = datetime.now().replace(tzinfo=utc)
 
             # check repos content and build repo RPMs
-            has_content = False
             for repo in self.all_repos:
                 if not os.path.exists(repo.get_rpmfile_path()):
                     repo.rpmbuild(timeout)
                 repo.createrepo(timeout)
                 repo.last_synced = self.last_synced
-                repo.has_content = list(filter(
-                    lambda name: name.endswith('.rpm'),
-                    os.listdir(repo.get_repo_dir())
-                )) and True or False
+                repo.has_content = len(repo.dump_provides(timeout)) > 0
                 repo.save()
-                has_content |= repo.has_content
-            self.has_content = has_content
+            self.has_content = len(self.dump_provides(timeout)) > 0
             self.save()
 
     def dump_provides(self, timeout=None):
         with self.lock:
             repos_root = self.get_repos_root()
-            with open(os.path.join(repos_root, '.provides'), 'w') as out:
+            with open(os.path.join(repos_root, '.provides'), 'w+') as out:
                 check_call(
-                    "set -o pipefail; " \
-                    "find '{repos_root}' -name '*.rpm' -exec rpm -qp --provides '{{}}' \\; " \
-                    "| sed 's/ .*//' | sort -u".format(repos_root=repos_root),
+                    "cat '{repos_root}'/*/.provides " \
+                    "| sort -u".format(repos_root=repos_root),
                     shell=True, stdout=out, timeout=timeout
                 )
+                out.seek(0)
+                return [line.rstrip() for line in out]
 
     def find_related(self, timeout=None):
         with self.lock:
@@ -556,6 +552,19 @@ class Repo(models.Model):
                 'createrepo_c', '--database', '--update', '--skip-symlinks',
                 self.get_repo_dir()
             ], stdout=log, stderr=log, timeout=timeout)
+
+    def dump_provides(self, timeout=None):
+        with self.lock:
+            repo_dir = self.get_repo_dir()
+            with open(os.path.join(repo_dir, '.provides'), 'w+') as out:
+                check_call(
+                    "set -o pipefail; " \
+                    "find '{repo_dir}' -name '*.rpm' -exec rpm -qp --provides '{{}}' \\; " \
+                    "| sed 's/ .*//' | sort -u".format(repo_dir=repo_dir),
+                    shell=True, stdout=out, timeout=timeout
+                )
+                out.seek(0)
+                return [line.rstrip() for line in out]
 
     def delete(self, *args, **kwargs):
         # rename of repo directory is faster than deleting

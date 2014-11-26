@@ -20,6 +20,8 @@ def dump_provides(args):
     # scl.dump_provides()
     logger.info('Dumping provides for {}'.format(scl.slug))
     try:
+        for repo in scl.all_repos:
+            repo.dump_provides(timeout)
         scl.dump_provides(timeout)
     except:
         logger.exception('Failed to dump provides for {}'.format(scl.slug))
