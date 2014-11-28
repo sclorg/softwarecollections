@@ -38,7 +38,7 @@ ADMINS = (
     ('Adam Samalik',   'asamalik@redhat.com'),
 )
 MANAGERS = ADMINS
-SERVER_EMAIL = 'admin@softwarecollections.org'
+SERVER_EMAIL = 'SoftwareCollections @ {} <admin@softwarecollections.org>'.format(os.uname()[1])
 
 # COPR
 COPR_URL = 'http://copr-fe.cloud.fedoraproject.org'
