@@ -23,8 +23,8 @@ with open(os.path.join(BASE_DIR, 'secret_key'), 'rb') as f:
     SECRET_KEY = repr(f.read())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG   = False
-DBDEBUG = False
+DEBUG   = os.environ.get('DEBUG', False) and True or False
+DBDEBUG = os.environ.get('DEBUG', False) == 'DB'
 
 ALLOWED_HOSTS = ['www.softwarecollections.org']
 
