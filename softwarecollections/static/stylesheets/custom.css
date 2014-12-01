@@ -215,30 +215,6 @@ nav.paginator a {
     font-family: monospace;
 }
 
-.award {
-    background-color: #a02c5a;
-    color: white;
-    border-radius: 5px;
-    padding: 0 10px 0 10px;
-    text-align: right
-}
-
-.award img {
-    height: 55px;
-    margin: 10px;
-    float: right;
-}
-
-.award p {
-    font-family: 'Dosis';
-    font-size: 1.2em;
-}
-
-.award h2 {
-    color: white;
-    margin-bottom: 0;
-}
-
 .btn {
     border-radius: 0;
 }
