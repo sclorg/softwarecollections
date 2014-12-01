@@ -20,6 +20,12 @@ out = '''
 
 {% block content %}
 
+<ol class="breadcrumb">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="/en/docs/">Docs & Guides</a></li>
+    <li class="active">Packaging Guide</li>
+</ol>
+
 <h1>Packaging Guide</h1>
 
 <div class="para">

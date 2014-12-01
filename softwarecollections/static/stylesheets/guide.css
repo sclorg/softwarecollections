@@ -80,6 +80,10 @@ a {
 	border-bottom: 1px dotted ;
 }
 
+.breadcrumb a:link {
+    border-bottom: none;
+}
+
 body.pdf a:link {
 	word-wrap: break-word;
 }
