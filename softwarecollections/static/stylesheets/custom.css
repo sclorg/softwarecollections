@@ -108,30 +108,76 @@ nav.paginator a {
     color: #226d78;
 }
 
+.homepage-jumbotron {
+    padding: 40px 0 30px 0;
+    color: white;
+    font-family: 'Dosis';
+}
+
+.homepage-jumbotron p {
+    font-size: 1.4em;
+    margin-bottom: 30px;
+}
+
+.homepage-jumbotron h1 {
+    font-size: 2.8em;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.homepage-jumbotron h3 {
+    color: white;
+}
+
+.homepage-jumbotron .btn-primary {
+    background-color: #a37127;
+    border-color: #a37127;
+    margin-bottom: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.homepage-jumbotron .btn-primary:hover {
+    background-color: #c99341;
+    border-color: #c99341;
+}
+
+.homepage-jumbotron .btn-default:hover,
+.homepage-jumbotron .btn-default:focus,
+.homepage-jumbotron .btn-default:active {
+    background-color: #DDD;
+}
+
 .homepage-container {
-}
-
-.homepage-container .row:first-child h2 {
-    color: black;
-    font-weight: bold;
-}
-
-.homepage-container .row:first-child p {
-    color: black;
-}
-
-.homepage-container .row:first-child {
-    color: black;
-    background-color: rgba(230, 230, 230, .85);
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-    padding-bottom: 10px;
-}
-
-.homepage-container .row {
+    background-image: none;
     background-color: white;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 30px 0;
+}
+
+.homepage-side-container {
+    margin-top: 40px;
+    font-size: 0.9em;
+}
+
+.homepage-container p {
+    color: #333;
+    font-size: 1.1em;
+}
+
+.homepage-container h2,
+.homepage-container h3 {
+    font-weight: bold;
+    color: black;
+}
+
+.homepage-container:nth-child(even) {
+    color: black;
+    background-color: rgba(230, 230, 230, .75);
+}
+
+.homepage-container:nth-child(odd) {
+    color: black;
+    background-color: rgba(230, 230, 230, .95);
 }
 
 .content {
@@ -147,12 +193,14 @@ nav.paginator a {
     float: left;
 }
 
+.preview-frame {
+    background-color: rgba(0,0,0,0.25);
+    padding: 10px 20px 20px 20px;
+}
 .terminal-preview {
     background-color: #333333;
     color: #b3b3b3;
-    border-radius: 5px;
-    margin-top: 30px;
-    margin-bottom: 10px;
+    border: 1px solid #888;
     padding: 10px;
 }
 
@@ -191,6 +239,10 @@ nav.paginator a {
     margin-bottom: 0;
 }
 
+.btn {
+    border-radius: 0;
+}
+
 .btn-default, .td-gray {
     background-color: #EEE;
 }
@@ -213,25 +265,6 @@ nav.paginator a {
 
 .input-group-addon {
     background-color: #FFF !important;
-}
-
-.blam .jumbotron {
-    background-color: transparent;
-    font-weight: 500;
-    font-size: 22.5px;
-    max-width: 62ex;
-    margin: 0px auto;
-    padding: 10px;
-}
-
-.blam .jumbotron h1 {
-    text-align: center;
-    font-size: 24pt;
-}
-
-.blam .jumbotron .lead {
-    padding-top: 10px;
-    text-align: center;
 }
 
 .submenu-content-wrap {

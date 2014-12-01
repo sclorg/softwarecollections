@@ -4,138 +4,133 @@
 
 {% block content %}
 <!-- JUMBOTRON -->
-<div class='blam'>
-    <div class='jumbotron'>
-        <h1> All versions of any software<br />
-        on your system. Together.</h1>
-        <div class='lead'>
-            Software Collections give you power to build, install, and use
-            multiple versions of software on the same system, without
-            affecting system-wide installed packages.
+<div class='homepage-jumbotron'> 
+    <div class='container'> 
+        <div class="row">
+            <div class="col-md-7 col-lg-8">
+                <h1> All versions of any software<br />
+                on your system. Together.</h1>
+                <p>
+                    Software Collections give you power to build, install, and use <br>
+                    multiple versions of software on the same system, without <br>
+                    affecting system-wide installed packages.
+                </p>
+                <a class="btn btn-lg btn-primary" role="button" href="/docs/quick-start/">Get started!</a>
+            </div>
+            <div class="col-md-5 col-lg-4">
+                <div class="preview-frame">
+                    <h3> Using a system package </h3>
+                    <div class="terminal-preview">
+                        <ul>
+                            <li> $ python --version </li>
+                            <li> Python 2.7.5 </li>
+                            <li> &nbsp; </li>
+                        </ul>
+                    </div>
+                    <h3> Using a software collection </h3>
+                    <div class="terminal-preview">
+                        <ul>
+                            <li> $ scl enable python33 bash </li>
+                            <li> $ python --version </li>
+                            <li> Python 3.3.2 </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- AWARD 
-<div class='award visible-xs visible-sm'>
-    <div class='container text-center'>
-        <p><img src='/static/images/coding-environments.png' /><br />
-        DeveloperWeek Award for Top Innovator</p>
+<div class='homepage-container'> 
+    <div class='container'> 
+        <div class="row">
+            <div class="col-md-10">
+                <h2> Find Your Collections </h2>
+                <p>
+                    Looking for a new release of Ruby, Python, Perl, or want to install Node.js on your RHEL 6 system? How about an alternative to MySQL, MariaDB 5.5, or PostgreSQL 9.2? You can find the components you need in the SoftwareCollections.org directory.
+                </p>
+                <a class="btn btn-primary" role="button" href="/scls/">Browse the Software Collections directory</a>
+            </div>
+        </div>
     </div>
 </div>
-<div class='award hidden-xs hidden-sm'>
-    <div class='container text-center'>
-        <p><span style='display: inline-block'>DeveloperWeek Award</span>
-            <img src='/static/images/coding-environments.png' />
-    <span style='display: inline-block'>for Top Innovator</span></p>
-    </div>
-</div>  -->
 
-<div class='container homepage-container'> 
-    <div class="row">
-        <div class='col-md-4'>
-            <div class="terminal-preview">
-                <ul>
-                    <li> $ scl enable python27 bash </li>
-                    <li> $ python --version </li>
-                    <li> Python 2.7.5 </li>
-                </ul>
-                <ul>
-                    <li> $ scl enable python33 bash </li>
-                    <li> $ python --version </li>
-                    <li> Python 3.3.2 </li>
-                </ul>
+<div class='homepage-container'> 
+    <div class='container'> 
+        <div class="row">
+            <div class="col-md-8">
+                <h2> It's easy to develop </h2>
+                <p>
+                    SoftwareCollections.org is designed to be a community of people who create and use Software Collections for production systems, proof-of-concept systems, and development testbeds.
+                </p>
+                <p>
+                    Developers can build on existing SCLs, so they don't need to re-invent the wheel or take responsibility for packaging unnecessary dependencies. Need a newer version of Java or Python with your app? Use an existing SCL instead.
+                </p>
             </div>
-            <div class="text-center">
-                <a class="btn btn-primary" role="button"  href="/docs/quick-start/">Get started!</a>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <h2>It&#39;s easy to develop: </h2>
-            <div style="float: right">
-                <div class="distribution-logo">
-                    <img src="/static/scls/icons/fedora.png" width="50" height="50">
-                    <p>Fedora</p>
-                </div>
-                <div class="distribution-logo">
-                    <img src="/static/scls/icons/rhel.png" width="50" height="50">
-                    <p>RHEL</p>
-                </div>
-                <div class="distribution-logo">
-                    <img src="/static/scls/icons/centos.png" width="50" height="50">
-                    <p>CentOS</p>
+            <div class="col-md-4">
+                <div class="homepage-side-container">
+                    <h3> Learn how to build collections </h3>
+                    <p>
+                        Need to create a Software Collection for your project or product? The guide will show you how to modify the RPM spec file(s) for your project and create an easy to install Software Collection.
+                    </p>
+                    <a class="btn btn-primary" role="button" href="/docs/quick-start/">Building collections</a>
                 </div>
             </div>
-            <p>SoftwareCollections.org is designed to be a community of people who create
-            and use Software Collections for production systems, proof-of-concept systems,
-            and development testbeds.</p>
-
-            <p>Developers can build on existing SCLs, so they don&#39;t need to re-invent the
-            wheel or take responsibility for packaging unnecessary dependencies. Need a
-            newer version of Java or Python with your app? Use an existing SCL instead.</p>
         </div>
     </div>
-    <div class='row'>
-        <div class='col-md-6'>
-            <h2>Find Your Collections</h2>
+</div>
 
-            <p>Looking for a new release of Ruby, Python, Perl, or want to
-            install Node.js on your RHEL 6 system? How about an alternative to
-            MySQL, MariaDB 5.5, or PostgreSQL 9.2? You can find the components
-            you need in the <a href="scls">SoftwareCollections.org directory</a>.</p>
-        </div>
-
-        <div class='col-md-6'>
-            <h2>Developer QuickStart</h2>
-
-            <p>Need to create a Software Collection for your project or product?
-            Get started with our <a href="docs/quick-start">SCL walkthrough</a>,
-            which will show you how to modify the RPM spec file(s) for your
-            project and create an easy to install Software Collection.</p>
-        </div>
-    </div>
-
-    <div class='row'>
-        <div class='col-md-6'>
-            <h2>Supported SCLs</h2>
-
-            <p>For supported Software Collections for RHEL, you&#39;ll find
-            <a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Developer_Guide/chap-RHSCL.html">documentation on the Red Hat Customer Portal</a>,
-            and access the Red Hat Software Collection channels
-            <a href="http://www.redhat.com/GetRedHatSoftwareCollections.html">on the Red Hat Network</a>
-            (RHN).</p>
-
-            <p>Note that a qualifying subscription for Red Hat Software
-            Collections is required.</p>
-        </div>
-
-        <div class='col-md-6'>
-            <h2>Get in touch</h2>
-
-            <p>For everybody who wants to discuss public issues with SCL, there is a mailing list at
-            <a href='mailto:sclorg@redhat.com'>sclorg@redhat.com</a> (more info at
-            <a href='https://www.redhat.com/mailman/listinfo/sclorg' target='_blank'>https://www.redhat.com/mailman/listinfo/sclorg</a>).</p>
-        </div>
-    </div>
-
-    <div class='row'>
-        <div class='hidden-sm col-md-2 col-lg-3'>
-        </div>
-        <div class='col-sm-12 col-md-8 col-lg-6'>
-            <div class="award">
-            <div style="display:inline-block:">
-                <a target="_blank" href="http://developerblog.redhat.com/2014/01/24/rh-wins-2-developerweek-awards/">
-                    <img src='/static/images/coding-environments.png' />
-                </a>
-                <h2> DeveloperWeek Award </h2>
-                <p> for <strong> Top Innovator </strong> </p>
+<div class='homepage-container'> 
+    <div class='container'> 
+        <div class="row">
+            <div class="col-md-10">
+                <h2> Collections supported by Red Hat </h2>
+                <p>
+                    For supported Software Collections for RHEL, you'll find documentation on the Red Hat Customer Portal, and access the Red Hat Software Collection channels on the Red Hat Network (RHN).
+                </p>
+                <a class="btn btn-primary" role="button" href="https://access.redhat.com/products/Red_Hat_Enterprise_Linux/Developer/#rhscl=&dev-page=5">Red Hat Software Collections</a>
+                <a class="btn btn-primary" role="button" href="https://access.redhat.com/products/Red_Hat_Enterprise_Linux/Developer/#dts=&dev-page=6">Red Hat Developer Toolset</a>
             </div>
-            </div>
-
-        </div>
-        <div class='hidden-sm col-md-2 col-lg-3'>
         </div>
     </div>
+</div>
+
+<div class='homepage-container'> 
+    <div class='container'> 
+        <div class="row">
+            <div class="col-md-10">
+                <h2> Get in touch </h2>
+                <p>
+                    For everybody who wants to discuss public issues with SCL, there is a mailing list at sclorg@redhat.com
+                </p>
+                <a class="btn btn-primary" role="button" href="https://www.redhat.com/mailman/listinfo/sclorg">Subscribe to our mailing list</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class='homepage-container'> 
+    <div class='container'> 
+        <div class='row'>
+            <div class='hidden-sm col-md-2 col-lg-3'>
+            </div>
+            <div class='col-sm-12 col-md-8 col-lg-6'>
+                <div class="award">
+                <div style="display:inline-block:">
+                    <a target="_blank" href="http://developerblog.redhat.com/2014/01/24/rh-wins-2-developerweek-awards/">
+                        <img src='/static/images/coding-environments.png' />
+                    </a>
+                    <h2> DeveloperWeek Award </h2>
+                    <p> for <strong> Top Innovator </strong> </p>
+                </div>
+                </div>
+
+            </div>
+            <div class='hidden-sm col-md-2 col-lg-3'>
+            </div>
+        </div>
+    </div>
+</div>
 
 </div>
 
