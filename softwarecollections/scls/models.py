@@ -50,20 +50,17 @@ DISTRO_ICONS = ('fedora', 'epel', 'rhel', 'centos')
 POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
 
 POLICY_TEXT = {
-    'DEV':  '**Private project**: '
-            'For personal or development use with no guarantee. '
-            'Not listed publicly. '
-            'Could be a good choice for projects in pre-release stage. ',
+    'DEV':  '**Unpublished**: '
+            'Collections not listed publicly. For projects in development '
+            'stages before public release or projects for personal use. ',
 
-    'Q-D':  '**Experimental project**: '
-            'An early-stage or experimental project. '
-            'Comes with no warranty. '
-            'Could be unstable - not for production use. ',
+    'Q-D':  '**Incubator**: '
+            'Early-stage or experimental projects. May not be updated beyond '
+            'the existing build. Not suitable for long-term use. ',
 
-    'COM':  '**Community project**: '
-            'Maintained by the upstream community of developers. '
-            'Should work well and be updated for bug and security fixes. '
-            'Still not recommended for use in production. ',
+    'COM':  '**Community Project**: '
+            'Maintained by upstream communities of developers. The software '
+            'is cared for, but the developers make no commitments to update ' 'the repositories in a timely manner. ',
 
     'PRO':  '**Professional project**: '
             'Stable and secure release. '
