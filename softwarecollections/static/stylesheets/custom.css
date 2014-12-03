@@ -196,12 +196,14 @@ nav.paginator a {
 .preview-frame {
     background-color: rgba(0,0,0,0.25);
     padding: 10px 20px 20px 20px;
+    border-radius: 5px;
 }
 .terminal-preview {
     background-color: #333333;
     color: #b3b3b3;
     border: 1px solid #888;
     padding: 10px;
+    border-radius: 5px;
 }
 
 .terminal-preview ul:first-child {
@@ -213,10 +215,6 @@ nav.paginator a {
     padding: 0;
     margin: 15px 0 0 0;
     font-family: monospace;
-}
-
-.btn {
-    border-radius: 0;
 }
 
 .btn-default, .td-gray {
@@ -246,10 +244,6 @@ nav.paginator a {
 .menu-search {
     margin-top: 16px;
     margin-bottom: 8px;
-}
-
-.menu-search input {
-    border-radius: 0;
 }
 
 .submenu-content-wrap {
