@@ -243,6 +243,15 @@ nav.paginator a {
     background-color: #FFF !important;
 }
 
+.menu-search {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.menu-search input {
+    border-radius: 0;
+}
+
 .submenu-content-wrap {
     background-color: #ddd;
     background-color: rgba(230, 230, 230, .85)
