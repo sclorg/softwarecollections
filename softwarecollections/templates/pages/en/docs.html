@@ -10,7 +10,7 @@
 <h2>Using Software Collections</h2>
 
 <ol>
-<li>Find a software collection (SCL) you are interested in. You can browse through <a href="https://www.softwarecollections.org/en/scls/" target="_blank">available SCLs in our catalog</a>. We will use the <a href="https://www.softwarecollections.org/en/scls/rhscl/perl516/" target="_blank">perl516 collection</a> as an example.</li>
+<li>Find a software collection (SCL) you are interested in. You can browse through <a href="https://www.softwarecollections.org/en/scls/">available SCLs in our catalog</a>. We will use the <a href="https://www.softwarecollections.org/en/scls/rhscl/perl516/">perl516 collection</a> as an example.</li>
 <li>Download and install the chosen collection&#39;s repository RPM file for your system (EPEL&nbsp;6 on AMD&nbsp;64 or Intel&reg;&nbsp;64, in our case):
   <pre>yum install perl516-epel-6-x86_64-1-1.noarch.rpm</pre></li>
 <li>Install the main SCL package (its name is identical to the name of the collection):
@@ -19,20 +19,20 @@
   <pre>scl enable perl516 perl</pre></li>
 </ol>
 
-<p>For more usage examples and documentation of more complex scenarios, see the full <a href="https://www.softwarecollections.org/en/docs/guide/" target="_blank">Software Collections Packaging Guide</a>.</p>
+<p>For more usage examples and documentation of more complex scenarios, see the full <a href="https://www.softwarecollections.org/en/docs/guide/">Software Collections Packaging Guide</a>.</p>
 
 
 <a name="building-software-collections"></a>
 <h2>Building Software Collections</h2>
 
 <ol>
-<li>Read the <a href="https://www.softwarecollections.org/en/docs/guide/" target="_blank">Software Collections Packaging Guide</a> to learn how to build SCLs locally.</li>
-<li>Read the <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial" target="_blank">copr tutorial</a> to learn how to build packages in <a href="http://copr-fe.cloud.fedoraproject.org/" target="_blank">copr</a>.
+<li>Read the <a href="https://www.softwarecollections.org/en/docs/guide/">Software Collections Packaging Guide</a> to learn how to build SCLs locally.</li>
+<li>Read the <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">copr tutorial</a> to learn how to build packages in <a href="http://copr-fe.cloud.fedoraproject.org/">copr</a>.
   <p>Note that:</p>
   <ul>
     <li>Only packages built using copr can be included in our catalog.</li>
-    <li>Collections built on copr are created with an additional suffix based on the packager&#39;s username, i.e. the package name is <code><i>myorganization</i>_<i>collectionname</i>-<i>username</i>-<i>packagename</i></code> (see the <a href="https://www.softwarecollections.org/en/docs/guide/#sect-Software_Collection_Package_Names" target="_blank">Software Collection Package Names</a> chapter in the <a href="https://www.softwarecollections.org/en/docs/guide/" target="_blank">Software Collections Packaging Guide</a> for an explanation of standard naming conventions for SCLs).</li>
-    <li>In order to build packages with copr, the following lines need to be substituted for the first line of a package&#39;s metapackage (see the <a href="https://www.softwarecollections.org/en/docs/guide/#sect-Creating_a_Meta_Package" target="_blank">Creating a Metapackage</a> chapter in the <a href="https://www.softwarecollections.org/en/docs/guide/" target="_blank">Software Collections Packaging Guide</a> for instructions on how to prepare a metapackage file for SCLs):
+    <li>Collections built on copr are created with an additional suffix based on the packager&#39;s username, i.e. the package name is <code><i>myorganization</i>_<i>collectionname</i>-<i>username</i>-<i>packagename</i></code> (see the <a href="https://www.softwarecollections.org/en/docs/guide/#sect-Software_Collection_Package_Names">Software Collection Package Names</a> chapter in the <a href="https://www.softwarecollections.org/en/docs/guide/">Software Collections Packaging Guide</a> for an explanation of standard naming conventions for SCLs).</li>
+    <li>In order to build packages with copr, the following lines need to be substituted for the first line of a package&#39;s metapackage (see the <a href="https://www.softwarecollections.org/en/docs/guide/#sect-Creating_a_Meta_Package">Creating a Metapackage</a> chapter in the <a href="https://www.softwarecollections.org/en/docs/guide/">Software Collections Packaging Guide</a> for instructions on how to prepare a metapackage file for SCLs):
   <pre class="programlisting">
 <span class="perl_Comment"># if the build is running on copr</span>
 <span class="perl_String">%if 0%</span><span class="perl_Keyword">{?copr_username:<span class="perl_DecVal">1</span>}</span>
