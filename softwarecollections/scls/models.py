@@ -342,9 +342,10 @@ class SoftwareCollection(models.Model):
         with self.lock:
             repos_root = self.get_repos_root()
             with open(os.path.join(repos_root, '.provides'), 'w+') as out:
-                check_call(
-                    "cat '{repos_root}'/*/.provides " \
-                    "| sort -u".format(repos_root=repos_root),
+                call(
+                    "sort -u '{repos_root}'/*/.provides 2> /dev/null".format(
+                        repos_root=repos_root
+                    ),
                     shell=True, stdout=out, timeout=timeout
                 )
                 out.seek(0)
