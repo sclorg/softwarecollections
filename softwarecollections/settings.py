@@ -132,6 +132,15 @@ LOGIN_REDIRECT_URL = '/'
 # The number of days a password reset link is valid for
 PASSWORD_RESET_TIMEOUT_DAYS = 3
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
 CAPTCHA_FONT_SIZE        = 32
 CAPTCHA_LETTER_ROTATION  = None
 CAPTCHA_BACKGROUND_COLOR = '#ffffff'
