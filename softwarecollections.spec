@@ -42,6 +42,7 @@ Requires:          python3-memcached
 Requires:          python3-mod_wsgi
 Requires:          python3-openid
 Requires:          python3-pillow
+Requires:          python3-pylibravatar
 Requires:          python3-requests
 Requires:          rpm-build
 Requires:          yum-utils

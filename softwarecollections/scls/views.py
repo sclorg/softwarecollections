@@ -18,6 +18,7 @@ from django.views.generic import CreateView, DetailView, UpdateView
 from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
 from urllib.parse import urlsplit, urlunsplit
+from libravatar import libravatar_url
 
 from .forms import (
     FilterForm, CreateForm, UpdateForm, DeleteForm, RateForm,
@@ -86,8 +87,13 @@ def list_my(request, **kwargs):
 def list_user(request, username, **kwargs):
     User = get_user_model()
     user = get_object_or_404(User, **{User.USERNAME_FIELD: username})
+    try:
+        gravatar = libravatar_url(email=user.email, https=True)
+    except IOError:
+        gravatar = ""
+    abc = dir(user)
     queryset = user.softwarecollection_set.filter(has_content=True)
-    dictionary = {'user': user}
+    dictionary = {'user': user, "gravatar": gravatar}
     return _list(request, 'scls/list_user.html', queryset, dictionary, **kwargs)
 
 

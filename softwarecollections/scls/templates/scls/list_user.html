@@ -1,8 +1,29 @@
-{% extends "scls/list_base.html" %}
+{% extends "scls/base.html" %}
 {% load i18n %}
 
-{% block title %}{% blocktrans with name=user.get_full_name %}{{ name }}'s Collections{% endblocktrans %}{% endblock %}
+{% block title %} {% blocktrans with name=user.get_full_name %}{{ name }}{% endblocktrans %}{% endblock %}
 
-{% block empty %}
-    <p>{% blocktrans with name=user.get_full_name %}{{ name }} has not imported any collections matching the filter.{% endblocktrans %}</p>
+{% block content %}
+    <img class="img-thumbnail avatar" src="{{ gravatar }}">
+    <h1 class="profile-name"> {% blocktrans with name=user.get_full_name %}{{ name }}{% endblocktrans %} </h1>
+
+    <dl class="aligned">
+        <dt class="oneline">Account Name: </dt>
+        <dd>{{ user }} </dd>
+        <dt>Email: </dt>
+        {% if request.user.is_authenticated %}
+            <dd><a href="mailto:{{user.email}}">{{ user.email }}</a> </dt>
+        {% else %}
+            <dd><small>Please log in to see the email address.
+        {% endif %}
+    </dl>
+
+    <h2>{% blocktrans with name=user.first_name %}{{ name }}{% endblocktrans %}'s collections</h2>
+        {% include "scls/filter.html" %}
+        {% for scl in collections %}
+            {% include "scls/softwarecollection_preview.html" %}
+        {% empty %}
+            <p>{% blocktrans with name=user.get_full_name %}{{ name }} has not imported any collections matching the filter .{% endblocktrans %}</p>
+        {% endfor %}
+    {% include "scls/pagination.html" %}
 {% endblock %}

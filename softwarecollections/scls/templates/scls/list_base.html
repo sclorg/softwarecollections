@@ -3,6 +3,8 @@
 
 {% block content %}
     <h1>{% block title %}{% endblock %}</h1>
+    {% block user_content %}{% endblock %}
+    <h2>{% block subtitle %}{% endblock %}</h2>
         {% include "scls/filter.html" %}
         {% for scl in collections %}
             {% include "scls/softwarecollection_preview.html" %}
