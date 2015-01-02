@@ -10,16 +10,17 @@
 <h2>Using Software Collections</h2>
 
 <ol>
-<li>Find a software collection (SCL) you are interested in. You can browse through <a href="https://www.softwarecollections.org/en/scls/">available SCLs in our catalog</a>. We will use the <a href="https://www.softwarecollections.org/en/scls/rhscl/perl516/">perl516 collection</a> as an example.</li>
+<li>Find a software collection (SCL) you are interested in. You can browse through <a href="https://www.softwarecollections.org/en/scls/">available SCLs in our catalog</a>. We will use the <a href="https://www.softwarecollections.org/en/scls/rhscl/python33/">python33 collection</a> as an example.</li>
 <li>Download and install the chosen collection&#39;s repository RPM file for your system (EPEL&nbsp;6 on AMD&nbsp;64 or Intel&reg;&nbsp;64, in our case):
-  <pre>yum install perl516-epel-6-x86_64-1-1.noarch.rpm</pre></li>
+  <pre>yum install rhscl-python33-epel-6-x86_64-1-2.noarch.rpm</pre></li>
 <li>Install the main SCL package (its name is identical to the name of the collection):
-  <pre>yum install perl516</pre></li>
+  <pre>yum install python33</pre></li>
 <li>Start using the newly installed collection:
-  <pre>scl enable perl516 perl</pre></li>
+  <pre>scl enable python33 bash</pre></li>
 </ol>
 
 <p>For more usage examples and documentation of more complex scenarios, see the full <a href="https://www.softwarecollections.org/en/docs/guide/">Software Collections Packaging Guide</a>.</p>
+<p>If you need any help, you can ask your question on StackOverflow using the <a href="http://stackoverflow.com/questions/tagged/software-collections">software-collections</a> tag.</p>
 
 
 <a name="building-software-collections"></a>
