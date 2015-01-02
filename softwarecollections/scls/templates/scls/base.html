@@ -1,2 +1,10 @@
 {% extends "with_submenu.html" %}
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/en/">Home</a></li>
+        <li><a href="/en/scls/">Browse Collections</a></li>
+        <li class="active">{% block title %}{%endblock%}</li>
+    </ol>
+{% endblock %}
+

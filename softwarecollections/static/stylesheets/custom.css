@@ -226,6 +226,9 @@ nav.paginator a {
     border-color: #226d78;
 }
 
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:visited,
 .btn-primary:hover {
     background-color: #428d98;
     border-color: #428d98;
@@ -233,6 +236,7 @@ nav.paginator a {
 
 .btn-default:hover,
 .btn-default:focus,
+.btn-default:visited,
 .btn-default:active {
     background-color: #DDD;
 }
@@ -309,7 +313,7 @@ img.avatar {
 }
 
 h1.profile-name {
-    margin-top: 30px;
+    padding-top: 30px;
     margin-left: 30px;
     margin-bottom: 30px;
     border-bottom: 1px solid #ddd;
@@ -416,6 +420,10 @@ a {
 table.yum-repos th,
 table.yum-repos td {
     padding: 5px;
+}
+
+.page-header {
+    margin-top: 0px;
 }
 
 .page-header h1 {

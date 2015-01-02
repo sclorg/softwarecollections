@@ -1,18 +1,12 @@
-{% extends "with_submenu.html" %}
+{% extends "scls/softwarecollection_sub_base.html"%}
+{% block scl_menu_edit %} active btn-primary {% endblock %}
 {% load sekizai_tags %}
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}Edit Collection{% endblock %}
+{% block title %}Edit Project{% endblock %}
 
 {% block content %}
-
-<div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
-</div>
-
-<h1 class='page-header'>Edit Collection</h1>
-
 {% for error in form.non_field_errors %}
     <div class='alert alert-danger'>{{ error }}</div>
 {% endfor %}
@@ -38,7 +32,7 @@
     <!-- SUBMIT -->
     <div class='form-group'>
         <div class='col-md-9 col-md-offset-3'>
-            <input class='btn btn-default' type='submit' value='Save changes' />
+            <input class='btn btn-primary' type='submit' value='Save changes' />
         </div>
     </div>
 </form>

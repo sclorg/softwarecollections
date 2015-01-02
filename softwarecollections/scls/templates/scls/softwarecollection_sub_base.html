@@ -1,0 +1,12 @@
+{% extends "scls/softwarecollection_toolbar.html" %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/en/">Home</a></li>
+        <li><a href="/en/scls/">Browse Collections</a></li>
+        <li><a href="{% url "scls:list_user" scl.maintainer.username %}">
+            {% if scl.maintainer.get_full_name %}{{ scl.maintainer.get_full_name }}{% else %}{{ scl.maintainer.username }}{% endif %}
+        </a></li>
+        <li><a href="{{ scl.get_absolute_url }}">{{scl.title}}</a></li>
+        <li class="active">{% block title %}{%endblock%}</li>
+    </ol>
+{% endblock %}

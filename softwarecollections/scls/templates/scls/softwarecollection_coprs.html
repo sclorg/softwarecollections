@@ -1,17 +1,12 @@
-{% extends "with_submenu.html" %}
+{% extends "scls/softwarecollection_sub_base.html" %}
+{% block scl_menu_coprs %} active btn-primary {% endblock %}
 {% load sekizai_tags %}
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}Manage attached Copr projects{% endblock %}
+{% block title %}Manage Copr Projects{% endblock %}
 
 {% block content %}
-
-<div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
-</div>
-
-<h1 class='page-header'>Manage attached Copr projects</h1>
 
 <p>
     Use this form to attach / unattach Copr projects.
@@ -42,7 +37,7 @@
     <!-- SUBMIT -->
     <div class='form-group'>
         <div class='col-md-9 col-md-offset-3'>
-            <input class='btn btn-default' type='submit' value='Save changes' />
+            <input class='btn btn-primary' type='submit' value='Save changes' />
         </div>
     </div>
 </form>

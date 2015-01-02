@@ -1,16 +1,11 @@
-{% extends "with_submenu.html" %}
+{% extends "scls/softwarecollection_sub_base.html" %}
+{% block scl_menu_delete %} active btn-primary {% endblock %}
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}Directory{% endblock %}
+{% block title %}Delete Project{% endblock %}
 
 {% block content %}
-
-<div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
-</div>
-
-<h1 class='page-header'>Delete collection</h1>
 
 {% for error in form.non_field_errors %}
     <div class='alert alert-danger'>{{ error }}</div>
@@ -29,7 +24,7 @@
             <div class='input-group'>
                 {{ form.scl_name }}
                 <span class='input-group-btn'>
-                    <input class='btn btn-default' type="submit" value="Delete" />
+                    <input class='btn btn-danger' type="submit" value="Delete" />
                 </span>
             </div>
             {% for error in form.scl_name.errors %}

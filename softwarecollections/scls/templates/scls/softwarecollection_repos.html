@@ -1,8 +1,9 @@
-{% extends "with_submenu.html" %}
+{% extends "scls/softwarecollection_sub_base.html" %}
+{% block scl_menu_repos %} active btn-primary {% endblock %}
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}Repos Setup{% endblock %}
+{% block title %}Manage repositories{% endblock %}
 
 {% block content %}
 
@@ -37,7 +38,7 @@
     <!-- SUBMIT -->
     <div class='form-group'>
         <div class='col-md-9 col-md-offset-3'>
-            <input class='btn btn-default' type='submit' value='Save changes' />
+            <input class='btn btn-primary' type='submit' value='Save changes' />
         </div>
     </div>
 </form>

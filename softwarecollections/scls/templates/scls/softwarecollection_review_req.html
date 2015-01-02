@@ -1,16 +1,12 @@
-{% extends "with_submenu.html" %}
+{% extends "scls/softwarecollection_sub_base.html" %}
+{% block scl_menu_review %} active btn-primary {% endblock %}
 
 {% block submenu %}{% include "scls/submenu.html" %}{% endblock %}
 
-{% block title %}Review Request{% endblock %}
+{% block title %}Request Review{% endblock %}
 
 {% block content %}
 
-<div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
-</div>
-
-<h1 class='page-header'>Review Request</h1>
 
 {% for error in form.non_field_errors %}
     <div class='alert alert-danger'>{{ error }}</div>
@@ -26,7 +22,7 @@
     <!-- SUBMIT -->
     <div class='form-group'>
         <div class='col-md-9 col-md-offset-3'>
-            <input class='btn btn-default' type='submit' value='Submit review request' />
+            <input class='btn btn-primary' type='submit' value='Submit review request' />
         </div>
     </div>
 </form>

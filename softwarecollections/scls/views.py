@@ -160,6 +160,7 @@ class Edit(UpdateView):
     model = SoftwareCollection
     form_class = UpdateForm
     template_name_suffix = '_edit'
+    context_object_name = 'scl'
 
     def get_object(self, *args, **kwargs):
         scl = super(Edit, self).get_object(*args, **kwargs)
@@ -179,6 +180,7 @@ class Collaborators(UpdateView):
     model = SoftwareCollection
     form_class = CollaboratorsForm
     template_name_suffix = '_acl'
+    context_object_name = 'scl'
 
     def get_object(self, *args, **kwargs):
         scl = super(Collaborators, self).get_object(*args, **kwargs)
@@ -198,6 +200,7 @@ class Coprs(UpdateView):
     model = SoftwareCollection
     form_class = CoprsForm
     template_name_suffix = '_coprs'
+    context_object_name = 'scl'
 
     def get_object(self, *args, **kwargs):
         scl = super(Coprs, self).get_object(*args, **kwargs)
@@ -217,6 +220,7 @@ class Repos(UpdateView):
     model = SoftwareCollection
     form_class = ReposForm
     template_name_suffix = '_repos'
+    context_object_name = 'scl'
 
     def get_object(self, *args, **kwargs):
         scl = super(Repos, self).get_object(*args, **kwargs)
@@ -236,6 +240,7 @@ class Delete(UpdateView):
     model = SoftwareCollection
     form_class = DeleteForm
     template_name_suffix = '_delete'
+    context_object_name = 'scl'
 
     def get_object(self, *args, **kwargs):
         scl = super(Delete, self).get_object(*args, **kwargs)
@@ -259,6 +264,7 @@ class ReviewReq(UpdateView):
     model = SoftwareCollection
     form_class = ReviewReqForm
     template_name_suffix = '_review_req'
+    context_object_name = 'scl'
 
     def get_object(self, *args, **kwargs):
         scl = super(ReviewReq, self).get_object(*args, **kwargs)
@@ -286,6 +292,7 @@ class SyncReq(UpdateView):
     model = SoftwareCollection
     form_class = SyncReqForm
     template_name_suffix = '_sync_req'
+    context_object_name = 'scl'
 
     def get_object(self, *args, **kwargs):
         scl = super(SyncReq, self).get_object(*args, **kwargs)
@@ -305,6 +312,7 @@ class Complain(UpdateView):
     model = SoftwareCollection
     form_class = ComplainForm
     template_name_suffix = '_complain'
+    context_object_name = 'scl'
 
     def form_valid(self, form):
         email = 'jdornak@redhat.com'
