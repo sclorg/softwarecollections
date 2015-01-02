@@ -242,14 +242,17 @@ class SoftwareCollection(models.Model):
         return '''    # 1. Install the Software Collections tools:
     yum install scl-utils
 
-    # 2. Install repo configuration for Your system (see section Yum Repositories bellow)
+    # 2. Download a package with repository for your system.
+    #  (See the Yum Repositories section below. You can use `wget URL`.)
+
+    # 3. Install the repo package:
     yum install {maintainer}-{name}-*.noarch.rpm
 
-    # 2. Install a collection
+    # 4. Install the collection:
     yum install {name}
 
-    # 3. Start using software collections
-    scl enable {name}
+    # 5. Start using software collections:
+    scl enable {name} bash
 '''.format(name=self.name, maintainer=self.maintainer.get_username(), slug=self.slug)
 
     def add_auto_tags(self):
