@@ -244,11 +244,11 @@ class Delete(UpdateView):
 
     def get_object(self, *args, **kwargs):
         scl = super(Delete, self).get_object(*args, **kwargs)
-        self.success_url = reverse(
-            'scls:list_user',
-            kwargs={"username": self.request.user.get_username()}
-        )
         if self.request.user.has_perm('delete', obj=scl):
+            self.success_url = reverse(
+                'scls:list_user',
+                kwargs={"username": self.request.user.get_username()}
+            )
             return scl
         else:
             raise PermissionDenied()
