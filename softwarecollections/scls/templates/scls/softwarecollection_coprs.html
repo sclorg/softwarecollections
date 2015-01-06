@@ -8,9 +8,8 @@
 
 {% block content %}
 
-<p>
-    Use this form to attach / unattach Copr projects.
-</p>
+<h2> Manage Copr Projects </h2>
+<p> Use this form to attach or unattach Copr projects. Please remember to select chroots from these projects in the repos section.</p>
 
 {% for error in form.non_field_errors %}
     <div class='alert alert-danger'>{{ error }}</div>

@@ -7,11 +7,8 @@
 
 {% block content %}
 
-<div class="scl-toolbar btn-group btn-group-sm">
-    <a class='btn btn-default' href="{% url "scls:detail" form.instance %}">back</a>
-</div>
-
-<h1 class='page-header'>Repos setup</h1>
+<h2> Manage Repositories </h2>
+<p> Use this form to add or remove Copr repositories to your project. You can add more Copr projects in the coprs section. </p>
 
 {% for error in form.non_field_errors %}
     <div class='alert alert-danger'>{{ error }}</div>

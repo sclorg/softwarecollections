@@ -52,7 +52,7 @@
                 {% elif scl.review_req %}
                 <span class='btn btn-default active'>review requested</span>
                 {% else %}
-                <a class='{% block scl_menu_review %} btn-default{% endblock %}btn' href="{% url "scls:review_req" scl %}">review request</a>
+                <a class='{% block scl_menu_review %} btn-default {% endblock %}btn' href="{% url "scls:review_req" scl %}">request a review</a>
                 {% endif %}
             </div>
         </div>

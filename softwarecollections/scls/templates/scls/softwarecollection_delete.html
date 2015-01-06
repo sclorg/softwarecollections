@@ -7,6 +7,9 @@
 
 {% block content %}
 
+<h2> Delete Project </h2>
+<p> Use this form to delete the entire project including all the files. This action does not change or remove any copr projects. </p>
+
 {% for error in form.non_field_errors %}
     <div class='alert alert-danger'>{{ error }}</div>
 {% endfor %}

@@ -129,6 +129,7 @@ nav.paginator a {
     color: white;
 }
 
+.homepage-jumbotron .btn-primary:visited,
 .homepage-jumbotron .btn-primary {
     background-color: #a37127;
     border-color: #a37127;
@@ -137,7 +138,9 @@ nav.paginator a {
     padding-right: 40px;
 }
 
-.homepage-jumbotron .btn-primary:hover {
+.homepage-jumbotron .btn-primary:hover,
+.homepage-jumbotron .btn-primary:focus,
+.homepage-jumbotron .btn-primary:active {
     background-color: #c99341;
     border-color: #c99341;
 }
@@ -217,10 +220,12 @@ nav.paginator a {
     font-family: monospace;
 }
 
+.btn-default:visited,
 .btn-default, .td-gray {
     background-color: #EEE;
 }
 
+.btn-primary:visited,
 .btn-primary {
     background-color: #226d78;
     border-color: #226d78;
@@ -228,15 +233,13 @@ nav.paginator a {
 
 .btn-primary:hover,
 .btn-primary:focus,
-.btn-primary:visited,
-.btn-primary:hover {
+.btn-primary:active {
     background-color: #428d98;
     border-color: #428d98;
 }
 
 .btn-default:hover,
 .btn-default:focus,
-.btn-default:visited,
 .btn-default:active {
     background-color: #DDD;
 }
@@ -361,7 +364,9 @@ h1.profile-name {
     vertical-align: bottom;
 }
 
-.masthead .nav a:hover, .masthead .nav a:active {
+.masthead .nav a:hover,
+.masthead .nav a:focus,
+.masthead .nav a:active {
     background-color:  rgba(0, 0, 0, 0.4);
 }
 
