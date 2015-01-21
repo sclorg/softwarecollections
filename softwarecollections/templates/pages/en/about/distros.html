@@ -6,23 +6,20 @@
 <h2></h2>
 <h1>Software Collections for Distros</h1>
 <p>
-All collection on SCL.org are using the prefix (not distribution specific):
-<code>/opt/sclo</code>
+All collections on SoftwareCollections.org are using the <code>/opt/sclo</code> prefix (not distribution specific).
 </p>
 <p>
-Each distribution should register their own directory in the /opt directory and use it for their specific collections.
-
-The registration can be done by bug request via Linux Foundation <a href="https://lsbbugs.linuxfoundation.org/">
-bugzilla</a>, under product LANANA.
+Every distribution should register their own directory in the <code>/opt</code> directory and use it for their specific collections. The registration can requested in the Linux Foundation <a href="https://lsbbugs.linuxfoundation.org/">
+BugZilla</a>, using the LANANA product.
 </p>
 <p>
-The prefix is defined in the scl-utils package. You can find more about scl-utils macros <a href="../developers">here</a>.
+The prefix is defined in the <b>scl-utils</b> package. You can find more about <b>scl-utils</b> macros at <a href="../developers">Software Collections for Developers</a>.
 </p>
 <p>
-When building in Copr, it is easier to use a package with redefiniton of the prefix.
-For more information about building in Copr see: <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">https://fedorahosted.org/copr/wiki/ScreenshotsTutorial</a>
+When building in Copr, it is easier to use a package with a redefiniton of the prefix.
+For more information about building in Copr, see: <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">https://fedorahosted.org/copr/wiki/ScreenshotsTutorial</a>.
 </p>
-<p>
-How can be created package containing the prefix can be found here: <a href="">TODO</a>
-</p>
+<!--<p>
+For instructions on how to create a package containing the prefix, see <a href="">TODO</a>.
+</p>-->
 {% endblock %}

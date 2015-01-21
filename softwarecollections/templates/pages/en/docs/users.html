@@ -9,23 +9,23 @@
 
 <h2>Enabling Software Collections</h2>
 
-<p>To enable support for Software Collections on your system so that you can enable and build Software Collections, you need to have installed the packages scl-utils and scl-utils-build.</p>
+<p>To enable support for Software Collections on your system, so that you can enable and build Software Collections, you need to have the <b>scl-utils</b> and <b>scl-utils-build</b> packages installed.</p>
 
-<p>If the packages scl-utils and scl-utils-build are not already installed on your system, you can install them by typing the following at a shell prompt as root:</p>
+<p>If the <b>scl-utils</b> and <b>scl-utils-build</b> packages are not already installed on your system, you can install them by typing the following at a shell prompt as root:</p>
 
 <p><code>yum install scl-utils</code></p>
 
-<p>The scl-utils package provides the scl tool that lets you enable Software Collections on your system. </p>
+<p>The <b>scl-utils</b> package provides the <code>scl</code> tool that lets you enable Software Collections on your system. </p>
 
-<p>The scl tool is used to enable a Software Collection and to run applications in the Software Collection environment.</p>
+<p>The <code>scl</code> tool is used to enable a Software Collection and to run applications in the Software Collection environment.</p>
 
-<p>General usage of the scl tool can be described using the following syntax:</p>
+<p>General usage of the <code>scl</code> tool can be described using the following syntax:</p>
 
 <p><code>scl action software_collection_1 software_collection_2 command</code></p>
 
 <h3>Running an Application Directly</h3>
 
-<p>For example, to directly run Perl with the &ndash;version option in the Software Collection named software<em>collection</em>1, execute the following command:</p>
+<p>For example, to directly run Perl with the <code>--version</code> option in a Software Collection named <b>software<em>collection</em>1</b>, execute the following command:</p>
 
 <p><code>scl enable software_collection_1 &#39;perl --version&#39;</code></p>
 

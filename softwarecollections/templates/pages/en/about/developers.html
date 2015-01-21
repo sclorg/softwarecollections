@@ -6,11 +6,10 @@
 <h1>Software Collections for Developers</h1>
 <h3 id="collection_prefix">Collection prefix</h3>
 <p>
-Collection prefix must be set to /opt/sclo if hosting on scl.org is requested. All packages from scl.org will be installed into /opt/sclo. Users have possibility to redefine the path by adding the sclo-build package into their Copr buildroot.
-Other vendors must redefine it to their own <a href="../distros">vendor</a> string.
+Collection prefix must be set to <code>/opt/sclo</code> if hosting on SoftwareCollections.org is requested. All packages from SoftwareCollections.org will be installed into <code>/opt/sclo</code>. Users have the possibility to redefine the path by adding the <b>sclo-build</b> package into their COPR buildroot. Other vendors must redefine it to their own <a href="../distros">vendor</a> string.
 </p>
 
-<p>An example SCL metapackage with explanation of macros:</p>
+<p>An example SCL metapackage with an explanation of macros:</p>
 <pre class="highlight yaml">
 <span class="s"># check if builds are done on COPR</span>
 <span class="err">%</span><span class="s">if 0<span class="err">%</span>{?copr_username:1}</span>
@@ -26,20 +25,20 @@ Other vendors must redefine it to their own <a href="../distros">vendor</a> stri
 
 <h3>Still interested in details?</h3>
 <p>
-Macros are defined in /etc/rpm/macros.scl. It can be redefined there for local builds.
+Macros are defined in <code>/etc/rpm/macros.scl</code>. It can be redefined there for local builds.
 <ul>
-<li><strong>_scl_prefix</strong> in EL-5,6,7. It is set to /opt/rh by default in /etc/rpm/macros.scl. It can be redefined there for local builds, but it can be also redefined in specfiles or by a package sclo-build.</li>
-<li>In Fedora are used new macros, which are defining <strong>_scl_prefix</strong>. User is able to redefine <strong>scl_basedir</strong> (preset to /opt) and scl_vendor (preset to rh by upstream).</li>
+<li><strong>_scl_prefix</strong> in EL-5,6,7. It is set to <code>/opt/rh</code> by default in <code>/etc/rpm/macros.scl</code>. It can be redefined there for local builds, but it can be also redefined in specfiles or by the sclo-build package.</li>
+<li>In Fedora, new macros are used, which define <strong>_scl_prefix</strong>. Users can redefine <strong>scl_basedir</strong> (preset to <code>/opt</code>) and <b>scl_vendor</b> (preset to <code>rh</code> by upstream).</li>
 </ul>
 </p>
 
-<p>An example SCL metapackage with redefinition of installation path for local builds:</p>
+<p>An example SCL metapackage with a redefinition of the installation path for local builds:</p>
 <pre class="highlight yaml">
 <span class="err">%</span><span class="s">global <span class="err">%</span><span class="s">_scl_prefix /opt/sclo</span>
 </pre>
 or
 <pre class="highlight yaml">
-<span class="s"># define special directory if /opt is not sufficient</span>
+<span class="s"># define a special directory if /opt is not sufficient</span>
 <span class="err">%</span><span class="s">global <span class="err">%</span><span class="s">scl_basedir /mydir</span>
 # define vendor string. The string should be registered in FHS.
 <span class="err">%</span><span class="s">global <span class="err">%</span><span class="s">scl_vendor mycompany</span>
