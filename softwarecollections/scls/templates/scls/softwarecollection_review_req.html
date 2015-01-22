@@ -17,8 +17,22 @@
     {{ form }}
 
     <p>
-        Request a review of Your collection.
+        Request a review of your collection. Please ensure that the collection meets the requirements below.
     </p>
+
+    <h3> Catalogue Requirements: </h3>
+    <ul>
+        <li> Project has a description </li>
+        <li> Project has an issue tracker </li>
+        <li> Community Project policy selected </li>
+    </ul>
+    <h3> Packaging Requirements: </h3>
+    <p> All packages need to meet the requirements specified in the <a href="/en/docs/guide/#chap-Packaging_Software_Collections">Packaging Software Collections</a> section of the <a href="/en/docs/guide/">Packaging Guide</a>.
+    You can use the rpmlint tool with SCLCheck module to help you check your packages. An example command would     be:</p>
+    <pre> $ rpmlint -c SCLCheck python27-python-2.7.5-12.el7.centos.src.rpm </pre>
+
+    <h3> Legal Requirements: </h3>
+    <p> Your project must comply with the <a href="/en/docs/licensing">Licensing Guide</a>. </p>
 
     <!-- SUBMIT -->
     <div class='form-group'>

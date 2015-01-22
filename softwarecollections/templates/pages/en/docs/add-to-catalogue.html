@@ -5,23 +5,38 @@
 {% block content %}
 
 <h1>Adding a new collection</h1>
+<h2> Add your collection to our catalogue: </h2>
 <ol>
   <li>
-    <a href='/en/docs/#building-software-collections'>Build your collection.</a>
+    <a href='/en/docs/#building-software-collections'>Build your collection</a> in the Copr Build Service
   </li>
   <li>
-    <a href='/en/login/'>Log in</a> to your SoftwareCollections.org account.
+    <a href='/en/login/'>Log in</a> to the softwarecollections.org website
   </li>
   <li>
-    Go to <a href='/en/scls/'>Collections</a>.
+    Click on <a href='/en/scls/new'>Import New</a> in the <a href='/en/scls/'> Browse Collections </a> section.
   </li>
   <li>
-    Click on <a href='/en/scls/new'>Import New</a>.
-  </li>
-  <li>
-    Enter your COPR repository in the form. By default, only your own repositories are shown.
+    Select your Copr project, add a description and other information needed by the form.
   </li>
 </ol>
 
+<h2> Get your collection approved: </h2>
+
+<p> Consider having your collection reviewed by a professional to check if it works correctly. Your collection then get an approved tag and will be showed with higher priority in the directory.
+ To have your collection approved, please ensure it meets following requirements: </p>
+
+    <h3> Catalogue Requirements: </h3>
+    <ul>
+        <li> Project has a description </li>
+        <li> Project has an issue tracker </li>
+        <li> Community Project policy selected </li>
+    </ul>
+    <h3> Packaging Requirements: </h3>
+    <p> All packages need to meet the requirements specified in the <a href="/en/docs/guide/#chap-Packaging_Software_Collections">Packaging Software Collections</a> section of the <a href="/en/docs/guide/">Packaging Guide</a>. 
+    You can use the rpmlint tool with SCLCheck module to help you check your packages. An example command would be:</p>
+    <pre> $ rpmlint -c SCLCheck python27-python-2.7.5-12.el7.centos.src.rpm </pre>
+    <h3> Legal Requirements: </h3>
+    <p> Your project must comply with the <a href="/en/docs/licensing">Licensing Guide</a>. </p>
 
 {% endblock %}
