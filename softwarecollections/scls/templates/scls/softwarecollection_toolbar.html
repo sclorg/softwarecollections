@@ -33,9 +33,9 @@
             <div class="btn-group btn-group-sm">
                 <a class='{%block scl_menu_overview%}btn-default{%endblock%} btn' href="{{ scl.get_absolute_url }}">overview</a>
                 <a class='{%block scl_menu_edit%} btn-default{%endblock%} btn' href="{% url "scls:edit" scl %}">edit</a>
-                <a class='{%block scl_menu_collaborators%} btn-default{%endblock%} btn' href="{% url "scls:acl" scl %}">collaborators</a>
                 <a class='{%block scl_menu_coprs%} btn-default{%endblock%} btn' href="{% url "scls:coprs" scl %}">coprs</a>
                 <a class='{%block scl_menu_repos%} btn-default{%endblock%} btn' href="{% url "scls:repos" scl %}">repos</a>
+                <a class='{%block scl_menu_collaborators%} btn-default{%endblock%} btn' href="{% url "scls:acl" scl %}">collaborators</a>
                 <a class='{%block scl_menu_delete%} btn-default{%endblock%} btn' href="{% url "scls:delete" scl %}">delete</a>
             </div>
             <div class="btn-group btn-group-sm">
