@@ -549,10 +549,21 @@ class Repo(models.Model):
     def createrepo(self, timeout=None):
         with self.lock:
             log = open(os.path.join(self.get_repo_dir(), 'createrepo.log'), 'w')
-            check_call_log([
-                'createrepo_c', '--database', '--update', '--skip-symlinks',
-                self.get_repo_dir()
-            ], stdout=log, stderr=log, timeout=timeout)
+            tries = 5
+            # createrepo_c sometimes fails with those two exit codes:
+            #   - 6: At least one argument of function is bad or non complete
+            #   - 11: Unknown/Unsupported compression type
+            while True:
+                try:
+                    check_call_log([
+                        'createrepo_c', '--database', '--update', '--skip-symlinks',
+                        self.get_repo_dir()
+                    ], stdout=log, stderr=log, timeout=timeout)
+                    break
+                except:
+                    tries -= 1
+                    if not tries:
+                        raise
 
     def dump_provides(self, timeout=None):
         with self.lock:
