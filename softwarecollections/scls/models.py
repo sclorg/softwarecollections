@@ -561,6 +561,10 @@ class Repo(models.Model):
                     ], stdout=log, stderr=log, timeout=timeout)
                     break
                 except:
+                    try:
+                        shutil.rmtree(os.path.join(self.get_repo_dir(), ".repodata"))
+                    except FileNotFoundError:
+                        pass
                     tries -= 1
                     if not tries:
                         raise
