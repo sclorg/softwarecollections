@@ -322,7 +322,7 @@ class SoftwareCollection(models.Model):
 
                 # run reposync
                 args = [
-                    'reposync', '--source', '-c', self.get_repos_config(),
+                    'reposync', '--delete', '--source', '-c', self.get_repos_config(),
                     '-p', self.get_repos_root(),
                 ]
                 for repo in self.all_repos:
