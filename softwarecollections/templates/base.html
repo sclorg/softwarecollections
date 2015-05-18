@@ -35,9 +35,9 @@
                     <div class='container'>
                         {% if request.user.is_authenticated %}
                             <span> {{ request.user.first_name }} {{ request.user.last_name }} </span>
-                            <small> -  <a href='{% url "fas:logout" %}'> Log out </a> </small>
+                            <small> -  <a href='{% url "fas-logout" %}'> Log out </a> </small>
                         {% else %}
-                            <small> <a href='{% url "fas:login" %}?next={{ request.path }}'>Log in</a> </small>
+                            <small> <a href='{% url "fas-login" %}?next={{ request.path }}'>Log in</a> </small>
                         {% endif %}
 
                     </div>

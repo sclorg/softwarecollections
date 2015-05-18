@@ -120,7 +120,7 @@ AUTH_USER_MODEL = 'auth.User'
 
 AUTHENTICATION_BACKENDS = (
     'softwarecollections.auth.backend.PerObjectModelBackend',
-    'softwarecollections.fas.backend.FasBackend',
+    'fas.backend.FasBackend',
 )
 
 LOGIN_URL = '/login/'
