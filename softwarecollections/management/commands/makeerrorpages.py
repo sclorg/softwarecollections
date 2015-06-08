@@ -7,7 +7,7 @@ from sekizai.context import SekizaiContext
 class Command(BaseCommand):
     help = 'Used to make error pages.'
 
-    requires_model_validation = False
+    requires_system_checks = False
 
     def handle(self, *args, **options):
 

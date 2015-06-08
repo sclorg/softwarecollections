@@ -14,7 +14,7 @@ class Command(BaseCommand):
     args = '[ <username> ]'
     help = 'Used to make user a superuser.'
 
-    requires_model_validation = False
+    requires_system_checks = False
 
     def handle(self, *args, **options):
         if len(args) > 1:
