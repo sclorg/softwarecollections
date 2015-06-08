@@ -37,8 +37,7 @@ ALLOWED_HOSTS = []
 # https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-SERVER_EMAIL
 ADMINS = ()
 MANAGERS = ADMINS
-SERVER_EMAIL = 'root@localhost'
-
+SERVER_EMAIL = 'SoftwareCollections @ {} <admin@softwarecollections.org>'.format(os.uname()[1])
 
 # COPR
 COPR_URL = 'http://copr-fe.cloud.fedoraproject.org'
