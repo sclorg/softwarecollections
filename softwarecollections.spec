@@ -83,10 +83,13 @@ install -p -D -m 0644 localsettings \
 ln -s %{scls_confdir}/localsettings \
     %{buildroot}%{python3_sitelib}/%{name}/localsettings.py
 
-# install commandline interface with bash completion
+# install commandline interface
 install -p -D -m 0755 manage.py %{buildroot}%{_bindir}/%{name}
-install -p -D -m 0644 %{name}_bash_completion \
-    %{buildroot}%{_sysconfdir}/bash_completion.d/%{name}_bash_completion
+
+# install bash completion script
+mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
+install -m 0644 -p conf/bash-completion/softwarecollections \
+  %{buildroot}%{_datadir}/bash-completion/completions/softwarecollections
 
 # install httpd config file and wsgi config file
 install -p -D -m 0644 conf/httpd/%{name}.conf \
@@ -109,16 +112,6 @@ install -p -d -m 0775 data \
 # install crontab
 install -p -D -m 0644 conf/cron/%{name} \
     %{buildroot}%{cron_confdir}/%{name}
-
-# remove .po files
-find %{buildroot} -name "*.po" | xargs rm -f
-
-# create file list
-(cd %{buildroot}; find *) | egrep -v '\.mo$' | \
-sed -r -e 's|\.py[co]?$|.py*|' -e 's|__pycache__.*$|__pycache__/*|' | sort -u | \
-while read FILE; do
-    [ -d "%{buildroot}/$FILE" ] && echo "%dir /$FILE" || echo "/$FILE"
-done | grep %{python3_sitelib} > %{name}.files
 
 
 %post
@@ -152,10 +145,12 @@ softwarecollections migrate                 || :
 softwarecollections collectstatic --noinput || :
 softwarecollections makeerrorpages          || :
 
-%files -f %{name}.files
+
+%files
 %doc LICENSE README.md
 %{_bindir}/%{name}
-%{_sysconfdir}/bash_completion.d/%{name}_bash_completion
+%{_datadir}/bash-completion/completions/softwarecollections
+%{python3_sitelib}/softwarecollections*
 %config(noreplace) %{cron_confdir}/%{name}
 %config(noreplace) %{httpd_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
