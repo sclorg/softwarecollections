@@ -24,7 +24,7 @@
         <div class='col-md-12 preview_description'>
             {% if scl.description %}
                 {% truncate 50 words_html %}
-                    {{ scl.description | markdown2:"safe" }}
+                    {{ scl.description | markdown:"safe" }}
                 {% truncatestop %}... <a href='{{ scl.get_absolute_url }}'>[more]</a>{% endtruncate %}
             {% else %}
                 <em>No description available</em>

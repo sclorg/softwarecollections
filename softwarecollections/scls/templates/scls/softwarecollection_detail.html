@@ -11,7 +11,7 @@
 
 {% block content %}
 
-{{ scl.description | markdown2:"safe" }}
+{{ scl.description | markdown:"safe" }}
 
 {% if scl.upstream_url %}
 <a class="btn btn-default" href="{{ scl.upstream_url }}" target="_blank"><span class="glyphicon glyphicon-home"></span> Project homepage</a>
@@ -23,10 +23,10 @@
 {% endif %}
 
 <h2>Instructions</h2>
-{{ scl.instructions | markdown2:"safe" }}
+{{ scl.instructions | markdown:"safe" }}
 
 <h2>Policy</h2>
-{{ scl.policy_text | markdown2 }}
+{{ scl.policy_text | markdown }}
 
 {% if scl.requires.all or scl.required_by.all %}
     <h2>Related software collections</h2>

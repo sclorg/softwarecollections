@@ -36,7 +36,6 @@ Requires:          python3-django-fas
 Requires:          python3-django-markdown2
 Requires:          python3-django-sekizai
 Requires:          python3-django-simple-captcha
-Requires:          python3-django-south
 Requires:          python3-django-tagging
 Requires:          python3-flock
 Requires:          python3-memcached
@@ -148,14 +147,8 @@ if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.
 fi
 
 service httpd condrestart
-if [ -e %{scls_statedir}/data/db.sqlite3 ]; then
-    # update database
-    softwarecollections syncdb --migrate --noinput || :
-else
-    # install database
-    softwarecollections syncdb --all --noinput || :
-    softwarecollections migrate --fake         || :
-fi
+
+softwarecollections migrate                 || :
 softwarecollections collectstatic --noinput || :
 softwarecollections makeerrorpages          || :
 

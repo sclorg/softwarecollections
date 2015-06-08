@@ -23,8 +23,6 @@ from tagging.utils import edit_string_for_tags
 
 from .validators import validate_name
 
-User = get_user_model()
-
 
 def check_call_log(args, **kwargs):
     try:
@@ -155,9 +153,9 @@ class SoftwareCollection(models.Model):
     auto_sync       = models.BooleanField(_('Auto sync'), default=False,
                         help_text=_('Enable periodic synchronization with related Copr project'))
     need_sync       = models.BooleanField(_('Needs sync with coprs'), default=True)
-    maintainer      = models.ForeignKey(User, verbose_name=_('Maintainer'),
+    maintainer      = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Maintainer'),
                         related_name='maintained_softwarecollection_set')
-    collaborators   = models.ManyToManyField(User,
+    collaborators   = models.ManyToManyField(settings.AUTH_USER_MODEL,
                         verbose_name=_('Collaborators'),
                         related_name='softwarecollection_set', blank=True)
     requires        = models.ManyToManyField('self', symmetrical=False,
@@ -606,7 +604,7 @@ class Repo(models.Model):
 
 class Score(models.Model):
     scl  = models.ForeignKey(SoftwareCollection, related_name='scores')
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     score = models.SmallIntegerField(choices=((n, n) for n in range(1,6)))
 
     # store average score on each change
