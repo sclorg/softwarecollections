@@ -10,7 +10,7 @@ from softwarecollections import scls
 urlpatterns = i18n_patterns('',
     url(r'^admin/',     include(admin.site.urls)),
     url(r'^captcha/',   include('captcha.urls')),
-    url(r'^faq/$',      RedirectView.as_view(url='/en/docs/faq/')),
+    url(r'^faq/$',      RedirectView.as_view(url='/en/docs/faq/', permanent=True)),
     url(r'^scls/',      include(scls.urls)),
     url('',             include('fas.urls')),
     url(r'^((?P<path>.*)/|)$', 'softwarecollections.pages.views.page', name='page',
