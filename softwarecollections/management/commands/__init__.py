@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string
 from django.core.management.base import BaseCommand
 
 logging_levels  = {'3': 'DEBUG', '2': 'INFO', '1': 'WARNING', '0': 'ERROR'}
@@ -21,7 +21,7 @@ class LoggingBaseCommand(BaseCommand):
     """
 
     def configure_logging(self, verbosity):
-        logging_config_func = import_by_path(settings.LOGGING_CONFIG)
+        logging_config_func = import_string(settings.LOGGING_CONFIG)
         logging_config_func({
             'version': 1,
             'disable_existing_loggers': False,
