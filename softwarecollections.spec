@@ -31,6 +31,7 @@ Requires:          flite
 Requires:          httpd
 Requires:          memcached
 Requires:          mod_ssl
+Requires:          python3-defusedxml
 Requires:          python3-django >= 1.6
 Requires:          python3-django-fas
 Requires:          python3-django-markdown2
