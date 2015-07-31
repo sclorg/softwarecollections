@@ -111,6 +111,7 @@
                     {% else %}
                         <span class="btn btn-default btn-sm disabled"><span class="glyphicon glyphicon-refresh"> {{ repo.arch }} <small>not synced</small></span></span>
                     {% endif %}
+                    <small class="text-muted">({{repo.download_count}} downloads)</small>
                 {% endfor %}
             </td>
             <td>
