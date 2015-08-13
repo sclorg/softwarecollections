@@ -2,12 +2,12 @@ from django.conf import settings
 from django.utils.module_loading import import_string
 from django.core.management.base import BaseCommand
 
-logging_levels  = {'3': 'DEBUG', '2': 'INFO', '1': 'WARNING', '0': 'ERROR'}
+logging_levels  = {3: 'DEBUG', 2: 'INFO', 1: 'WARNING', 0: 'ERROR'}
 logging_formats = {
-    '0': '%(module)s: %(message)s',
-    '1': '%(levelname)s %(module)s: %(message)s',
-    '2': '%(levelname)s %(module)s: %(message)s',
-    '3': '%(asctime)s %(levelname)s %(module)s: %(message)s (pid: %(process)d/%(thread)d)',
+    0: '%(module)s: %(message)s',
+    1: '%(levelname)s %(module)s: %(message)s',
+    2: '%(levelname)s %(module)s: %(message)s',
+    3: '%(asctime)s %(levelname)s %(module)s: %(message)s (pid: %(process)d/%(thread)d)',
 }
 
 class LoggingBaseCommand(BaseCommand):
