@@ -356,7 +356,7 @@ class SoftwareCollection(models.Model):
         with self.lock:
             out = check_output(
                 "set -o pipefail; " \
-                "find '{repos_root}' -name '*.rpm' -exec rpm -qp --requires '{{}}' \\; " \
+                "find '{repos_root}' -name '*.rpm' -exec rpm -qp --nosignature --requires '{{}}' \\; " \
                 "| sed 's/ .*//' | sort -u | while read req; do " \
                 "egrep -l \"^$req$\" '{all_repos_root}'/*/*/.provides || :; " \
                 "done | sed -r -e 's|^{all_repos_root}/||' -e 's|/.provides$||' | sort -u" \
@@ -573,7 +573,7 @@ class Repo(models.Model):
             with open(os.path.join(repo_dir, '.provides'), 'w+') as out:
                 check_call(
                     "set -o pipefail; " \
-                    "find '{repo_dir}' -name '*.rpm' -exec rpm -qp --provides '{{}}' \\; " \
+                    "find '{repo_dir}' -name '*.rpm' -exec rpm -qp --nosignature --provides '{{}}' \\; " \
                     "| sed 's/ .*//' | sort -u".format(repo_dir=repo_dir),
                     shell=True, stdout=out, timeout=timeout
                 )
