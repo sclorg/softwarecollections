@@ -113,7 +113,7 @@ def coprnames(request, copr_username, **kwargs):
         coprnames = CoprProxy().coprnames(copr_username)
     else:
         coprnames = []
-    return HttpResponse(json.dumps(sorted(coprnames)), mimetype='application/json')
+    return HttpResponse(json.dumps(sorted(coprnames)), content_type='application/json')
 
 
 class Detail(DetailView):
