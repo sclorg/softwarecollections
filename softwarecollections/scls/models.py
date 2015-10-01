@@ -519,7 +519,7 @@ class Repo(models.Model):
                 '-D',            'dist {}'.format(self.distro_version),
                 '-D',        'scl_name {}'.format(self.scl.name),
                 '-D',       'scl_title {}'.format(self.scl.title),
-                '-D', 'scl_description {}'.format(self.scl.description),
+                '-D', 'scl_description {}'.format(self.scl.description.replace('%','%%')),
                 '-D',       'repo_name {}'.format(self.name),
                 '-D',        'pkg_name {}'.format(self.rpmname),
                 '-D',     'pkg_version {}'.format(VERSION),
