@@ -6,7 +6,7 @@
                 {% endif %}
 
                 {% for page in collections.paginator.page_range %}
-                    <li {% if forloop.counter == collections.number %} class="active" {% endif %} ><a href="?page={{page}}">{{page}}</a></li>
+                    <li {% if forloop.counter == collections.number %} class="active" {% endif %} ><a href="?{% for key,value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{page}}">{{page}}</a></li>
                 {% endfor %}
 
                 {% if collections.has_next %}
