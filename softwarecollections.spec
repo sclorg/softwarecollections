@@ -33,7 +33,7 @@ Requires:          httpd
 Requires:          memcached
 Requires:          mod_ssl
 Requires:          python3-defusedxml
-Requires:          python3-django >= 1.6
+Requires:          python3-django >= 1.8
 Requires:          python3-django-fas
 Requires:          python3-django-markdown2
 Requires:          python3-django-sekizai
@@ -129,6 +129,10 @@ install -p -D -m 0644 conf/rsyncd/rsyncd.conf \
 install -p -D -m 0644 conf/rsyncd/softwarecollections-rsyncd.service \
     %{buildroot}%{_unitdir}/softwarecollections-rsyncd.service
 
+# create ghost db.sqlite3 and secret_key
+touch %{buildroot}%{scls_statedir}/data/db.sqlite3
+touch %{buildroot}%{scls_statedir}/secret_key
+
 
 
 %post
@@ -189,6 +193,8 @@ softwarecollections makeerrorpages          || :
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/static
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/media
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/data
+%ghost %{scls_statedir}/data/db.sqlite3
+%ghost %{scls_statedir}/secret_key
 
 
 %changelog
