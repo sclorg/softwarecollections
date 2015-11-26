@@ -17,13 +17,14 @@ URL:               http://softwarecollections.org/
 Source0:           http://github.srcurl.net/misli/%{name}/%{version}/%{name}-%{version}.tar.gz
 # Additional sources are not yet supported by tito
 # TODO: uncomment next line
-#Source1:          %{guide_name}-%{guide_version}.tar.gz
+#Source1:          %#{guide_name}-%#{guide_version}.tar.gz
 
 BuildArch:         noarch
 
 BuildRequires:     publican
 BuildRequires:     python3-devel
 BuildRequires:     python3-setuptools
+BuildRequires:     systemd
 
 Requires:          createrepo_c
 Requires:          cronie
@@ -46,8 +47,14 @@ Requires:          python3-pillow
 Requires:          python3-pylibravatar
 Requires:          python3-requests
 Requires:          rpm-build
+Requires:          rsync-daemon
 Requires:          yum-utils
 Requires:          MTA
+# systemd
+Requires:            systemd
+Requires(pre):       systemd
+Requires(posttrans): systemd
+%{?systemd_requires: %systemd_requires}
 
 %description
 Software Collections Management Website and Utils
@@ -114,8 +121,20 @@ install -p -d -m 0775 data \
 install -p -D -m 0644 conf/cron/%{name} \
     %{buildroot}%{cron_confdir}/%{name}
 
+# install rsyncd.conf
+install -p -D -m 0644 conf/rsyncd/rsyncd.conf \
+    %{buildroot}%{scls_confdir}/rsyncd.conf
+
+# install softwarecollections-rsyncd.service
+install -p -D -m 0644 conf/rsyncd/softwarecollections-rsyncd.service \
+    %{buildroot}%{_unitdir}/softwarecollections-rsyncd.service
+
+
 
 %post
+# systemd
+%systemd_post softwarecollections-rsyncd.service
+
 # create secret key
 if [ ! -e        %{scls_statedir}/secret_key ]; then
     touch        %{scls_statedir}/secret_key
@@ -147,6 +166,14 @@ softwarecollections collectstatic --noinput || :
 softwarecollections makeerrorpages          || :
 
 
+%preun
+%systemd_preun softwarecollections-rsyncd.service
+
+%postun
+%systemd_postun_with_restart softwarecollections-rsyncd.service
+
+
+
 %files
 %doc LICENSE README.md
 %{_bindir}/%{name}
@@ -155,6 +182,8 @@ softwarecollections makeerrorpages          || :
 %config(noreplace) %{cron_confdir}/%{name}
 %config(noreplace) %{httpd_confdir}/%{name}.conf
 %config(noreplace) %{scls_confdir}/localsettings
+%config(noreplace) %{scls_confdir}/rsyncd.conf
+%{_unitdir}/softwarecollections-rsyncd.service
 %{scls_statedir}/htdocs/wsgi.py*
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/repos
 %attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/static

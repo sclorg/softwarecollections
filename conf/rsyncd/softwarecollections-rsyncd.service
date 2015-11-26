@@ -1,0 +1,10 @@
+[Unit]
+Description=rsync daemon for softwarecollections.org
+ConditionPathExists=/etc/softwarecollections/rsyncd.conf
+Conflicts=rsyncd.service
+
+[Service]
+ExecStart=/usr/bin/rsync --daemon --no-detach --config=/etc/softwarecollections/rsyncd.conf
+
+[Install]
+WantedBy=multi-user.target
