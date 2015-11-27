@@ -8,7 +8,7 @@ if __name__ == "__main__":
     if os.getuid() == 0 and 'collectstatic' not in sys.argv:
         from django.conf import settings
         import pwd, grp
-        user = pwd.getpwnam(getattr(settings, 'USERNAME', 'apache'))
+        user = pwd.getpwnam('softwarecollections')
         groups = [g.gr_gid for g in grp.getgrall() if user.pw_name in g.gr_mem]
         os.setgid(user.pw_gid)
         os.setgroups(groups)

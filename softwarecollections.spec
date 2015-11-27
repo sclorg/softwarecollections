@@ -1,8 +1,10 @@
 %global  scls_statedir %{_localstatedir}/scls
+%global  secret_key    %{scls_statedir}/secret_key
 %global  scls_confdir  %{_sysconfdir}/softwarecollections
 %global  cron_confdir  %{_sysconfdir}/cron.d
 %global  httpd_confdir %{_sysconfdir}/httpd/conf.d
-%global  httpd_group   apache
+%global  user_name     softwarecollections
+%global  group_name    softwarecollections
 %global  guide_name    packaging-guide
 %global  guide_version 1
 
@@ -32,6 +34,10 @@ Requires:          flite
 Requires:          httpd
 Requires:          memcached
 Requires:          mod_ssl
+Requires:          postgresql
+Requires(pre):     postgresql
+Requires:          postgresql-server
+Requires(pre):     postgresql-server
 Requires:          python3-defusedxml
 Requires:          python3-django >= 1.8
 Requires:          python3-django-fas
@@ -44,6 +50,7 @@ Requires:          python3-memcached
 Requires:          python3-mod_wsgi
 Requires:          python3-openid
 Requires:          python3-pillow
+Requires:          python3-psycopg2
 Requires:          python3-pylibravatar
 Requires:          python3-requests
 Requires:          rpm-build
@@ -93,6 +100,7 @@ ln -s %{scls_confdir}/localsettings \
 
 # install commandline interface
 install -p -D -m 0755 manage.py %{buildroot}%{_bindir}/%{name}
+install -p -D -m 0755 %{name}-db-setup %{buildroot}%{_bindir}/%{name}-db-setup
 
 # install bash completion script
 mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
@@ -114,8 +122,8 @@ install -p -d -m 0775 htdocs/repos \
     %{buildroot}%{scls_statedir}/htdocs/repos
 
 # install separate directory for sqlite db
-install -p -d -m 0775 data \
-     %{buildroot}%{scls_statedir}/data
+install -p -d -m 0775 db \
+     %{buildroot}%{scls_statedir}/db
 
 # install crontab
 install -p -D -m 0644 conf/cron/%{name} \
@@ -129,10 +137,16 @@ install -p -D -m 0644 conf/rsyncd/rsyncd.conf \
 install -p -D -m 0644 conf/rsyncd/softwarecollections-rsyncd.service \
     %{buildroot}%{_unitdir}/softwarecollections-rsyncd.service
 
-# create ghost db.sqlite3 and secret_key
-touch %{buildroot}%{scls_statedir}/data/db.sqlite3
+# create ghost secret_key
 touch %{buildroot}%{scls_statedir}/secret_key
 
+
+
+%pre
+/usr/sbin/groupadd --system %{group_name} &>/dev/null || :
+/usr/sbin/useradd --system --home-dir /var/scls \
+    --group %{group_name} --groups postgres \
+    %{user_name} &>/dev/null || :
 
 
 %post
@@ -140,13 +154,12 @@ touch %{buildroot}%{scls_statedir}/secret_key
 %systemd_post softwarecollections-rsyncd.service
 
 # create secret key
-if [ ! -e        %{scls_statedir}/secret_key ]; then
-    touch        %{scls_statedir}/secret_key
-    chown apache %{scls_statedir}/secret_key
-    chgrp apache %{scls_statedir}/secret_key
-    chmod 0400   %{scls_statedir}/secret_key
-    dd bs=1k  of=%{scls_statedir}/secret_key if=/dev/urandom count=5
-fi
+test -e %{secret_key} || (
+    umask 077
+    dd bs=1k of=%{secret_key} if=/dev/urandom count=5
+)
+chown %{user_name}:%{user_name} %{secret_key}
+chmod 0400 %{secret_key}
 
 # link default certificate
 if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.crt ]; then
@@ -165,9 +178,10 @@ fi
 
 service httpd condrestart
 
-softwarecollections migrate                 || :
-softwarecollections collectstatic --noinput || :
-softwarecollections makeerrorpages          || :
+%{name}-db-setup
+%{name} migrate                 || :
+%{name} collectstatic --noinput || :
+%{name} makeerrorpages          || :
 
 
 %preun
@@ -181,6 +195,7 @@ softwarecollections makeerrorpages          || :
 %files
 %doc LICENSE README.md
 %{_bindir}/%{name}
+%{_bindir}/%{name}-db-setup
 %{_datadir}/bash-completion/completions/softwarecollections
 %{python3_sitelib}/softwarecollections*
 %config(noreplace) %{cron_confdir}/%{name}
@@ -189,11 +204,10 @@ softwarecollections makeerrorpages          || :
 %config(noreplace) %{scls_confdir}/rsyncd.conf
 %{_unitdir}/softwarecollections-rsyncd.service
 %{scls_statedir}/htdocs/wsgi.py*
-%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/repos
-%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/static
-%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/htdocs/media
-%attr(775,root,%{httpd_group}) %dir %{scls_statedir}/data
-%ghost %{scls_statedir}/data/db.sqlite3
+%attr(755,root,root) %dir %{scls_statedir}/htdocs/static
+%attr(775,root,%{group_name}) %dir %{scls_statedir}/htdocs/repos
+%attr(775,root,%{group_name}) %dir %{scls_statedir}/htdocs/media
+%attr(750,postgres,%{group_name}) %dir %{scls_statedir}/db
 %ghost %{scls_statedir}/secret_key
 
 

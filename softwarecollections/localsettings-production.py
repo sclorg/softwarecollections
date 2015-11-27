@@ -52,8 +52,11 @@ COPR_COPRS_URL = COPR_URL + '/coprs'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'data', 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': '/var/scls/db',
+        'PORT': 5432,
+        'USER': 'softwarecollections',
+        'NAME': 'softwarecollections',
     }
 }
 
