@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.10
+Version:           0.11
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -212,6 +212,11 @@ service httpd condrestart
 
 
 %changelog
+* Fri Nov 27 2015 Jakub Dorňák <jdornak@redhat.com> 0.11-1
+- switch production to postgresql (jdornak@redhat.com)
+- ghost db.sqlite3 and secret_key, packaging (jdornak@redhat.com)
+- softwarecollections-rsyncd.service (jdornak@redhat.com)
+
 * Fri Oct 02 2015 Miroslav Suchý <msuchy@redhat.com> 0.10-1
 - Fix remote exec flaw (misc@redhat.com)
 - fix HttpResponse arg: mimetype > content_type (jdornak@redhat.com)
