@@ -177,6 +177,13 @@ if [ ! -e               %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.
     ln -s localhost.crt %{_sysconfdir}/pki/tls/certs/softwarecollections.org.CA.crt
 fi
 
+# set selinux context
+semanage fcontext -a -t httpd_sys_content_t  '%{scls_statedir}/htdocs(/.*)?'
+semanage fcontext -a -t httpd_sys_content_t  '%{scls_statedir}/secret_key'
+semanage fcontext -a -t postgresql_var_run_t '%{scls_statedir}/db(/\..*)?'
+restorecon -R                                '%{scls_statedir}'
+setsebool httpd_can_network_connect on
+
 service httpd condrestart
 
 %{name}-db-setup

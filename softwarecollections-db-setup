@@ -28,17 +28,6 @@ if ! test -d $DATADIR; then
     sed -r -i 's/(local +all +all +).*/\1trust/' $DATADIR/pg_hba.conf
 fi
 
-if ! semanage port -l | grep $PORT >/dev/null; then
-    log "Enable port $PORT in selinux"
-    semanage port -a -t postgresql_port_t -p tcp $PORT
-fi
-
-if ! ls -dZ $SOCKETDIR | grep -q postgresql_var_run_t; then
-    log "Enable socket directory in selinux"
-    semanage fcontext -a -t postgresql_var_run_t $SOCKETDIR
-    restorecon $SOCKETDIR
-fi
-
 if ! test -L /etc/systemd/system/multi-user.target.wants/$SERVICE; then
     log "Enable $SERVICE"
     systemctl enable $SERVICE
