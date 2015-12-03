@@ -34,6 +34,7 @@ Requires:          flite
 Requires:          httpd
 Requires:          memcached
 Requires:          mod_ssl
+Requires:          policycoreutils-python-utils
 Requires:          postgresql
 Requires(pre):     postgresql
 Requires:          postgresql-server
@@ -145,7 +146,7 @@ touch %{buildroot}%{scls_statedir}/secret_key
 %pre
 /usr/sbin/groupadd --system %{group_name} &>/dev/null || :
 /usr/sbin/useradd --system --home-dir /var/scls \
-    --group %{group_name} --groups postgres \
+    --gid %{group_name} --groups postgres \
     %{user_name} &>/dev/null || :
 
 
