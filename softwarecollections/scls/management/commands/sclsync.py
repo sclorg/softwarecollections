@@ -25,16 +25,16 @@ def sync(args):
         if not scl.auto_sync:
             scl.need_sync = False
             scl.save()
-    except:
-        logger.exception('Failed to sync {}'.format(scl.slug))
+    except Exception as e:
+        logger.error('Failed to sync {}: {}'.format(scl.slug, e))
         exit_code += 1
 
     # scl.dump_provides()
     logger.info('Dumping provides for {}'.format(scl.slug))
     try:
         scl.dump_provides(timeout)
-    except:
-        logger.exception('Failed to dump provides for {}'.format(scl.slug))
+    except Exception as e:
+        logger.error('Failed to dump provides for {}: {}'.format(scl.slug, e))
         exit_code += 1
 
     return exit_code

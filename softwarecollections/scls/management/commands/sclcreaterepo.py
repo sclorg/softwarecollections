@@ -21,8 +21,8 @@ def createrepo(args):
     logger.info('Creating repo {}'.format(repo.slug))
     try:
         repo.createrepo(timeout)
-    except:
-        logger.exception('Failed to create repo {}'.format(repo.slug))
+    except Exception as e:
+        logger.error('Failed to create repo {}: {}'.format(repo.slug, e))
         return 1
 
     return 0
