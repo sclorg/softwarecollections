@@ -342,11 +342,6 @@ class ReposForm(forms.ModelForm):
         for repo in self.cleaned_data['repos']:
             if not repo.id:
                 os.makedirs(repo.get_repo_dir())
-                try:
-                    os.unlink(repo.get_repo_symlink())
-                except FileNotFoundError:
-                    pass
-                os.symlink(repo.repo_id, repo.get_repo_symlink())
                 repo.save()
             ids.append(repo.id)
             download_count += repo.download_count

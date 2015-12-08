@@ -287,7 +287,7 @@ class SoftwareCollection(models.Model):
                             repo.save()
                             repos_config.write(
                                 '[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n'.format(
-                                    name = repo.repo_id,
+                                    name = repo.name,
                                     url  = repo.copr_url,
                                 )
                             )
@@ -324,7 +324,7 @@ class SoftwareCollection(models.Model):
                     '-p', self.get_repos_root(),
                 ]
                 for repo in self.all_repos:
-                    args += ['-r', repo.repo_id]
+                    args += ['-r', repo.name]
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
             self.last_synced = datetime.now().replace(tzinfo=utc)
 
@@ -460,25 +460,10 @@ class Repo(models.Model):
     def rpmfile_symlink(self):
         return self.rpmname + '.noarch.rpm'
 
-    @property
-    def repo_id(self):
-        try:
-            return self._repo_id
-        except AttributeError:
-            self._repo_id= '-'.join([
-                self.copr.username,
-                self.copr.name,
-                self.name
-            ])
-        return self._repo_id
-
     def get_cache_dir(self):
         return os.path.join(self.scl.get_cache_root(), self.name)
 
     def get_repo_dir(self):
-        return os.path.join(self.scl.get_repos_root(), self.repo_id)
-
-    def get_repo_symlink(self):
         return os.path.join(self.scl.get_repos_root(), self.name)
 
     def get_repo_url(self):
@@ -591,10 +576,6 @@ class Repo(models.Model):
                     '.repo.{}.deleted'.format(self.id)
                 )
             )
-        except FileNotFoundError:
-            pass
-        try:
-            os.unlink(self.get_repo_symlink())
         except FileNotFoundError:
             pass
         # delete repo in the database
