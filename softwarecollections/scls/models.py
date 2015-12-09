@@ -368,7 +368,11 @@ class SoftwareCollection(models.Model):
 
     @cached_property
     def lock(self):
-        return Flock(os.open(self.get_repos_root(), 0), LOCK_EX)
+        try:
+            return Flock(os.open(self.get_repos_root(), 0), LOCK_EX)
+        except FileNotFoundError:
+            os.makedirs(self.get_repos_root())
+            return Flock(os.open(self.get_repos_root(), 0), LOCK_EX)
 
     def has_perm(self, user, perm):
         if perm in ['edit', 'delete']:
@@ -493,7 +497,11 @@ class Repo(models.Model):
 
     @cached_property
     def lock(self):
-        return Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
+        try:
+            return Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
+        except FileNotFoundError:
+            os.makedirs(self.get_repo_dir())
+            return Flock(os.open(self.get_repo_dir(), 0), LOCK_EX)
 
     def rpmbuild(self, timeout=None):
         with self.lock:
