@@ -43,6 +43,10 @@ def sync(args):
 class Command(LoggingBaseCommand):
     option_list = LoggingBaseCommand.option_list + (
         make_option(
+            '-A', '--all', action='store_true', dest='all', default=False,
+            help='Sync all collections, regardless the need_sync flag.',
+        ),
+        make_option(
             '-P', '--max-procs', action='store', dest='max_procs', default=cpu_count(),
             help='Run up to MAX_PROCS processes at a time (default {})'.format(cpu_count())
         ),
@@ -67,6 +71,8 @@ class Command(LoggingBaseCommand):
                 except Exception as e:
                     logging.error(str(e))
                     errors += 1
+        elif options['all']:
+            scls = SoftwareCollection.objects.all()
         else:
             scls = SoftwareCollection.objects.filter(need_sync=True)
         timeout = options['timeout'] and int(options['timeout'])
