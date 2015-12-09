@@ -319,8 +319,10 @@ class SoftwareCollection(models.Model):
                     pass
 
                 # run reposync
+                # TODO replace reposync with another tool,
+                # which is capable of parallel run and preserves *-relese.rpm
                 args = [
-                    'reposync', '--delete', '--source', '-c', self.get_repos_config(),
+                    'reposync', '--source', '-c', self.get_repos_config(),
                     '-p', self.get_repos_root(),
                 ]
                 for repo in self.all_repos:
