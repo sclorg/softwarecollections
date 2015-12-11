@@ -91,7 +91,6 @@ def list_user(request, username, **kwargs):
         gravatar = libravatar_url(email=user.email, https=True)
     except IOError:
         gravatar = ""
-    abc = dir(user)
     queryset = user.softwarecollection_set.filter(has_content=True)
     dictionary = {'user': user, "gravatar": gravatar}
     return _list(request, 'scls/list_user.html', queryset, dictionary, **kwargs)

@@ -1,6 +1,8 @@
 import markdown2
 import os
+import requests
 import shutil
+import time
 import tagging
 import tempfile
 from itertools import groupby
@@ -132,13 +134,57 @@ class Copr(models.Model):
 
 
 
+class CentOSRepo(models.Model):
+    version      = models.CharField(_('CentOS version'), max_length=20)
+    arch            = models.CharField(_('Architecture'), max_length=20)
+    prefix          = models.CharField(_('Prefix'), max_length=20)
+    release_package = models.CharField(_('Release package name'), max_length=100)
+    last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
+    last_synced     = models.DateTimeField(_('Last synced'), null=True, editable=False)
+
+    class Meta:
+        verbose_name        = 'CentOS repo'
+        verbose_name_plural = 'CentOS repos'
+        ordering = ('version', 'arch', 'prefix')
+        unique_together = (('version', 'arch', 'prefix'),)
+
+    def __str__(self):
+        return 'CentOS {version} {arch} - {prefix}'.format(
+            version  = self.version,
+            arch        = self.arch,
+            prefix      = self.prefix,
+        )
+
+    def get_repo_url(self):
+        return os.path.join(settings.CENTOS_REPOS_URL, self.version, 'sclo', self.arch, self.prefix)
+
+    def get_rpmfile_url(self):
+        return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
+
+    def get_icon_url(self):
+        return get_icon_url('centos')
+
+    def sync(self, timeout=None):
+        response = requests.head(self.get_repo_url() + '/repodata/repomd.xml')
+        if response.status_code != 200:
+            response.raise_for_status()
+        self.last_modified = datetime.fromtimestamp(time.mktime(time.strptime(
+            response.headers['Last-Modified'],
+            '%a, %d %b %Y %H:%M:%S GMT'
+        ))).replace(tzinfo=utc)
+        self.last_synced = datetime.now().replace(tzinfo=utc)
+        self.save()
+
+
+
 class SoftwareCollection(models.Model):
     # automatic value (maintainer.username/name) used as unique key
     slug            = models.CharField(max_length=150, editable=False, db_index=True)
     # name is unique per maintainer
     name            = models.CharField(_('Name'), max_length=100, validators=[validate_name],
                         help_text=_('Name without spaces (It will be part of the url and RPM name.)'))
-    coprs           = models.ManyToManyField(Copr, verbose_name=_('Copr projects'))
+    coprs           = models.ManyToManyField(Copr, verbose_name=_('Copr projects'), blank=True)
+    centos_repos    = models.ManyToManyField(CentOSRepo, verbose_name=_('CentOS repos'), blank=True)
     upstream_url    = models.URLField(_('Project homepage'), blank=True)
     issue_tracker   = models.URLField(_('Issue Tracker'), blank=True,
                         default='https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org')
@@ -228,6 +274,10 @@ class SoftwareCollection(models.Model):
     def all_repos(self):
         return list(self.repos.all().order_by('name'))
 
+    @cached_property
+    def all_centos_repos(self):
+        return list(self.centos_repos.all())
+
     @property
     def all_repos_grouped(self):
         repo_groups = []
@@ -241,6 +291,8 @@ class SoftwareCollection(models.Model):
         tags = set()
         for repo in self.all_repos:
             tags.update([repo.distro_version])
+        for repo in self.all_centos_repos:
+            tags.update(['centos-{}'.format(repo.version)])
         return list(tags)
 
     def get_default_instructions(self):

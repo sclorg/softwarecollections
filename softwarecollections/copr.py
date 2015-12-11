@@ -1,8 +1,5 @@
 import requests
 import json
-import subprocess
-import tempfile
-import os
 
 from django.conf import settings
 

@@ -47,6 +47,9 @@ COPR_URL = 'http://copr-fe.cloud.fedoraproject.org'
 COPR_API_URL   = COPR_URL + '/api'
 COPR_COPRS_URL = COPR_URL + '/coprs'
 
+# CentOS
+CENTOS_REPOS_URL = 'http://mirror.centos.org/centos'
+
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 

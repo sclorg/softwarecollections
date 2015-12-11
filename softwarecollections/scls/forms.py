@@ -73,10 +73,10 @@ class MaintainerWidget(forms.HiddenInput):
 
 
 class _CoprForm(forms.ModelForm):
-    copr_username   = forms.CharField(label=_('Copr User'),
+    copr_username   = forms.CharField(label=_('Copr User'), required=False,
                         widget=forms.TextInput(attrs={'class': 'form-control'}),
                         help_text=_('Username of Copr user (Note that the packages must be built in Copr.)'))
-    copr_name       = forms.ChoiceField(label=_('Copr Project'),
+    copr_name       = forms.ChoiceField(label=_('Copr Project'), required=False,
                         widget=forms.Select(attrs={'class': 'form-control'}),
                         help_text=_('Name of Copr Project to attach'))
 
@@ -98,15 +98,9 @@ class _CoprForm(forms.ModelForm):
         )
 
     def clean_copr_username(self):
-        if self.fields['copr_username' ].required and not self.coprnames:
+        if self.cleaned_data['copr_username'] and not self.coprnames:
             raise forms.ValidationError(_('No SCL project found for this Copr user.'))
         return self.cleaned_data['copr_username']
-
-    def clean_copr_name(self):
-        if self.fields['copr_username' ].required and self.coprnames \
-            and self.cleaned_data['copr_name'] not in self.coprnames:
-            raise forms.ValidationError(_('This field is mandatory.'))
-        return self.cleaned_data['copr_name']
 
     def clean(self):
         self.cleaned_data = super(_CoprForm, self).clean()
@@ -135,11 +129,13 @@ class CreateForm(_CoprForm):
     def save(self, commit=True):
         self.instance.slug          = '{}/{}'.format(self.instance.maintainer.get_username(), self.instance.name)
         self.instance.title         = pretty_name(self.instance.name)
-        self.instance.description   = self.cleaned_data['copr'].description
-        self.instance.instructions  = self.cleaned_data['copr'].instructions
+        if 'copr' in self.cleaned_data:
+            self.instance.description   = self.cleaned_data['copr'].description
+            self.instance.instructions  = self.cleaned_data['copr'].instructions
         os.makedirs(self.instance.get_repos_root())
         self.instance.save()
-        self.instance.coprs.add(self.cleaned_data['copr'])
+        if 'copr' in self.cleaned_data:
+            self.instance.coprs.add(self.cleaned_data['copr'])
         self.instance.add_auto_tags()
         self.instance.collaborators.add(self.instance.maintainer)
         return self.instance
@@ -313,6 +309,17 @@ class ReposForm(forms.ModelForm):
                 self.available_repos[slug] = repo
             self.fields['repos'].choices.append((label, choices))
         self.initial['repos'] = self.current_repos.keys()
+        self.fields['centos_repos'].widget = forms.CheckboxSelectMultiple(
+            renderer = CheckboxSelectMultipleTableRenderer,
+            choices  = [
+                (
+                    repo.id,
+                    mark_safe('<img src="{}" width="32" height="32" alt=""/> {}'.format(
+                        repo.get_icon_url(), repo,
+                    )),
+                ) for repo in self.fields['centos_repos'].widget.choices.queryset
+            ],
+        )
 
     def clean_copr_username(self):
         if self.fields['copr_username'].required and not self.coprnames:
@@ -361,7 +368,7 @@ class ReposForm(forms.ModelForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['repos']
+        fields = ['repos', 'centos_repos']
 
 
 class ReviewReqForm(forms.ModelForm):
