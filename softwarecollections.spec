@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.11
+Version:           0.12
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -221,6 +221,20 @@ service httpd condrestart
 
 
 %changelog
+* Fri Dec 11 2015 Jakub Dorňák <jdornak@redhat.com> 0.12-1
+- CentOS repos (jdornak@redhat.com)
+- Repo.get_download_url (jdornak@redhat.com)
+- get_icon_url with param does not belong to Repo (jdornak@redhat.com)
+- settings.TEMPLATES for Django > 1.8 (jdornak@redhat.com)
+- allow rsync to serve files (jdornak@redhat.com)
+- do not delete, it deletes *-release.rpm (jdornak@redhat.com)
+- new option --all for command sclsync (jdornak@redhat.com)
+- create repo directories if does not exist (jdornak@redhat.com)
+- drop symlinking, it is not needed any more (jdornak@redhat.com)
+- less irrelevant log output (jdornak@redhat.com)
+- fixed selinux contexts (jdornak@redhat.com)
+- fixed adduser and requirements in spec (jdornak@redhat.com)
+
 * Fri Nov 27 2015 Jakub Dorňák <jdornak@redhat.com> 0.11-1
 - switch production to postgresql (jdornak@redhat.com)
 - ghost db.sqlite3 and secret_key, packaging (jdornak@redhat.com)
