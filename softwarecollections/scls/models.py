@@ -38,11 +38,18 @@ def check_call_log(args, **kwargs):
 
 
 
+def get_icon_url(distro_name):
+    return distro_name in ('fedora', 'epel', 'rhel', 'centos') \
+       and '{}scls/icons/{}.png'.format(settings.STATIC_URL, distro_name) \
+        or '{}scls/icons/empty.png'.format(settings.STATIC_URL)
+
+
+
 SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
 VERSION = '1'
 RELEASE = '2'
 
-DISTRO_ICONS = ('fedora', 'epel', 'rhel', 'centos')
+
 
 # Tuple is needed to preserve the order of policies
 POLICIES = ('DEV', 'Q-D', 'COM', 'PRO')
@@ -484,18 +491,14 @@ class Repo(models.Model):
     def get_rpmfile_url(self):
         return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
 
-    def get_icon_url(self, distro_name=None):
-        if not distro_name:
-            distro_name = self.distro
-        return distro_name in DISTRO_ICONS \
-           and '{}/scls/icons/{}.png'.format(settings.STATIC_URL, distro_name) \
-            or '{}/scls/icons/empty.png'.format(settings.STATIC_URL)
+    def get_icon_url(self):
+        return get_icon_url(self.distro)
 
     def get_oses_names_and_logos(self):
         if self.distro == 'epel':
-            return [('RHEL {}'.format(self.version), self.get_icon_url('rhel')),
-                    ('CentOS {}'.format(self.version), self.get_icon_url('centos'))]
-        return [('{0} {1}'.format(self.distro, self.version), self.get_icon_url)]
+            return [('RHEL {}'.format(self.version), get_icon_url('rhel')),
+                    ('CentOS {}'.format(self.version), get_icon_url('centos'))]
+        return [('{0} {1}'.format(self.distro, self.version), self.get_icon_url())]
 
     @cached_property
     def lock(self):
