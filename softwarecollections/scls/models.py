@@ -494,6 +494,9 @@ class Repo(models.Model):
     def get_icon_url(self):
         return get_icon_url(self.distro)
 
+    def get_download_url(self):
+        return reverse('scls:download', kwargs={'slug': self.slug}) + self.rpmfile_symlink
+
     def get_oses_names_and_logos(self):
         if self.distro == 'epel':
             return [('RHEL {}'.format(self.version), get_icon_url('rhel')),

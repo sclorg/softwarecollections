@@ -107,11 +107,11 @@
             <td>
                 {% for repo in group.1 %}
                     {% if repo.last_synced %}
-                        <a href="{% url "scls:download" repo.slug %}{{ repo.rpmfile_symlink }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-download-alt"> {{ repo.arch }} </span></a>
+                        <a href="{{ repo.get_download_url }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-download-alt"> {{ repo.arch }} </span></a>
                     {% else %}
                         <span class="btn btn-default btn-sm disabled"><span class="glyphicon glyphicon-refresh"> {{ repo.arch }} <small>not synced</small></span></span>
                     {% endif %}
-                    <small class="text-muted">({{repo.download_count}} downloads)</small>
+                    <small class="text-muted">({{ repo.download_count }} downloads)</small>
                 {% endfor %}
             </td>
             <td>
