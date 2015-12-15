@@ -1,6 +1,6 @@
 ### Sync SCLs with copr repos every 10 minutes
 
-#*/10 * * * *    root    rm -rf /tmp/softwarecollections-yum-cache; softwarecollections sclsync; softwarecollections sclrelated; softwarecollections sclclean
+#*/10 * * * *    root    if [ ! -e /run/sclsync ]; then touch /run/sclsync; softwarecollections sclsync; softwarecollections sclrelated; softwarecollections sclclean; rm /run/sclsync; fi
 
 ### This rebuilds error pages with the current year in the footer
 #0 0 1 1 *       root    /usr/bin/softwarecollections makeerrorpages
