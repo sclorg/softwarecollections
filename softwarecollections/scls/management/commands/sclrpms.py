@@ -61,7 +61,7 @@ class Command(LoggingBaseCommand):
                 try:
                     repos.append(Repo.objects.get(slug=slug))
                 except Exception as e:
-                    logging.error(str(e))
+                    logger.error(str(e))
                     errors += 1
         else:
             repos = Repo.objects.all()

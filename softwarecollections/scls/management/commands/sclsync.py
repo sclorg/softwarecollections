@@ -69,7 +69,7 @@ class Command(LoggingBaseCommand):
                 try:
                     scls.append(SoftwareCollection.objects.get(slug=slug))
                 except Exception as e:
-                    logging.error(str(e))
+                    logger.error(str(e))
                     errors += 1
         elif options['all']:
             scls = SoftwareCollection.objects.all()
