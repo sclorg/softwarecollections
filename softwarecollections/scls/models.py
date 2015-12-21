@@ -321,40 +321,42 @@ class SoftwareCollection(models.Model):
 
     def sync(self, timeout=None):
         with self.lock:
-            # create repos_config
-            with open(self.get_repos_config(), 'w') as repos_config:
-                repos_config = open(self.get_repos_config(), 'w')
-                repos_config.write(
-                    '[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n\n'.format(cache_root=self.get_cache_root())
-                )
-                last_modified  = None
-                download_count = 0
-                all_repos      = []
-                for copr in self.all_coprs:
-                    if copr.last_modified:
-                        if last_modified:
-                            last_modified = max(last_modified, copr.last_modified)
-                        else:
-                            last_modified = copr.last_modified
-                    for repo in self.repos.filter(copr=copr):
-                        if repo.name not in copr.yum_repos:
-                            # delete old repos
-                            repo.delete()
-                        else:
-                            # update existing repos
-                            repo.copr_url = copr.yum_repos[repo.name]
-                            repo.save()
-                            repos_config.write(
-                                '[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n\n'.format(
-                                    name = repo.name,
-                                    url  = repo.copr_url,
-                                )
+            # create repos config
+            repos_config = [
+                '[main]\nreposdir=\ncachedir={cache_root}\nkeepcache=0\n'.format(cache_root=self.get_cache_root())
+            ]
+            last_modified  = None
+            download_count = 0
+            all_repos      = []
+            for copr in self.all_coprs:
+                if copr.last_modified:
+                    if last_modified:
+                        last_modified = max(last_modified, copr.last_modified)
+                    else:
+                        last_modified = copr.last_modified
+                for repo in self.repos.filter(copr=copr):
+                    if repo.name not in copr.yum_repos:
+                        # delete old repos
+                        repo.delete()
+                    else:
+                        # update existing repos
+                        repo.copr_url = copr.yum_repos[repo.name]
+                        repo.save()
+                        repos_config.append(
+                            '[{name}]\nname={name}\nbaseurl={url}\ngpgcheck=0\n'.format(
+                                name = repo.name,
+                                url  = repo.copr_url,
                             )
-                            all_repos.append(repo)
-                            download_count += repo.download_count
+                        )
+                        all_repos.append(repo)
+                        download_count += repo.download_count
+
+            # save repos config
+            with open(self.get_repos_config(), 'w') as f:
+                f.write('\n'.join(repos_config))
                 # despite expectations the file is empty
                 # if I do not call explicitly flush
-                repos_config.flush()
+                f.flush()
 
             # scl.all_repos are expected to be sorted by name
             all_repos.sort(key=lambda repo: repo.name)
