@@ -90,7 +90,10 @@ class _CoprForm(forms.ModelForm):
             except:
                 copr_username = ''
         if copr_username:
-            self.coprnames = CoprProxy().coprnames(copr_username)
+            try:
+                self.coprnames = CoprProxy().coprnames(copr_username)
+            except:
+                self.coprnames = []
         else:
             self.coprnames = []
         self.fields['copr_name'].choices = tuple(
