@@ -72,12 +72,14 @@
     {% endif %}
 {% endif %}
 
-<h2>Related COPR projects</h2>
-<ul>
-    {% for copr in scl.all_coprs %}
-    <li><a href="{{ copr.get_url }}">{{ copr.username }}/{{ copr.name }}</a></li>
-    {% endfor %}
-</ul>
+{% if scl.all_coprs %}
+    <h2>Related COPR projects</h2>
+    <ul>
+        {% for copr in scl.all_coprs %}
+        <li><a href="{{ copr.get_url }}">{{ copr.username }}/{{ copr.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 <h2>Yum Repositories
     {% if scl.last_modified %}
@@ -145,36 +147,39 @@
     </table>
 </div>
 
-<h2>Tags</h2>
-<div class="scl-tags">
-    {% for tag in scl.tags %}
-        <a class='label label-default' href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
-    {% endfor %}
-</div>
+{% if scl.tags %}
+    <h2>Tags</h2>
+    <div class="scl-tags">
+        {% for tag in scl.tags %}
+            <a class='label label-default' href="{% url "scls:list_tag" tag.name %}" class="scl-tag scl-tag-{{ tag.name }}">{{ tag.name }}</a>
+        {% endfor %}
+    </div>
+{% endif %}
 
 <h2>Rating</h2>
 <div class='row'>
-    {% if scl.score_count %}
-        <div class='col-md-6'>
-            {% rating_stars 'passive' scl %}
-            <p>Rated by {{ scl.score_count }} user{{ scl.score_count|pluralize }}</p>
-        </div>
-    {% endif %}
     <div class='col-md-6'>
-        {% allowed 'rate' obj=scl %}
+        {% rating_stars 'passive' scl %}
+        <p>Rated by {{ scl.score_count }} user{{ scl.score_count|pluralize }}</p>
+    </div>
+    {% allowed 'rate' obj=scl %}
+        <div class='col-md-6'>
             {% rating_stars 'active' scl user_score %}
             {% if user_score %}
                 <strong>Your rating:</strong>
             {% else %}
                 <strong>Rate this collection:</strong>
             {% endif %}
-        {% endallowed %}
-    </div>
+        </div>
+    {% endallowed %}
 </div>
-        {% allowed 'edit' obj=scl %}
-        {% notallowed %}
-        <a href="{% url "scls:complain" scl %}"
-            title="report abuse" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-ban-circle report-abuse'></span> Report malicious content</a>
-        {% endallowed %}
+
+{% allowed 'edit' obj=scl %}
+{% notallowed %}
+<a href="{% url "scls:complain" scl %}" title="report abuse" class="btn btn-danger btn-sm">
+    <span class='glyphicon glyphicon-ban-circle report-abuse'></span>
+    Report malicious content
+</a>
+{% endallowed %}
 
 {% endblock %}
