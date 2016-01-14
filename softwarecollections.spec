@@ -184,6 +184,7 @@ semanage fcontext -a -t postgresql_var_run_t '%{scls_statedir}/db(/\..*)?'
 restorecon -R                                '%{scls_statedir}'
 setsebool -P httpd_can_network_connect on
 setsebool -P rsync_full_access on
+setsebool -P nis_enabled on
 
 service httpd condrestart
 
