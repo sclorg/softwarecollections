@@ -42,7 +42,7 @@ MANAGERS = ADMINS
 SERVER_EMAIL = 'SoftwareCollections @ {} <admin@softwarecollections.org>'.format(os.uname()[1])
 
 # COPR
-COPR_URL = 'http://copr-fe.cloud.fedoraproject.org'
+COPR_URL = 'https://copr.fedorainfracloud.org'
 COPR_API_URL   = COPR_URL + '/api'
 COPR_COPRS_URL = COPR_URL + '/coprs'
 
