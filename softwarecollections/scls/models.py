@@ -454,19 +454,6 @@ class SoftwareCollection(models.Model):
             self.instructions = self.get_default_instructions()
         super(SoftwareCollection, self).save(*args, **kwargs)
 
-    def delete(self, *args, **kwargs):
-        # rename of repos root is faster than deleting
-        # renamed directories will be deleted by command sclclean
-        os.rename(
-            self.get_repos_root(),
-            os.path.join(
-                settings.REPOS_ROOT,
-                '.scl.{}.deleted'.format(self.id)
-            )
-        )
-        # delete scl in the database
-        super(SoftwareCollection, self).delete(*args, **kwargs)
-
 tagging.register(SoftwareCollection)
 
 
@@ -634,22 +621,6 @@ class Repo(models.Model):
                 )
                 out.seek(0)
                 return [line.rstrip() for line in out]
-
-    def delete(self, *args, **kwargs):
-        # rename of repo directory is faster than deleting
-        # renamed directories will be deleted by command sclclean
-        try:
-            os.rename(
-                self.get_repo_dir(),
-                os.path.join(
-                    settings.REPOS_ROOT,
-                    '.repo.{}.deleted'.format(self.id)
-                )
-            )
-        except FileNotFoundError:
-            pass
-        # delete repo in the database
-        super(Repo, self).delete(*args, **kwargs)
 
 
 

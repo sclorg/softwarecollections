@@ -135,7 +135,6 @@ class CreateForm(_CoprForm):
         if 'copr' in self.cleaned_data:
             self.instance.description   = self.cleaned_data['copr'].description
             self.instance.instructions  = self.cleaned_data['copr'].instructions
-        os.makedirs(self.instance.get_repos_root())
         self.instance.save()
         if 'copr' in self.cleaned_data:
             self.instance.coprs.add(self.cleaned_data['copr'])
@@ -351,7 +350,6 @@ class ReposForm(forms.ModelForm):
         # save attached repos
         for repo in self.cleaned_data['repos']:
             if not repo.id:
-                os.makedirs(repo.get_repo_dir())
                 repo.save()
             ids.append(repo.id)
             download_count += repo.download_count
