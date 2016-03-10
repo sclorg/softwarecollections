@@ -40,11 +40,18 @@ def check_call_log(args, **kwargs):
 
 
 
-def get_icon_url(distro_name):
-    return distro_name in ('fedora', 'epel', 'rhel', 'centos') \
-       and '{}scls/icons/{}.png'.format(settings.STATIC_URL, distro_name) \
-        or '{}scls/icons/empty.png'.format(settings.STATIC_URL)
+ICON_NAMES = tuple(
+    name[:-4]
+    for name in os.listdir(os.path.join(os.path.dirname(__file__), 'static', 'scls', 'icons'))
+    if name[-4:]=='.png' and name != 'empty.png'
+)
 
+ICON_NAME_CHOICES = ((name, name) for name in ICON_NAMES)
+
+def get_icon_url(icon_name):
+    return (icon_name in ICON_NAMES
+       and '{}scls/icons/{}.png'.format(settings.STATIC_URL, icon_name)
+        or '{}scls/icons/empty.png'.format(settings.STATIC_URL))
 
 
 SPECFILE = os.path.join(os.path.dirname(__file__), 'scl-release.spec')
@@ -109,9 +116,9 @@ class Copr(models.Model):
 
     @property
     def last_modified(self):
-        return self.detail['last_modified'] \
-           and datetime.utcfromtimestamp(self.detail['last_modified']).replace(tzinfo=utc) \
-            or None
+        return (self.detail['last_modified']
+           and datetime.utcfromtimestamp(self.detail['last_modified']).replace(tzinfo=utc)
+            or None)
 
     @property
     def description(self):
@@ -134,38 +141,36 @@ class Copr(models.Model):
 
 
 
-class CentOSRepo(models.Model):
-    version      = models.CharField(_('CentOS version'), max_length=20)
+class OtherRepo(models.Model):
+    name            = models.CharField(_('Distribution name'), max_length=20)
+    version         = models.CharField(_('Distribution version'), max_length=20)
+    variant         = models.CharField(_('Variant'), max_length=20, blank=True, default='')
     arch            = models.CharField(_('Architecture'), max_length=20)
-    prefix          = models.CharField(_('Prefix'), max_length=20)
-    release_package = models.CharField(_('Release package name'), max_length=100)
+    icon            = models.CharField(_('Icon'), max_length=20, choices=ICON_NAME_CHOICES)
+    url             = models.CharField(_('URL'), max_length=200, blank=True, default='')
+    command         = models.TextField(_('Command'))
     last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
     last_synced     = models.DateTimeField(_('Last synced'), null=True, editable=False)
 
     class Meta:
-        verbose_name        = 'CentOS repo'
-        verbose_name_plural = 'CentOS repos'
-        ordering = ('version', 'arch', 'prefix')
-        unique_together = (('version', 'arch', 'prefix'),)
+        verbose_name        = 'Other repo'
+        verbose_name_plural = 'Other repos'
+        ordering            = ('name', 'version', 'variant', 'arch')
+        unique_together     = (('name', 'version', 'variant', 'arch'),)
 
     def __str__(self):
-        return 'CentOS {version} {arch} - {prefix}'.format(
-            version  = self.version,
-            arch        = self.arch,
-            prefix      = self.prefix,
+        return '{name} {version} {variant} {arch}'.format(
+            name    = self.name,
+            version = self.version,
+            variant = self.variant,
+            arch    = self.arch,
         )
 
-    def get_repo_url(self):
-        return os.path.join(settings.CENTOS_REPOS_URL, self.version, 'sclo', self.arch, self.prefix)
-
-    def get_rpmfile_url(self):
-        return os.path.join(self.scl.get_repos_url(), self.name, 'noarch', self.rpmfile)
-
     def get_icon_url(self):
-        return get_icon_url('centos')
+        return get_icon_url(self.icon)
 
     def sync(self, timeout=None):
-        response = requests.head(self.get_repo_url() + '/repodata/repomd.xml')
+        response = requests.head('{}/repodata/repomd.xml'.format(self.url))
         if response.status_code != 200:
             response.raise_for_status()
         self.last_modified = datetime.fromtimestamp(time.mktime(time.strptime(
@@ -184,7 +189,7 @@ class SoftwareCollection(models.Model):
     name            = models.CharField(_('Name'), max_length=100, validators=[validate_name],
                         help_text=_('Name without spaces (It will be part of the url and RPM name.)'))
     coprs           = models.ManyToManyField(Copr, verbose_name=_('Copr projects'), blank=True)
-    centos_repos    = models.ManyToManyField(CentOSRepo, verbose_name=_('CentOS repos'), blank=True)
+    other_repos     = models.ManyToManyField(OtherRepo, verbose_name=_('Other repos'), blank=True)
     upstream_url    = models.URLField(_('Project homepage'), blank=True)
     issue_tracker   = models.URLField(_('Issue Tracker'), blank=True,
                         default='https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org')
@@ -275,8 +280,8 @@ class SoftwareCollection(models.Model):
         return list(self.repos.all().order_by('name'))
 
     @cached_property
-    def all_centos_repos(self):
-        return list(self.centos_repos.all())
+    def all_other_repos(self):
+        return list(self.other_repos.all())
 
     @property
     def all_repos_grouped(self):
@@ -291,8 +296,8 @@ class SoftwareCollection(models.Model):
         tags = set()
         for repo in self.all_repos:
             tags.update([repo.distro_version])
-        for repo in self.all_centos_repos:
-            tags.update(['centos-{}'.format(repo.version)])
+        for repo in self.all_other_repos:
+            tags.update(['{}-{}'.format(repo.name, repo.version)])
         return list(tags)
 
     def get_default_instructions(self):
@@ -418,12 +423,12 @@ class SoftwareCollection(models.Model):
     def find_related(self, timeout=None):
         with self.lock:
             out = check_output(
-                "set -o pipefail; " \
-                "find '{repos_root}' -name '*.rpm' -exec rpm -qp --nosignature --requires '{{}}' \\; " \
-                "| sed 's/ .*//' | sort -u | while read req; do " \
-                "egrep -l \"^$req$\" '{all_repos_root}'/*/*/.provides || :; " \
-                "done | sed -r -e 's|^{all_repos_root}/||' -e 's|/.provides$||' | sort -u" \
-                .format(all_repos_root=settings.REPOS_ROOT, repos_root=self.get_repos_root()),
+                ("set -o pipefail; "
+                "find '{repos_root}' -name '*.rpm' -exec rpm -qp --nosignature --requires '{{}}' \\; "
+                "| sed 's/ .*//' | sort -u | while read req; do "
+                "egrep -l \"^$req$\" '{all_repos_root}'/*/*/.provides || :; "
+                "done | sed -r -e 's|^{all_repos_root}/||' -e 's|/.provides$||' | sort -u"
+                .format(all_repos_root=settings.REPOS_ROOT, repos_root=self.get_repos_root())),
                 shell=True, universal_newlines=True, timeout=timeout
             )
             related_slugs = [slug for slug in out.split() if slug != self.slug]
@@ -439,11 +444,11 @@ class SoftwareCollection(models.Model):
 
     def has_perm(self, user, perm):
         if perm in ['edit', 'delete']:
-            return user.id == self.maintainer_id \
-                or self in user.softwarecollection_set.all()
+            return (user.id == self.maintainer_id
+                or self in user.softwarecollection_set.all())
         elif perm == 'rate':
-            return user.id != self.maintainer_id \
-                or self not in user.softwarecollection_set.all()
+            return (user.id != self.maintainer_id
+                or self not in user.softwarecollection_set.all())
         else:
             return False
 
@@ -614,9 +619,9 @@ class Repo(models.Model):
             repo_dir = self.get_repo_dir()
             with open(os.path.join(repo_dir, '.provides'), 'w+') as out:
                 check_call(
-                    "set -o pipefail; " \
-                    "find '{repo_dir}' -name '*.rpm' -exec rpm -qp --nosignature --provides '{{}}' \\; " \
-                    "| sed 's/ .*//' | sort -u".format(repo_dir=repo_dir),
+                    ("set -o pipefail; "
+                    "find '{repo_dir}' -name '*.rpm' -exec rpm -qp --nosignature --provides '{{}}' \\; "
+                    "| sed 's/ .*//' | sort -u".format(repo_dir=repo_dir)),
                     shell=True, stdout=out, timeout=timeout
                 )
                 out.seek(0)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import ungettext, ugettext as _
-from .models import SoftwareCollection, CentOSRepo, Repo, Score
+from .models import SoftwareCollection, OtherRepo, Repo, Score
 
 class SoftwareCollectionAdmin(admin.ModelAdmin):
     list_display = ('slug', 'get_title_tag', 'get_copr_tags', 'review_req', 'approved', 'auto_sync', 'need_sync', 'last_synced', 'last_modified')
@@ -27,7 +27,7 @@ class SoftwareCollectionAdmin(admin.ModelAdmin):
         )
     request_sync.short_description = _('Request sync for selected software collections')
 
-admin.site.register(CentOSRepo)
+admin.site.register(OtherRepo)
 admin.site.register(SoftwareCollection, SoftwareCollectionAdmin)
 admin.site.register(Repo)
 admin.site.register(Score)

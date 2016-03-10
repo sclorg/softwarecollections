@@ -209,7 +209,7 @@ class Coprs(UpdateView):
             raise PermissionDenied()
 
     def form_valid(self, form):
-        messages.success(self.request, _('The list of attached copr projects has been saved.'))
+        messages.success(self.request, _('The list of attached Copr projects has been saved.'))
         return super(Coprs, self).form_valid(form)
 
 coprs = Coprs.as_view()
@@ -229,7 +229,7 @@ class Repos(UpdateView):
             raise PermissionDenied()
 
     def form_valid(self, form):
-        messages.success(self.request, _('The list of attached Copr repositories has been saved.'))
+        messages.success(self.request, _('The list of attached repositories has been saved.'))
         return super(Repos, self).form_valid(form)
 
 repos = Repos.as_view()

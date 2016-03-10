@@ -126,21 +126,25 @@
             </td>
         </tr>
         {% endfor %}
-        {% for repo in scl.all_centos_repos %}
+        {% for repo in scl.all_other_repos %}
         <tr>
             <td >
                 <img src="{{ repo.get_icon_url }}" width="32" height="32" alt=""/>
-                <strong>CentOS {{ repo.version }}</strong>
+                <strong>{{ repo.name }} {{ repo.version }}</strong>
             </td>
             <td>
-                yum install {{ repo.release_package }}
+                {{ repo.command | markdown:"safe" }}
             </td>
             <td>
-                <a href="{{ repo.get_repo_url }}" target="_blank">{{ repo.arch }}</a>
+                {% if repo.url %}
+                <a href="{{ repo.url }}" target="_blank">{{ repo.arch }}</a>
+                {% else %}
+                {{ repo.arch }}
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
-        {% if not scl.all_repos_grouped and not scl.all_centos_repos %}
+        {% if not scl.all_repos_grouped and not scl.all_other_repos %}
             <td></td>
             <td colspan='4'><em>No repos available</em></td>
         {% endif %}

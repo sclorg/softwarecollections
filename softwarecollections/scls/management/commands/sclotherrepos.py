@@ -8,7 +8,7 @@ from django.core.management.base import CommandError
 from multiprocessing import Pool, cpu_count
 
 from softwarecollections.management.commands import LoggingBaseCommand
-from softwarecollections.scls.models import CentOSRepo
+from softwarecollections.scls.models import OtherRepo
 
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class Command(LoggingBaseCommand):
         ),
     )
 
-    help = 'Refresh CentOS repo information.'
+    help = 'Refresh other repos information.'
 
     def handle(self, *args, **options):
         self.configure_logging(options['verbosity'])
@@ -45,8 +45,8 @@ class Command(LoggingBaseCommand):
         with Pool(processes=int(options['max_procs'])) as pool:
             errors = sum(pool.map(
                 centos_sync,
-                [(repo, timeout) for repo in CentOSRepo.objects.all()],
+                [(repo, timeout) for repo in OtherRepo.objects.all()],
             ))
             if errors > 0:
-                raise CommandError('Failed to sync CentOS repos: {} error(s)'.format(errors))
+                raise CommandError('Failed to sync other repos: {} error(s)'.format(errors))
 

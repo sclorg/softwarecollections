@@ -311,7 +311,7 @@ class ReposForm(forms.ModelForm):
                 self.available_repos[slug] = repo
             self.fields['repos'].choices.append((label, choices))
         self.initial['repos'] = self.current_repos.keys()
-        self.fields['centos_repos'].widget = forms.CheckboxSelectMultiple(
+        self.fields['other_repos'].widget = forms.CheckboxSelectMultiple(
             renderer = CheckboxSelectMultipleTableRenderer,
             choices  = [
                 (
@@ -319,7 +319,7 @@ class ReposForm(forms.ModelForm):
                     mark_safe('<img src="{}" width="32" height="32" alt=""/> {}'.format(
                         repo.get_icon_url(), repo,
                     )),
-                ) for repo in self.fields['centos_repos'].widget.choices.queryset
+                ) for repo in self.fields['other_repos'].widget.choices.queryset
             ],
         )
 
@@ -369,7 +369,7 @@ class ReposForm(forms.ModelForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['repos', 'centos_repos']
+        fields = ['repos', 'other_repos']
 
 
 class ReviewReqForm(forms.ModelForm):
