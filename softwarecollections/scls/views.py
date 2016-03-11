@@ -230,7 +230,9 @@ class Repos(UpdateView):
 
     def form_valid(self, form):
         messages.success(self.request, _('The list of attached repositories has been saved.'))
-        return super(Repos, self).form_valid(form)
+        response = super(Repos, self).form_valid(form)
+        self.object.check_repos_content(None)
+        return response
 
 repos = Repos.as_view()
 

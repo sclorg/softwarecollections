@@ -396,15 +396,19 @@ class SoftwareCollection(models.Model):
                 check_call_log(args, stdout=log, stderr=log, timeout=timeout)
             self.last_synced = datetime.now().replace(tzinfo=utc)
 
+            self.check_repos_content(timeout)
+
+    def check_repos_content(self, timeout):
+        with self.lock:
             # check repos content and build repo RPMs
-            for repo in self.all_repos:
+            for repo in self.repos.all():
                 if not os.path.exists(repo.get_rpmfile_path()):
                     repo.rpmbuild(timeout)
                 repo.createrepo(timeout)
                 repo.last_synced = self.last_synced
                 repo.has_content = len(repo.dump_provides(timeout)) > 0
                 repo.save()
-            self.has_content = len(self.dump_provides(timeout)) > 0
+            self.has_content = (len(self.dump_provides(timeout)) + self.other_repos.count()) > 0
             self.save()
 
     def dump_provides(self, timeout=None):
