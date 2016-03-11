@@ -40,11 +40,11 @@ def check_call_log(args, **kwargs):
 
 
 
-ICON_NAMES = tuple(
+ICON_NAMES = sorted(tuple(
     name[:-4]
     for name in os.listdir(os.path.join(os.path.dirname(__file__), 'static', 'scls', 'icons'))
     if name[-4:]=='.png' and name != 'empty.png'
-)
+))
 
 ICON_NAME_CHOICES = ((name, name) for name in ICON_NAMES)
 
@@ -143,12 +143,12 @@ class Copr(models.Model):
 
 class OtherRepo(models.Model):
     name            = models.CharField(_('Distribution name'), max_length=20)
-    version         = models.CharField(_('Distribution version'), max_length=20)
+    version         = models.CharField(_('Distribution version'), max_length=20, blank=True, default='')
     variant         = models.CharField(_('Variant'), max_length=20, blank=True, default='')
-    arch            = models.CharField(_('Architecture'), max_length=20)
-    icon            = models.CharField(_('Icon'), max_length=20, choices=ICON_NAME_CHOICES)
+    arch            = models.CharField(_('Architecture'), max_length=20, blank=True, default='')
+    icon            = models.CharField(_('Icon'), max_length=20, choices=ICON_NAME_CHOICES, blank=True, default='')
     url             = models.CharField(_('URL'), max_length=200, blank=True, default='')
-    command         = models.TextField(_('Command'))
+    command         = models.TextField(_('Command'), blank=True, default='')
     last_modified   = models.DateTimeField(_('Last modified'), null=True, editable=False)
     last_synced     = models.DateTimeField(_('Last synced'), null=True, editable=False)
 
