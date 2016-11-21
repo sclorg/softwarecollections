@@ -10,13 +10,15 @@
 <h2>Using Software Collections</h2>
 
 <ol>
-<li>Find a Software Collection (SCL) you are interested in. You can browse through the <a href="https://www.softwarecollections.org/en/scls/">available SCLs in our Directory</a>. We will use the <a href="https://www.softwarecollections.org/en/scls/rhscl/python33/">python33 SCL</a> as an example.</li>
-<li>Download and install the chosen Software Collection&#39;s repository RPM file for your system (EPEL&nbsp;6 on AMD&nbsp;64 or Intel&reg;&nbsp;64, in our case):
-  <pre>yum install rhscl-python33-epel-6-x86_64-1-2.noarch.rpm</pre></li>
+<li>Find a Software Collection (SCL) you are interested in. You can browse through the <a href="https://www.softwarecollections.org/en/scls/">available SCLs in our Directory</a>. We will use the <a href="https://www.softwarecollections.org/en/scls/rhscl/rh-python35/">rh-python35 SCL</a> as an example.</li>
+<li><p>On CentOS, install the SCL release package `centos-release-scl`:</p>
+  <pre>yum install centos-release-scl</pre></li>
+  <p>On RHEL, enable the RHSCL repository. Note that you may also need to enable the Optional channel and attach a subscription providing access to RHSCL to be able to use that repository.</p>
+  <pre>yum-config-manager --enable rhel-server-rhscl-7-rpms</pre>
 <li>Install the main SCL package (its name is identical to the name of the Software Collection):
-  <pre>yum install python33</pre></li>
-<li>Start using the newly installed Software Collection:
-  <pre>scl enable python33 bash</pre></li>
+  <pre>yum install rh-python35</pre></li>
+<li>Start using the Software Collection you just installed:
+  <pre>scl enable rh-python35 bash</pre></li>
 </ol>
 
 <p>For more usage examples and documentation of more complex scenarios, see the <a href="/en/docs/guide/#chap-Introducing_Software_Collections">Software Collections Packaging Guide</a>.</p>
@@ -31,9 +33,9 @@
 <li>Read the <a href="https://fedorahosted.org/copr/wiki/ScreenshotsTutorial">copr tutorial</a> to learn how to build packages in <a href="http://copr-fe.cloud.fedoraproject.org/">copr</a>.
   <p>Note that:</p>
   <ul>
-    <li>Only packages built using copr can be included in our Directory.</li>
-    <li>Software Collections built on copr are created with an additional suffix based on the packager&#39;s user name (<code><i>%{copr_username}</i></code>), i.e. the SCL metapackage name is <code><i>%{copr_username}</i>-<i>%{copr_projectname}</i></code>.<br>See the <a href="/en/docs/guide/#sect-Package_Layout">Package Layout</a> and <a href="/en/docs/guide/#sect-Software_Collection_Package_Names">Package Names</a> chapters in the <a href="/en/docs/guide/">Software Collections Packaging Guide</a> for an explanation of standard naming conventions for SCLs.</li>
-    <li>In order to build packages with copr, the following lines need to be added to the top of your SCL&#39;s metapackage spec file:
+    <li>Packages built using copr or the CentOS Build System can be included in our Directory.</li>
+    <li>Software Collections built in copr are created with an additional suffix based on the packager&#39;s user name (<code><i>%{copr_username}</i></code>), i.e. the SCL metapackage name is <code><i>%{copr_username}</i>-<i>%{copr_projectname}</i></code>.<br>See the <a href="/en/docs/guide/#sect-Package_Layout">Package Layout</a> and <a href="/en/docs/guide/#sect-Software_Collection_Package_Names">Package Names</a> chapters in the <a href="/en/docs/guide/">Software Collections Packaging Guide</a> for an explanation of standard naming conventions for SCLs.</li>
+    <li>To build packages with copr, add the following lines to the top of your SCL&#39;s metapackage spec file:
   <pre class="programlisting">
 <span class="perl_Comment"># If the build is running on copr</span>
 <span class="perl_String">%if 0%</span><span class="perl_Keyword">{?copr_username:<span class="perl_DecVal">1</span>}</span>

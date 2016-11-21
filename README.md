@@ -15,10 +15,12 @@ Date migration from Django-1.6.x (Fedora-20) to Django-1.8.x (Fedora 22)
 
 3. Check the new id of ContentType SoftwareCollection:
 
+```
     softwarecollections shell
     >>> from django.contrib.contenttypes.models import ContentType
     >>> ContentType.objects.get(app_label='scls', model='softwarecollection').id
     2
+```
 
 4. Fix the id in data.json:
 
@@ -65,7 +67,7 @@ Follow the **installation steps**. You do not need package
 
 Clone the git repository:
 
-    git clone git@github.com:misli/softwarecollections.git
+    git clone git@github.com:sclorg/softwarecollections.git
     cd softwarecollections
 
 Clone the packaging-guide repository
