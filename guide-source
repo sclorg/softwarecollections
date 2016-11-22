@@ -11,12 +11,9 @@ pushd "$1" > /dev/null
 # get information about source
 NAME="packaging-guide"
 VERSION="$(egrep ^version: publican.cfg | sed -r 's/version:\s*//')"
-TIMESTAMP="$(git log -n 1 --format='%ct')"
 
-# create reproducible archive
-git archive --format=tar --prefix=$NAME-$VERSION/ HEAD \
-| tar-fixup-stamp-comment.pl $TIMESTAMP \
-| gzip -n -c - > ${NAME}-${VERSION}.tar.gz
+# create archive
+git archive --format=tar.gz --prefix=$NAME-$VERSION/ HEAD > ${NAME}-${VERSION}.tar.gz
 
 # change dir back
 popd > /dev/null
