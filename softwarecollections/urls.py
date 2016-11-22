@@ -36,4 +36,5 @@ urlpatterns = i18n_patterns(
 if settings.DEBUG:
     urlpatterns += [
         url(r'^repos/(?P<path>.*)$', serve, {'document_root': settings.REPOS_ROOT, 'show_indexes': True}),
+        url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
     ]

@@ -183,6 +183,17 @@ nav.paginator a {
     background-color: rgba(230, 230, 230, .95);
 }
 
+.error-jumbotron {
+    padding: 40px 0 30px 0;
+}
+
+.error-jumbotron h1 {
+    font-size: 2.8em;
+    color: white;
+    text-align: center;
+    font-family: 'Dosis';
+}
+
 .content {
     background-size: cover;
     background-attachment: fixed;
