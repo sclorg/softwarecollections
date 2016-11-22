@@ -3,7 +3,6 @@ import os
 import requests
 import shutil
 import time
-import tagging
 import tempfile
 from itertools import groupby
 from datetime import datetime
@@ -21,6 +20,7 @@ from flock import Flock, LOCK_EX
 from softwarecollections.copr import CoprProxy
 from subprocess import call, check_call, check_output, CalledProcessError
 from tagging.models import Tag
+from tagging.registry import register
 from tagging.utils import edit_string_for_tags
 
 from .validators import validate_name
@@ -463,7 +463,7 @@ class SoftwareCollection(models.Model):
             self.instructions = self.get_default_instructions()
         super(SoftwareCollection, self).save(*args, **kwargs)
 
-tagging.register(SoftwareCollection)
+register(SoftwareCollection)
 
 
 

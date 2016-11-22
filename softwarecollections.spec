@@ -190,9 +190,9 @@ setsebool -P httpd_unified on
 service httpd condrestart
 
 %{name}-db-setup
-%{name} migrate       --noinput || :
-%{name} collectstatic --noinput || :
-%{name} makeerrorpages          || :
+%{name} migrate       --noinput               || :
+%{name} collectstatic --noinput --verbosity=1 || :
+%{name} makeerrorpages                        || :
 
 
 %preun
