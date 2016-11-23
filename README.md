@@ -122,12 +122,6 @@ To build RPM in Copr type:
     tito release copr-test  # submits build from the latest commit
 ```
 
-Note that you need rel-eng/releasers.conf:
-
-```
-    sed "s/<USERNAME>/$USERNAME/" < rel-eng/releasers.conf.template > rel-eng/releasers.conf
-```
-
 
 Help
 ----
