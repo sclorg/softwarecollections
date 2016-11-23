@@ -28,7 +28,7 @@ urlpatterns = i18n_patterns(
     url(r'^admin/',     include(admin.site.urls)),
     url(r'^captcha/',   include('captcha.urls')),
     url(r'^faq/$',      RedirectView.as_view(url='/en/docs/faq/', permanent=True)),
-    url(r'^scls/',      include('softwarecollections.scls.urls')),
+    url(r'^scls/',      include('softwarecollections.scls.urls', namespace='scls')),
     url('',             include('fas.urls')),
     url(r'^((?P<path>.*)/|)$', page, name='page', kwargs={'template_dir':'pages'}),
 )
