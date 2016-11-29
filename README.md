@@ -123,6 +123,33 @@ To build RPM in Copr type:
 ```
 
 
+Data migration from one server to another one
+---------------------------------------------
+
+1. Dump all data on the old system:
+
+```
+    softwarecollections dumpdata > data.json
+```
+
+2. Move data.json to the new system to location accessible by softwarecollections user.
+
+```
+    rsync old:data.json /var/scls/data.json
+```
+
+3. Delete automaticaly generated tables and load all data from json file:
+
+```
+    echo "delete from auth_permission;" | softwarecollections dbshell
+    echo "delete from django_content_type;" | softwarecollections dbshell
+    softwarecollections loaddata /var/scls/data.json
+```
+
+
+Voilà!
+
+
 Help
 ----
 
