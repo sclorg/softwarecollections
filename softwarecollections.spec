@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.12
+Version:           0.13
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -226,6 +226,37 @@ service httpd condrestart
 
 
 %changelog
+* Wed Dec 14 2016 Jakub Dorňák <jakub.dornak@misli.cz> 0.13-1
+- updated contact information and project url (jakub.dornak@misli.cz)
+- softwarecollections-services-setup (jakub.dornak@misli.cz)
+- added information on data migration (jdornak@redhat.com)
+- deleted obsolete instruction (jdornak@redhat.com)
+- copr can now build directly (msuchy@redhat.com)
+- fixed url namespace (jakub.dornak@misli.cz)
+- updated links in the footer (jakub.dornak@misli.cz)
+- fixed error pages (jakub.dornak@misli.cz)
+- Fedora 25 compatibility (jakub.dornak@misli.cz)
+- new version of packaging guide (jakub.dornak@misli.cz)
+- updated README.md (jdornak@redhat.com)
+- Docs update per #90 (pkovar@redhat.com)
+- default values for OtherRepo (jdornak@redhat.com)
+- do not require input in %%post (jdornak@redhat.com)
+- fixed has_content with other repos (jdornak@redhat.com)
+- change CentOSRepo to OtherRepo (jdornak@redhat.com)
+- change text of Issue Tracker (jdornak@redhat.com)
+- do not delete synced repositories from disk (jdornak@redhat.com)
+- new policy also needs httpd_unified to be on (jdornak@redhat.com)
+- new Copr url (jdornak@redhat.com)
+- set selinux nis_enabled on (jdornak@redhat.com)
+- allow cron to enable temporarily disabled entries (jdornak@redhat.com)
+- hide headlines for empty fields (jdornak@redhat.com)
+- do not fail if Copr is not available (jdornak@redhat.com)
+- drop bluehost logo (jdornak@redhat.com)
+- first collect data, than open file for writing (jdornak@redhat.com)
+- use logger instance instead of logging module (jdornak@redhat.com)
+- Change suggested contact to mailing list (hhorak@redhat.com)
+- prevent sclsync from running concurrently (jdornak@redhat.com)
+
 * Fri Dec 11 2015 Jakub Dorňák <jdornak@redhat.com> 0.12-1
 - CentOS repos (jdornak@redhat.com)
 - Repo.get_download_url (jdornak@redhat.com)
