@@ -316,8 +316,6 @@ class Complain(UpdateView):
     context_object_name = 'scl'
 
     def form_valid(self, form):
-        email = 'jdornak@redhat.com'
-        
         subject = _('[{title}] {subject}').format(
             title=self.object.title,
             subject=form.cleaned_data['subject']
