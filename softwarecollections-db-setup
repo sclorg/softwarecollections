@@ -28,12 +28,12 @@ if ! test -d $DATADIR; then
     sed -r -i 's/(local +all +all +).*/\1trust/' $DATADIR/pg_hba.conf
 fi
 
-if ! test -L /etc/systemd/system/multi-user.target.wants/$SERVICE; then
+if ! systemctl is-enabled -q $SERVICE; then
     log "Enable $SERVICE"
     systemctl enable $SERVICE
 fi
 
-if ! test -S $SOCKET; then
+if ! systemctl is-active -q $SERVICE; then
     log "Start $SERVICE"
     systemctl start $SERVICE || \
     systemctl status $SERVICE
@@ -48,6 +48,4 @@ if test -S $SOCKET && ! echo | su - softwarecollections -c "psql -h $SOCKETDIR -
     log "Create database"
     su - postgres -c "createdb -h $SOCKETDIR -p $PORT softwarecollections"
 fi
-
-exec softwarecollections migrate
 

@@ -102,6 +102,7 @@ ln -s %{scls_confdir}/localsettings \
 # install commandline interface
 install -p -D -m 0755 manage.py %{buildroot}%{_bindir}/%{name}
 install -p -D -m 0755 %{name}-db-setup %{buildroot}%{_bindir}/%{name}-db-setup
+install -p -D -m 0755 %{name}-services-setup %{buildroot}%{_bindir}/%{name}-services-setup
 
 # install bash completion script
 mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
@@ -193,6 +194,7 @@ service httpd condrestart
 %{name} migrate       --noinput               || :
 %{name} collectstatic --noinput --verbosity=1 || :
 %{name} makeerrorpages                        || :
+%{name}-services-setup
 
 
 %preun
@@ -207,6 +209,7 @@ service httpd condrestart
 %doc LICENSE README.md
 %{_bindir}/%{name}
 %{_bindir}/%{name}-db-setup
+%{_bindir}/%{name}-services-setup
 %{_datadir}/bash-completion/completions/softwarecollections
 %{python3_sitelib}/softwarecollections*
 %config(noreplace) %{cron_confdir}/%{name}
