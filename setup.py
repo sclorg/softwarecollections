@@ -7,11 +7,11 @@ from setuptools import setup, find_packages
 
 setup(
     name         = "softwarecollections",
-    version      = '0.12',
+    version      = '0.13',
     description  = "Software Collection Management Website and Utils",
     author       = "Jakub Dorňák",
     author_email = "jdornak@redhat.com",
-    url          = "https://github.com/misli/softwarecollections",
+    url          = "https://github.com/sclorg/softwarecollections",
     packages     = find_packages(),
     include_package_data = True,
 )

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+log() {
+    if [ -t 1 ]; then
+        echo -e "\033[1;36m$1\033[0m"
+    else
+        echo "$1"
+    fi
+}
+
+for SERVICE in {memcached,httpd,sendmail,softwarecollections-rsyncd}.service; do
+    if ! systemctl is-enabled -q $SERVICE; then
+        log "Enable $SERVICE"
+        systemctl enable $SERVICE
+    fi
+    if ! systemctl is-active -q $SERVICE; then
+        log "Start $SERVICE"
+        systemctl start $SERVICE
+    fi
+done
+

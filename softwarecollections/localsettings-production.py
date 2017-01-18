@@ -36,7 +36,7 @@ ALLOWED_HOSTS = ['www.softwarecollections.org']
 # https://docs.djangoproject.com/en/1.9/ref/settings/#std:setting-MANAGERS
 # https://docs.djangoproject.com/en/1.9/ref/settings/#std:setting-SERVER_EMAIL
 ADMINS = (
-    ('Jakub Dorňák',   'jdornak@redhat.com'),
+    ('Jakub Dorňák',   'jakub.dornak@misli.cz'),
     ('Miroslav Suchý', 'msuchy@redhat.com'),
     ('Adam Samalik',   'asamalik@redhat.com'),
 )
