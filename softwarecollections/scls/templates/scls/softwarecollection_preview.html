@@ -33,11 +33,13 @@
     <div class='row'>
         <div class='col-md-12 preview_footer'>
             <p>
-                {{ scl.policy | policy_name }} | 
+                {{ scl.policy | policy_name }}
                 {% if scl.approved %}
-                    <span data-toggle="tooltip" data-placement="bottom" data-original-title="This collection has passed a review by professional to ensure it works properly." class="approved"><span class="glyphicon glyphicon-ok"></span> approved </span> |
+                    | <span data-toggle="tooltip" data-placement="bottom" data-original-title="This collection has passed a review by professional to ensure it works properly." class="approved"><span class="glyphicon glyphicon-ok"></span> approved </span>
                 {% endif %}
-                {{ scl.download_count }} downloads
+                {% if scl.download_count > 0 %}
+                    | {{ scl.download_count }} downloads
+                {% endif %}
             </p>
         </div>
     </div>
