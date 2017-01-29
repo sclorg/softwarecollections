@@ -1,0 +1,526 @@
+- fields:
+    name: mariadb100
+    username: hhorak
+  model: scls.copr
+  pk: 1
+- fields:
+    arch: x86_64
+    command: yum install centos-release-scl-rh
+    icon: centos
+    last_modified: null
+    last_synced: null
+    name: CentOS
+    url: http://mirror.centos.org/centos/6/sclo/x86_64/rh/
+    variant: rh
+    version: '6'
+  model: scls.otherrepo
+  pk: 1
+- fields:
+    arch: x86_64
+    command: yum install centos-release-scl
+    icon: centos
+    last_modified: null
+    last_synced: null
+    name: CentOS
+    url: http://mirror.centos.org/centos/6/sclo/x86_64/sclo/
+    variant: sclo
+    version: '6'
+  model: scls.otherrepo
+  pk: 2
+- fields:
+    arch: x86_64
+    command: yum install centos-release-scl-rh
+    icon: centos
+    last_modified: null
+    last_synced: null
+    name: CentOS
+    url: http://mirror.centos.org/centos/7/sclo/x86_64/rh/
+    variant: rh
+    version: '7'
+  model: scls.otherrepo
+  pk: 3
+- fields:
+    arch: x86_64
+    command: yum install centos-release-scl
+    icon: centos
+    last_modified: null
+    last_synced: null
+    name: CentOS
+    url: http://mirror.centos.org/centos/7/sclo/x86_64/sclo/
+    variant: sclo
+    version: '7'
+  model: scls.otherrepo
+  pk: 4
+- fields:
+    app_label: scls
+    model: copr
+  model: contenttypes.contenttype
+  pk: 1
+- fields:
+    app_label: scls
+    model: otherrepo
+  model: contenttypes.contenttype
+  pk: 2
+- fields:
+    app_label: scls
+    model: softwarecollection
+  model: contenttypes.contenttype
+  pk: 3
+- fields:
+    app_label: scls
+    model: repo
+  model: contenttypes.contenttype
+  pk: 4
+- fields:
+    app_label: scls
+    model: score
+  model: contenttypes.contenttype
+  pk: 5
+- fields:
+    app_label: admin
+    model: logentry
+  model: contenttypes.contenttype
+  pk: 6
+- fields:
+    app_label: auth
+    model: permission
+  model: contenttypes.contenttype
+  pk: 7
+- fields:
+    app_label: auth
+    model: group
+  model: contenttypes.contenttype
+  pk: 8
+- fields:
+    app_label: auth
+    model: user
+  model: contenttypes.contenttype
+  pk: 9
+- fields:
+    app_label: contenttypes
+    model: contenttype
+  model: contenttypes.contenttype
+  pk: 10
+- fields:
+    app_label: sessions
+    model: session
+  model: contenttypes.contenttype
+  pk: 11
+- fields:
+    app_label: tagging
+    model: tag
+  model: contenttypes.contenttype
+  pk: 12
+- fields:
+    app_label: tagging
+    model: taggeditem
+  model: contenttypes.contenttype
+  pk: 13
+- fields:
+    app_label: captcha
+    model: captchastore
+  model: contenttypes.contenttype
+  pk: 14
+- fields:
+    name: CentOS-7
+  model: tagging.tag
+  pk: 1
+- fields:
+    name: CentOS-6
+  model: tagging.tag
+  pk: 2
+- fields:
+    name: centos-5
+  model: tagging.tag
+  pk: 3
+- fields:
+    content_type: 3
+    object_id: 1
+    tag: 3
+  model: tagging.taggeditem
+  pk: 3
+- fields:
+    content_type: 3
+    object_id: 1
+    tag: 1
+  model: tagging.taggeditem
+  pk: 4
+- fields:
+    content_type: 3
+    object_id: 1
+    tag: 2
+  model: tagging.taggeditem
+  pk: 5
+- fields:
+    codename: add_copr
+    content_type: 1
+    name: Can add copr
+  model: auth.permission
+  pk: 1
+- fields:
+    codename: change_copr
+    content_type: 1
+    name: Can change copr
+  model: auth.permission
+  pk: 2
+- fields:
+    codename: delete_copr
+    content_type: 1
+    name: Can delete copr
+  model: auth.permission
+  pk: 3
+- fields:
+    codename: add_otherrepo
+    content_type: 2
+    name: Can add Other repo
+  model: auth.permission
+  pk: 4
+- fields:
+    codename: change_otherrepo
+    content_type: 2
+    name: Can change Other repo
+  model: auth.permission
+  pk: 5
+- fields:
+    codename: delete_otherrepo
+    content_type: 2
+    name: Can delete Other repo
+  model: auth.permission
+  pk: 6
+- fields:
+    codename: add_softwarecollection
+    content_type: 3
+    name: Can add software collection
+  model: auth.permission
+  pk: 7
+- fields:
+    codename: change_softwarecollection
+    content_type: 3
+    name: Can change software collection
+  model: auth.permission
+  pk: 8
+- fields:
+    codename: delete_softwarecollection
+    content_type: 3
+    name: Can delete software collection
+  model: auth.permission
+  pk: 9
+- fields:
+    codename: add_repo
+    content_type: 4
+    name: Can add repo
+  model: auth.permission
+  pk: 10
+- fields:
+    codename: change_repo
+    content_type: 4
+    name: Can change repo
+  model: auth.permission
+  pk: 11
+- fields:
+    codename: delete_repo
+    content_type: 4
+    name: Can delete repo
+  model: auth.permission
+  pk: 12
+- fields:
+    codename: add_score
+    content_type: 5
+    name: Can add score
+  model: auth.permission
+  pk: 13
+- fields:
+    codename: change_score
+    content_type: 5
+    name: Can change score
+  model: auth.permission
+  pk: 14
+- fields:
+    codename: delete_score
+    content_type: 5
+    name: Can delete score
+  model: auth.permission
+  pk: 15
+- fields:
+    codename: add_logentry
+    content_type: 6
+    name: Can add log entry
+  model: auth.permission
+  pk: 16
+- fields:
+    codename: change_logentry
+    content_type: 6
+    name: Can change log entry
+  model: auth.permission
+  pk: 17
+- fields:
+    codename: delete_logentry
+    content_type: 6
+    name: Can delete log entry
+  model: auth.permission
+  pk: 18
+- fields:
+    codename: add_permission
+    content_type: 7
+    name: Can add permission
+  model: auth.permission
+  pk: 19
+- fields:
+    codename: change_permission
+    content_type: 7
+    name: Can change permission
+  model: auth.permission
+  pk: 20
+- fields:
+    codename: delete_permission
+    content_type: 7
+    name: Can delete permission
+  model: auth.permission
+  pk: 21
+- fields:
+    codename: add_group
+    content_type: 8
+    name: Can add group
+  model: auth.permission
+  pk: 22
+- fields:
+    codename: change_group
+    content_type: 8
+    name: Can change group
+  model: auth.permission
+  pk: 23
+- fields:
+    codename: delete_group
+    content_type: 8
+    name: Can delete group
+  model: auth.permission
+  pk: 24
+- fields:
+    codename: add_user
+    content_type: 9
+    name: Can add user
+  model: auth.permission
+  pk: 25
+- fields:
+    codename: change_user
+    content_type: 9
+    name: Can change user
+  model: auth.permission
+  pk: 26
+- fields:
+    codename: delete_user
+    content_type: 9
+    name: Can delete user
+  model: auth.permission
+  pk: 27
+- fields:
+    codename: add_contenttype
+    content_type: 10
+    name: Can add content type
+  model: auth.permission
+  pk: 28
+- fields:
+    codename: change_contenttype
+    content_type: 10
+    name: Can change content type
+  model: auth.permission
+  pk: 29
+- fields:
+    codename: delete_contenttype
+    content_type: 10
+    name: Can delete content type
+  model: auth.permission
+  pk: 30
+- fields:
+    codename: add_session
+    content_type: 11
+    name: Can add session
+  model: auth.permission
+  pk: 31
+- fields:
+    codename: change_session
+    content_type: 11
+    name: Can change session
+  model: auth.permission
+  pk: 32
+- fields:
+    codename: delete_session
+    content_type: 11
+    name: Can delete session
+  model: auth.permission
+  pk: 33
+- fields:
+    codename: add_tag
+    content_type: 12
+    name: Can add tag
+  model: auth.permission
+  pk: 34
+- fields:
+    codename: change_tag
+    content_type: 12
+    name: Can change tag
+  model: auth.permission
+  pk: 35
+- fields:
+    codename: delete_tag
+    content_type: 12
+    name: Can delete tag
+  model: auth.permission
+  pk: 36
+- fields:
+    codename: add_taggeditem
+    content_type: 13
+    name: Can add tagged item
+  model: auth.permission
+  pk: 37
+- fields:
+    codename: change_taggeditem
+    content_type: 13
+    name: Can change tagged item
+  model: auth.permission
+  pk: 38
+- fields:
+    codename: delete_taggeditem
+    content_type: 13
+    name: Can delete tagged item
+  model: auth.permission
+  pk: 39
+- fields:
+    codename: add_captchastore
+    content_type: 14
+    name: Can add captcha store
+  model: auth.permission
+  pk: 40
+- fields:
+    codename: change_captchastore
+    content_type: 14
+    name: Can change captcha store
+  model: auth.permission
+  pk: 41
+- fields:
+    codename: delete_captchastore
+    content_type: 14
+    name: Can delete captcha store
+  model: auth.permission
+  pk: 42
+- fields:
+    date_joined: '2017-01-28T12:09:33.048Z'
+    email: test
+    first_name: ''
+    groups: []
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: null
+    last_name: ''
+    password: pbkdf2_sha256$24000$2B0BkwyavwYc$nkBIC02l46rbyEE774ISP2KCRrnmRQOZ3JZMuAm0xZE=
+    user_permissions: []
+    username: admin@example.com
+  model: auth.user
+  pk: 1
+- fields:
+    date_joined: '2017-01-28T12:18:14.766Z'
+    email: hhorak@redhat.com
+    first_name: Honza
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: '2017-01-28T12:32:28.330Z'
+    last_name: Horak
+    password: ''
+    user_permissions: []
+    username: hhorak
+  model: auth.user
+  pk: 2
+- fields:
+    approved: false
+    auto_sync: false
+    collaborators:
+    - 2
+    coprs: []
+    create_date: '2017-01-28T12:19:19.852Z'
+    description: description text
+    download_count: 0
+    has_content: true
+    instructions: instructions text
+    issue_tracker: https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org
+    last_modified: null
+    last_synced: null
+    maintainer: 2
+    name: mariadb-galera-5.5-ci
+    need_sync: true
+    other_repos:
+    - 1
+    - 2
+    - 3
+    - 4
+    policy: COM
+    requires: []
+    review_req: false
+    score: null
+    score_count: 0
+    slug: hhorak/mariadb-galera-5.5-ci
+    title: Mariadb-galera-5.5-ci
+    upstream_url: ''
+  model: scls.softwarecollection
+  pk: 1
+- fields:
+    approved: false
+    auto_sync: false
+    collaborators:
+    - 2
+    coprs:
+    - 1
+    create_date: '2017-01-28T12:44:47.878Z'
+    description: scl
+    download_count: 0
+    has_content: false
+    instructions: "example description"
+    issue_tracker: https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org
+    last_modified: null
+    last_synced: null
+    maintainer: 2
+    name: mariadb100
+    need_sync: true
+    other_repos: []
+    policy: COM
+    requires: []
+    review_req: false
+    score: null
+    score_count: 0
+    slug: hhorak/mariadb100
+    title: Mariadb100
+    upstream_url: ''
+  model: scls.softwarecollection
+  pk: 2
+- fields:
+    approved: false
+    auto_sync: false
+    collaborators:
+    - 2
+    coprs: []
+    create_date: '2017-01-28T12:51:11.051Z'
+    description: 'example descriptions check-content-description'
+    download_count: 0
+    has_content: true
+    instructions: "example instructions that we want to check check-content-instructions"
+    issue_tracker: https://bugzilla.redhat.com/enter_bug.cgi?product=softwarecollections.org
+    last_modified: null
+    last_synced: null
+    maintainer: 2
+    name: rpmquality
+    need_sync: true
+    other_repos:
+    - 2
+    - 4
+    policy: Q-D
+    requires: []
+    review_req: false
+    score: null
+    score_count: 0
+    slug: hhorak/rpmquality
+    title: Rpmquality
+    upstream_url: ''
+  model: scls.softwarecollection
+  pk: 3

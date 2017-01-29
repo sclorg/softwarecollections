@@ -1,27 +1,25 @@
-To create and use Docker container:
+For development purposes, a Dockerfile is included. To build a Docker container, install and run Docker daemon first:
 
-- install Docker:
-
-    yum -y install docker-io
+    dnf -y install docker
+    systemctl start docker
 
 - make sure you're in the top level directory (the one that contains Dockerfile)
-- cd into this directory and run (this will take some time):
+- cd into this directory and build the image as `sclorgweb` (this will take some time):
 
-    docker build .
+    docker build -t sclorgweb .
 
-- after build is finished, take the last image hash
-  ("Successfully built <image_hash>") and run:
+- after build is finished, run the resulting image:
 
-    docker run -P -d -t -v $(pwd):/srv/softwarecollections <image_hash>
+    docker run --name scloorgwebtest -P -d -t -v $(pwd):/srv/softwarecollections:z sclorgweb
 
 - this will print a hash of new container
 - get IP address of the new container:
 
-    docker inspect -format='{{.NetworkSettings.IPAddress}}' <container_hash>
+    docker inspect -format='{{.NetworkSettings.IPAddress}}' scloorgwebtest
 
 - attach to the image to see the output of testing server:
 
-    docker attach <container_hash>
+    docker attach scloorgwebtest
 
 - develop (code is mounted in container, so you can code locally)
 - when done developing, stop the container:
@@ -30,4 +28,3 @@ To create and use Docker container:
 
 - if you want to prune DB, just remove data/db.sqlite3
 
-Yes, DevAssistant will do this for you in the next release :)

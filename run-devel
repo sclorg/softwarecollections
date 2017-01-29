@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -xe
+
+cd /srv/softwarecollections
+cp softwarecollections/localsettings{-development,}.py
+test -e data/db.sqlite3 && dbexists=0 || dbexists=1
+./manage.py migrate --noinput
+if [ $dbexists -ne 0 ]; then
+echo "from django.contrib.auth.models import User
+User.objects.filter(email='admin@example.com').delete()
+User.objects.create_superuser('admin@example.com', 'test', 'test')" | python3 manage.py shell
+#    echo -e "test\ntest@test.com\ntest\ntest\n" | ./manage.py createsuperuser
+    ./manage.py makesuperuser admin@example.com
+fi
+chmod a+w data/db.sqlite3
+
+# start memcached on background
+echo "Starting memcached ..."
+memcached &
+
+./manage.py loaddata example-data.yaml
+
+# show nice IP that can be used in browser with some delay
+# and in separate process, because python runs in frontend
+(
+  set +x
+  sleep 2
+  echo "========================================================"
+  echo "App started at http://$(hostname --ip-address):8000"
+  echo "========================================================"
+) &
+
+./manage.py runserver 0.0.0.0:8000
+

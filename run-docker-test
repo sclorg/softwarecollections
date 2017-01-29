@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -xe
+
+RESULT=1
+
+function cleanup() {
+  docker stop scloorgwebtest
+  docker rm scloorgwebtest
+  [ $RESULT -eq 0 ] && echo "Test successfull." || echo "Test failed."
+  exit $RESULT
+}
+trap cleanup EXIT SIGINT
+
+yum -y install docker
+systemctl start docker
+
+docker build -t sclorgweb .
+docker run --name scloorgwebtest -P -d -t sclorgweb
+webip=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' scloorgwebtest)
+
+sleep 10
+
+curl http://$webip:8000/en/scls/hhorak/rpmquality/ | grep 'check-content-instructions'
+curl http://$webip:8000/en/scls/hhorak/rpmquality/ | grep 'check-content-description'
+curl http://$webip:8000/en/scls/hhorak/rpmquality/ | grep 'yum install centos-release-scl'
+
+RESULT=0
+
