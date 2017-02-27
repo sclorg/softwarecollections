@@ -17,10 +17,12 @@ from .models import (
 PER_PAGE_CHOICES = ((10, '10 per page'), (25, '25 per page'), (50, '50 per page'))
 
 ORDER_BY_CHOICES = (
-    ('-download_count', _('Sort: download count')),
+    ('-create_date',    _('Sort: recently created')),
     ('-score',          _('Sort: score')),
     ('title',           _('Sort: title')),
-    ('-last_modified',  _('Sort: recently built')),
+# Not using stats that don't matter for non-copr SCLs
+#    ('-download_count', _('Sort: download count')),
+#    ('-last_modified',  _('Sort: recently built')),
 )
 
 
