@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.13
+Version:           0.14
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -226,6 +226,14 @@ service httpd condrestart
 
 
 %changelog
+* Thu Aug 24 2017 Miroslav Suchý <msuchy@redhat.com> 0.14-1
+- Update packaging-guide (pkovar@redhat.com)
+- typo in pagination.html (jakub.dornak@misli.cz)
+- Update packaging-guide (pkovar@redhat.com)
+- Add Dockerfile for development and a test that executes it
+  (hhorak@redhat.com)
+- Make sure pagination persists search options (cwt137@gmail.com)
+
 * Wed Dec 14 2016 Jakub Dorňák <jakub.dornak@misli.cz> 0.13-1
 - updated contact information and project url (jakub.dornak@misli.cz)
 - softwarecollections-services-setup (jakub.dornak@misli.cz)

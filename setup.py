@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name         = "softwarecollections",
-    version      = '0.13',
+    version      = '0.14',
     description  = "Software Collection Management Website and Utils",
     author       = "Jakub Dorňák",
     author_email = "jdornak@redhat.com",
