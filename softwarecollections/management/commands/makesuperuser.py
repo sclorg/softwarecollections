@@ -7,12 +7,16 @@ from django.db import DEFAULT_DB_ALIAS
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--database', action='store', dest='database',
-            default=DEFAULT_DB_ALIAS, help='Specifies the database to use. Default is "default".'),
-    )
-    args = '[ <username> ]'
-    help = 'Used to make user a superuser.'
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--database',
+            action='store',
+            dest='database',
+            default=DEFAULT_DB_ALIAS,
+            help='Specifies the database to use. Default is "default".',
+        )
+        parser.add_argument('username', nargs='?')
+        parser.help = 'Used to make user a superuser.'
 
     requires_system_checks = False
 

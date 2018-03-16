@@ -9,8 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Manager
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
@@ -69,8 +68,7 @@ def _list(request, template, queryset, dictionary, **kwargs):
     dictionary['collections'] = collections
     dictionary['filter_form'] = filter_form
     dictionary['paginator']   = paginator
-    return render_to_response(template, dictionary,
-        context_instance = RequestContext(request))
+    return render(request, template, dictionary)
 
 
 def list_all(request, **kwargs):
