@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.14
+Version:           0.15
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -226,6 +226,17 @@ service httpd condrestart
 
 
 %changelog
+* Mon May 21 2018 Miroslav Suchý <msuchy@redhat.com> 0.15-1
+- Update packaging-guide-1.tar.gz (pkovar@redhat.com)
+- use more processes (msuchy@redhat.com)
+- Make makesuperuser command compatible with Django 1.11 (jstanek@redhat.com)
+- Fix of a typo, https://bugzilla.redhat.com/show_bug.cgi?id=1552615
+  (mschorm@redhat.com)
+- use django.shortcuts.render instead of render_to_response
+  (jakub.dornak@misli.cz)
+- Sort collections from newest by default (hhorak@redhat.com)
+- Do not show downloads if there are none (hhorak@redhat.com)
+
 * Thu Aug 24 2017 Miroslav Suchý <msuchy@redhat.com> 0.14-1
 - Update packaging-guide (pkovar@redhat.com)
 - typo in pagination.html (jakub.dornak@misli.cz)
