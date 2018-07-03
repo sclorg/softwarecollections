@@ -1,0 +1,10 @@
+<tr>
+  <td class="col-md-1 text-center td-gray">
+    {% include "django/forms/widgets/input.html" %}
+  </td>
+  <td>
+    <label style="font-weight: normal"{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %}>
+      {{ widget.label }}
+    </label>
+  </td>
+</tr>
