@@ -90,7 +90,10 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-        }
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
     },
     'loggers': {
         '': {
@@ -106,6 +109,10 @@ LOGGING = {
         'django.db.backends': {
             'level': DBDEBUG and 'DEBUG' or 'INFO',
             'propagate': True,
+        },
+        'django.security.DisallowedHost': {
+            'handlers': [] if DEBUG else ['null'],
+            'propagate': False,
         },
     }
 }
