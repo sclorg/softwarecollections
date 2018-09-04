@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.15
+Version:           0.16
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -226,6 +226,10 @@ service httpd condrestart
 
 
 %changelog
+* Tue Sep 04 2018 Jan Staněk <jstanek@redhat.com> 0.16-1
+- Filter logging of DisallowedHost (jstanek@redhat.com)
+- Add jstanek to admins (jstanek@redhat.com)
+
 * Mon May 21 2018 Miroslav Suchý <msuchy@redhat.com> 0.15-1
 - Update packaging-guide-1.tar.gz (pkovar@redhat.com)
 - use more processes (msuchy@redhat.com)
