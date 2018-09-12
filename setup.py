@@ -37,6 +37,12 @@ PROD_REQUIRES = [
     "mod_wsgi",
     "psycopg2",
 ]
+# Extra dependencies for development
+DEVEL_REQUIRES = [
+    "pytest",
+    "pytest-django",
+    "pyyaml",
+]
 
 
 with open(os.path.join(REPO_DIR, "README.md"), encoding="utf-8") as readme:
@@ -50,5 +56,8 @@ setup(
     include_package_data=True,
     python_requires=">=3",
     install_requires=REQUIRES,
-    extras_require={"production": PROD_REQUIRES},
+    extras_require={
+        "production": PROD_REQUIRES,
+        "devel": DEVEL_REQUIRES,
+    },
 )
