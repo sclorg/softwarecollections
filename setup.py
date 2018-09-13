@@ -37,8 +37,8 @@ PROD_REQUIRES = [
     "mod_wsgi",
     "psycopg2",
 ]
-# Extra dependencies for development
-DEVEL_REQUIRES = [
+# Extra dependencies for testing
+TEST_REQUIRES = [
     "pytest",
     "pytest-django",
     "pyyaml",
@@ -55,9 +55,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     python_requires=">=3",
+    setup_requires=["pytest-runner"],
     install_requires=REQUIRES,
+    tests_require=TEST_REQUIRES,
     extras_require={
         "production": PROD_REQUIRES,
-        "devel": DEVEL_REQUIRES,
     },
 )
