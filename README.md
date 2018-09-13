@@ -101,6 +101,25 @@ To update your code and database to the last available version run:
     pipenv run ./manage.py migrate
 ```
 
+Running tests
+-------------
+
+Tests can be run either in the local development environment,
+or in pre-configured set of tests environments.
+
+In order to run the tests in the development environment, execute:
+
+```
+    pipenv run pytest
+    # or, equivalent
+    pipenv run python setup.py test
+```
+
+In order to run the full test matrix, execute:
+
+```
+    tox
+```
 
 RPM build
 ---------
