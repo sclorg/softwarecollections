@@ -63,16 +63,22 @@ Create local configuration:
     cp softwarecollections/localsettings{-development,}.py
 ```
 
+Create and set up the development environment:
+
+```
+    pipenv install --dev
+```
+
 Initialize development database:
 
 ```
-    ./manage.py migrate
+    pipenv run ./manage.py migrate
 ```
 
 Run development server:
 
 ```
-    ./manage.py runserver
+    pipenv run ./manage.py runserver
 ```
 
 Voilà!
@@ -85,17 +91,15 @@ If You want to access the [admin site](http://127.0.0.1:8000/admin/),
 first make Yourself a superuser:
 
 ```
-    ./manage.py makesuperuser $USER
+    pipenv run ./manage.py makesuperuser $USER
 ```
 
 To update your code and database to the last available version run:
 
 ```
     git pull --rebase
-    ./manage.py migrate
+    pipenv run ./manage.py migrate
 ```
-
-You may also need to install some new requirements (see the spec file).
 
 
 RPM build
