@@ -19,10 +19,10 @@ from django.conf.urls.i18n import i18n_patterns
 from django.views.generic.base import RedirectView
 from django.views.static import serve
 from django.contrib import admin
-admin.autodiscover()
 
-from softwarecollections import scls
 from softwarecollections.pages.views import page
+
+admin.autodiscover()
 
 urlpatterns = i18n_patterns(
     url(r'^admin/',     admin.site.urls),

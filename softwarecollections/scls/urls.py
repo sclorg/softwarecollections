@@ -25,4 +25,3 @@ urlpatterns = [
     url(r'^(?P<slug>[^/]+/[^/]+/[^/]+)/download/(.*\.rpm)?$',
                                                     views.download,     name='download'),
 ]
-
