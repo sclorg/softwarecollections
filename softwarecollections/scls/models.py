@@ -32,7 +32,7 @@ def check_call_log(args, **kwargs):
         kwargs['stderr'].flush()
         check_call(args, **kwargs)
         kwargs['stderr'].write('OK\n')
-    except:
+    except (OSError, CalledProcessError):
         kwargs['stderr'].write('FAILED\n')
         raise
     finally:
@@ -609,7 +609,7 @@ class Repo(models.Model):
                         self.get_repo_dir()
                     ], stdout=log, stderr=log, timeout=timeout)
                     break
-                except:
+                except (OSError, CalledProcessError):
                     try:
                         shutil.rmtree(os.path.join(self.get_repo_dir(), ".repodata"))
                     except FileNotFoundError:
