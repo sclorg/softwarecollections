@@ -13,3 +13,6 @@ pyyaml = "*"
 
 [requires]
 python_version = "3.6"
+
+[scripts]
+warn-manage = "python -Wall::DeprecationWarning -Wignore:'__class__ not set' -Wignore:\"'U' mode\" -Wignore:'the imp module' ./manage.py"
