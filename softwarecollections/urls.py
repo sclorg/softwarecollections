@@ -25,7 +25,7 @@ from softwarecollections import scls
 from softwarecollections.pages.views import page
 
 urlpatterns = i18n_patterns(
-    url(r'^admin/',     include(admin.site.urls)),
+    url(r'^admin/',     admin.site.urls),
     url(r'^captcha/',   include('captcha.urls')),
     url(r'^faq/$',      RedirectView.as_view(url='/en/docs/faq/', permanent=True)),
     url(r'^scls/',      include('softwarecollections.scls.urls', namespace='scls')),
