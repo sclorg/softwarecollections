@@ -209,7 +209,7 @@ class SoftwareCollection(models.Model):
                         help_text=_('Enable periodic synchronization with related Copr project'))
     need_sync       = models.BooleanField(_('Needs sync with coprs'), default=True)
     maintainer      = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Maintainer'),
-                        related_name='maintained_softwarecollection_set')
+                        related_name='maintained_softwarecollection_set', on_delete=models.CASCADE)
     collaborators   = models.ManyToManyField(settings.AUTH_USER_MODEL,
                         verbose_name=_('Collaborators'),
                         related_name='softwarecollection_set', blank=True)
@@ -467,8 +467,8 @@ register(SoftwareCollection)
 class Repo(models.Model):
     # automatic value (scl.slug/name) used as unique key
     slug            = models.SlugField(max_length=150, editable=False)
-    scl             = models.ForeignKey(SoftwareCollection, related_name='repos')
-    copr            = models.ForeignKey(Copr, related_name='repos')
+    scl             = models.ForeignKey(SoftwareCollection, related_name='repos', on_delete=models.CASCADE)
+    copr            = models.ForeignKey(Copr, related_name='repos', on_delete=models.CASCADE)
     name            = models.CharField(_('Name'), max_length=50)
     copr_url        = models.CharField(_('Copr URL'), max_length=200)
     download_count  = models.IntegerField(default=0, editable=False)
@@ -631,8 +631,8 @@ class Repo(models.Model):
 
 
 class Score(models.Model):
-    scl  = models.ForeignKey(SoftwareCollection, related_name='scores')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    scl  = models.ForeignKey(SoftwareCollection, related_name='scores', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     score = models.SmallIntegerField(choices=((n, n) for n in range(1,6)))
 
     # store average score on each change
