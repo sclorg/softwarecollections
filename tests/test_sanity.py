@@ -1,5 +1,12 @@
 """Basic functionality sanity tests"""
+from urllib.parse import urljoin
+
 import pytest
+
+# Various sub-urls for the main page
+PAGE_URL_LIST = ["", "about/", "docs/", "scls/"]
+# Various sub-urls for a collection
+SCL_URL_LIST = ["", "edit/", "coprs/", "repos/", "acl/", "review_req/"]
 
 
 @pytest.mark.django_db
@@ -11,3 +18,27 @@ def test_scl_page(client):
     assert b"check-content-instructions" in response.content
     assert b"check-content-description" in response.content
     assert b"yum install centos-release-scl" in response.content
+
+
+@pytest.mark.parametrize("url_tail", PAGE_URL_LIST)
+@pytest.mark.django_db
+def test_top_page_accessible(client, url_tail):
+    """Top-level sub-page is accessible."""
+
+    url = urljoin("/en/", url_tail)
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize("url_tail", SCL_URL_LIST)
+@pytest.mark.django_db
+def test_scl_page_accessible(admin_client, url_tail):
+    """SCL-level sub-page is accessible."""
+
+    url = urljoin("/en/scls/hhorak/rpmquality/", url_tail)
+
+    response = admin_client.get(url)
+
+    assert response.status_code == 200
