@@ -10,11 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
-# import ugettext_lazy to avoid circular module import
-from django.utils.translation import ugettext_lazy as _
-
 # localsettings is used to store site depandant settings
-from .localsettings import (
+from .localsettings import (  # noqa: F401
     BASE_DIR, SECRET_KEY, DEBUG, DBDEBUG, ALLOWED_HOSTS, DATABASES,
     ADMINS, MANAGERS, SERVER_EMAIL,
     COPR_URL, COPR_API_URL, COPR_COPRS_URL,
@@ -166,4 +163,3 @@ CAPTCHA_NOISE_FUNCTIONS  = ()
 CAPTCHA_FILTER_FUNCTIONS = ()
 CAPTCHA_FLITE_PATH       = '/usr/bin/flite'
 CAPTCHA_TIMEOUT          = 20
-
