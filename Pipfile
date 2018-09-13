@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+django = "~=1.10.0"
 softwarecollections = {editable = true, path = "."}
 
 [dev-packages]
