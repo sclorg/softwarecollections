@@ -8,7 +8,7 @@ from datetime import datetime
 from django.db import models
 from django.db.models import Avg
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import utc
