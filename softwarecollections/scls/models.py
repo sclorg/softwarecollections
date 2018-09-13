@@ -3,15 +3,12 @@ import os
 import requests
 import shutil
 import time
-import tempfile
 from itertools import groupby
 from datetime import datetime
 from django.db import models
 from django.db.models import Avg
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
-from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.timezone import utc
@@ -653,4 +650,3 @@ class Score(models.Model):
 
     class Meta:
         unique_together = (('scl', 'user'),)
-
