@@ -23,7 +23,7 @@ REQUIRES = [
     "django-sekizai",
     "django-simple-captcha",
     "django-tagging",
-    "django<1.11",
+    "django",
     "flock",
     "py3dns",  # pylibravatar missing dependency workaround
     "pylibravatar",
@@ -33,16 +33,9 @@ REQUIRES = [
 ]
 
 # Extra dependencies for production
-PROD_REQUIRES = [
-    "mod_wsgi",
-    "psycopg2",
-]
+PROD_REQUIRES = ["mod_wsgi", "psycopg2"]
 # Extra dependencies for testing
-TEST_REQUIRES = [
-    "pytest",
-    "pytest-django",
-    "pyyaml",
-]
+TEST_REQUIRES = ["pytest", "pytest-django", "pyyaml"]
 
 
 with open(os.path.join(REPO_DIR, "README.md"), encoding="utf-8") as readme:
@@ -58,7 +51,5 @@ setup(
     setup_requires=["pytest-runner"],
     install_requires=REQUIRES,
     tests_require=TEST_REQUIRES,
-    extras_require={
-        "production": PROD_REQUIRES,
-    },
+    extras_require={"production": PROD_REQUIRES},
 )

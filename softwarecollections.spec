@@ -16,7 +16,7 @@ Summary:           Software Collections Management Website and Utils
 Group:             System Environment/Daemons
 License:           BSD
 URL:               http://softwarecollections.org/
-Source0:           http://github.srcurl.net/misli/%{name}/%{version}/%{name}-%{version}.tar.gz
+Source0:           https://github.srcurl.net/sclorg/%{name}/%{name}-%{version}-1/%{name}-%{version}.tar.gz
 # Additional sources are not yet supported by tito
 # TODO: uncomment next line
 #Source1:          %#{guide_name}-%#{guide_version}.tar.gz
@@ -26,6 +26,7 @@ BuildArch:         noarch
 BuildRequires:     publican
 BuildRequires:     python3-devel
 BuildRequires:     python3-setuptools
+BuildRequires:     python3-pytest-runner
 BuildRequires:     systemd
 
 Requires:          createrepo_c
@@ -72,7 +73,7 @@ Software Collections Management Website and Utils
 %setup -q
 # Additional sources are not yet supported by tito
 # TODO: uncomment next line
-#%setup -qn %{name}-%{version} -D -T -a 1
+#%%setup -qn %%{name}-%%{version} -D -T -a 1
 
 
 %build
@@ -142,6 +143,10 @@ install -p -D -m 0644 conf/rsyncd/softwarecollections-rsyncd.service \
 # create ghost secret_key
 touch %{buildroot}%{scls_statedir}/secret_key
 
+
+%check
+# not all test deps are packaged in Fedora
+# %%{__python3} setup.py test
 
 
 %pre

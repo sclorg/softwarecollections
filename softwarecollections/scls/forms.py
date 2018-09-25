@@ -1,9 +1,7 @@
-import os
 from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms.forms import pretty_name
-from django.forms.widgets import CheckboxFieldRenderer, RadioFieldRenderer
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from softwarecollections.copr import CoprProxy
@@ -26,41 +24,16 @@ ORDER_BY_CHOICES = (
 )
 
 
-class TableRenderer:
-
-    def render_option(self, value, label, i):
-        widget = self.choice_input_class(self.name, self.value, self.attrs.copy(), (value, label), i)
-        row    = '<tr><td class="col-md-1 text-center td-gray">{}</td><td><label style="font-weight:normal" for="{}">{}</label></td></tr>'
-        return row.format(widget.tag(), widget.attrs['id'], widget.choice_label)
-
-    def render(self):
-        header  = '<div class="panel panel-default"><table class="table"><tbody>'
-        group   = '<tr><th colspan="2">{}</th></tr>'
-        footer  = '</tbody></table></div>'
-        rows    = []
-        i       = 0
-        for value, label in self.choices:
-            if isinstance(label, (list, tuple)):
-                rows.append(group.format(value))
-                for v, l in label:
-                    rows.append(self.render_option(v, l, i))
-                    i += 1
-            else:
-                rows.append(self.render_option(value, label, i))
-            i += 1
-        if not rows:
-            rows.append('<tr><td class="col-md-1 text-center td-gray"><input type="checkbox" disabled="disabled" /></td><td></td></tr>')
-        return mark_safe(
-            header + '\n'.join(rows) + footer
-        )
+class CheckboxSelectMultipleTable(forms.CheckboxSelectMultiple):
+    """ Renders CheckboxSelectMultiple in a nice table """
+    template_name = "scls/form/table_select.html"
+    option_template_name = "scls/form/table_option.html"
 
 
-class CheckboxSelectMultipleTableRenderer(TableRenderer, CheckboxFieldRenderer):
-    ''' Renders CheckboxSelectMultiple in a nice table '''
-
-
-class RadioSelectTableRenderer(TableRenderer, RadioFieldRenderer):
-    ''' Renders RadioSelect in a nice table '''
+class RadioSelectTable(forms.RadioSelect):
+    """ Renders RadioSelect in a nice table """
+    template_name = "scls/form/table_select.html"
+    option_template_name = "scls/form/table_option.html"
 
 
 class MaintainerWidget(forms.HiddenInput):
@@ -148,11 +121,11 @@ class CreateForm(_CoprForm):
         model = SoftwareCollection
         fields = ['copr_username', 'copr_name', 'maintainer', 'name', 'issue_tracker', 'upstream_url' ,'policy']
         widgets = {
-            'issue_tracker': forms.TextInput( attrs={'class': 'form-control'}),
-            'maintainer':    MaintainerWidget(attrs={'class': 'form-control'}),
-            'name':          forms.TextInput( attrs={'class': 'form-control'}),
-            'upstream_url':  forms.TextInput( attrs={'class': 'form-control'}),
-            'policy':        forms.RadioSelect(renderer=RadioSelectTableRenderer),
+            "issue_tracker": forms.TextInput(attrs={"class": "form-control"}),
+            "maintainer": MaintainerWidget(attrs={"class": "form-control"}),
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "upstream_url": forms.TextInput(attrs={"class": "form-control"}),
+            "policy": RadioSelectTable(choices=POLICY_CHOICES_TEXT),
         }
 
 
@@ -177,13 +150,15 @@ class UpdateForm(forms.ModelForm):
         model = SoftwareCollection
         fields = ['title', 'description', 'instructions', 'issue_tracker', 'upstream_url', 'policy', 'auto_sync',]
         widgets = {
-            'title':         forms.TextInput(    attrs={'class': 'form-control'}),
-            'description':   forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
-            'instructions':  forms.Textarea(     attrs={'class': 'form-control', 'rows': '4'}),
-            'upstream_url':  forms.TextInput(    attrs={'class': 'form-control'}),
-            'policy':        forms.RadioSelect(choices=POLICY_CHOICES_TEXT, renderer=RadioSelectTableRenderer),
-            'issue_tracker': forms.TextInput(    attrs={'class': 'form-control'}),
-            'auto_sync':     forms.CheckboxInput(attrs={'class': 'form-control-static'}),
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": "4"}),
+            "instructions": forms.Textarea(
+                attrs={"class": "form-control", "rows": "4"}
+            ),
+            "upstream_url": forms.TextInput(attrs={"class": "form-control"}),
+            "policy": RadioSelectTable(choices=POLICY_CHOICES_TEXT),
+            "issue_tracker": forms.TextInput(attrs={"class": "form-control"}),
+            "auto_sync": forms.CheckboxInput(attrs={"class": "form-control-static"}),
         }
 
 
@@ -236,10 +211,8 @@ class CollaboratorsForm(forms.ModelForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['collaborators']
-        widgets = {
-            'collaborators': forms.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer)
-        }
+        fields = ["collaborators"]
+        widgets = {"collaborators": CheckboxSelectMultipleTable()}
 
 
 class CoprsForm(_CoprForm):
@@ -271,15 +244,14 @@ class CoprsForm(_CoprForm):
 
     class Meta:
         model = SoftwareCollection
-        fields = ['coprs']
-        widgets = {
-            'coprs': forms.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer),
-        }
+        fields = ["coprs"]
+        widgets = {"coprs": CheckboxSelectMultipleTable()}
 
 
 class ReposForm(forms.ModelForm):
-    repos = forms.MultipleChoiceField(label=_('Enabled repos'), required=False,
-                widget=forms.CheckboxSelectMultiple(renderer=CheckboxSelectMultipleTableRenderer))
+    repos = forms.MultipleChoiceField(
+        label=_("Enabled repos"), required=False, widget=CheckboxSelectMultipleTable()
+    )
 
     def __init__(self, *args, **kwargs):
         super(ReposForm, self).__init__(*args, **kwargs)
@@ -311,18 +283,20 @@ class ReposForm(forms.ModelForm):
                     )),
                 ))
                 self.available_repos[slug] = repo
-            self.fields['repos'].choices.append((label, choices))
-        self.initial['repos'] = self.current_repos.keys()
-        self.fields['other_repos'].widget = forms.CheckboxSelectMultiple(
-            renderer = CheckboxSelectMultipleTableRenderer,
-            choices  = [
+            self.fields["repos"].choices.append((label, choices))
+        self.initial["repos"] = self.current_repos.keys()
+        self.fields["other_repos"].widget = CheckboxSelectMultipleTable(
+            choices=[
                 (
                     repo.id,
-                    mark_safe('<img src="{}" width="32" height="32" alt=""/> {}'.format(
-                        repo.get_icon_url(), repo,
-                    )),
-                ) for repo in self.fields['other_repos'].widget.choices.queryset
-            ],
+                    mark_safe(
+                        '<img src="{}" width="32" height="32" alt=""/> {}'.format(
+                            repo.get_icon_url(), repo
+                        )
+                    ),
+                )
+                for repo in self.fields["other_repos"].widget.choices.queryset
+            ]
         )
 
     def clean_copr_username(self):

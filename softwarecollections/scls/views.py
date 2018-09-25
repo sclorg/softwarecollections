@@ -1,13 +1,12 @@
 import json
 from django.contrib import messages
-from django.contrib.auth import get_user_model, REDIRECT_FIELD_NAME
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.mail import mail_managers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse
-from django.db.models import Q, Manager
+from django.urls import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
@@ -16,7 +15,6 @@ from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, UpdateView
 from softwarecollections.copr import CoprProxy
 from tagging.models import Tag
-from urllib.parse import urlsplit, urlunsplit
 from libravatar import libravatar_url
 
 from .forms import (
@@ -97,7 +95,7 @@ def list_user(request, username, **kwargs):
 def list_tag(request, name, **kwargs):
     try:
         tag = Tag.objects.get(name=name)
-    except:
+    except ObjectDoesNotExist:
         tag = Tag()
         tag.name = name
     queryset = SoftwareCollection.tagged.with_all(tag).filter(has_content=True)
@@ -142,7 +140,7 @@ class New(CreateView):
             initial['copr_username'] = Copr.objects.filter(
                 softwarecollection__maintainer=self.request.user
             ).order_by('-id')[0].username
-        except:
+        except ObjectDoesNotExist:
             initial['copr_username'] = initial['maintainer'].get_username()
         return initial
 
@@ -277,8 +275,8 @@ class ReviewReq(UpdateView):
         subject = _('The review has been requested for {title}') \
                     .format(title=self.object.title)
         message = _(
-            'The review has been requested for {title}.\n' \
-            'Collection URL: http://softwarecollections.org{url}\n' \
+            'The review has been requested for {title}.\n'
+            'Collection URL: http://softwarecollections.org{url}\n'
             'Admin URL: http://softwarecollections.org/en/admin/scls/softwarecollection/{id}/'
         ).format(title=self.object.title, url=self.object.get_absolute_url(), id=self.object.id)
         mail_managers(subject, message, fail_silently=True)
@@ -319,8 +317,8 @@ class Complain(UpdateView):
             subject=form.cleaned_data['subject']
         )
         message = _(
-            'Reporter: {email}\n' \
-            'Collection: {title}\n' \
+            'Reporter: {email}\n'
+            'Collection: {title}\n'
             'Message:\n{message}'
         ).format(
             email=form.cleaned_data['email'],
@@ -361,4 +359,3 @@ def rate(request, slug):
         for message in form.errors.values():
             messages.error(request, message)
     return HttpResponseRedirect(scl.get_absolute_url())
-

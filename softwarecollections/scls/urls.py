@@ -2,6 +2,9 @@ from django.conf.urls import url
 
 from . import views
 
+# Explicitly namespace the URLs
+app_name = "scls"
+
 urlpatterns = [
     url(r'^$',                                      views.list_all,     name='list_all'),
     url(r'^user/$',                                 views.list_my,      name='list_my'),
@@ -22,4 +25,3 @@ urlpatterns = [
     url(r'^(?P<slug>[^/]+/[^/]+/[^/]+)/download/(.*\.rpm)?$',
                                                     views.download,     name='download'),
 ]
-
