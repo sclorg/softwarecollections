@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.16
+Version:           0.17
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -231,6 +231,10 @@ service httpd condrestart
 
 
 %changelog
+* Tue Sep 25 2018 Jan Staněk <jstanek@redhat.com> 0.17-1
+- Make the codebase comaptible with Django 2.1
+- Add basic/sanity test suite
+
 * Tue Sep 04 2018 Jan Staněk <jstanek@redhat.com> 0.16-1
 - Filter logging of DisallowedHost (jstanek@redhat.com)
 - Add jstanek to admins (jstanek@redhat.com)
