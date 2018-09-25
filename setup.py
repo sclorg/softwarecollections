@@ -17,12 +17,13 @@ METADATA = {
 
 # Basic/common package dependencies
 REQUIRES = [
+    "dj-database-url",
+    "django",
     "django-fas",
     "django-markdown2",
     "django-sekizai",
     "django-simple-captcha",
     "django-tagging",
-    "django",
     "flock",
     "py3dns",  # pylibravatar missing dependency workaround
     "pylibravatar",
