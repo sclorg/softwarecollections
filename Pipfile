@@ -15,4 +15,6 @@ pyyaml = "*"
 python_version = "3.6"
 
 [scripts]
+manage = "python ./manage.py"
+"manage.py" = "python ./manage.py"
 warn-manage = "python -Wall::DeprecationWarning -Wignore:'__class__ not set' -Wignore:\"'U' mode\" -Wignore:'the imp module' ./manage.py"
