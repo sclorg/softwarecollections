@@ -1,22 +1,20 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import render_to_string
-from os.path import join
+from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
+from sekizai.context_processors import sekizai
+
 
 class Command(BaseCommand):
-    help = 'Used to make error pages.'
+    help = "Generate static error pages."
 
-    requires_system_checks = False
-
-    def handle(self, *args, **options):
-
-        failed = 0
-
-        for error_page in '400.html', '403.html', '404.html', '500.html':
+    def handle(self, *_args, **_options):
+        for error_page in "400.html", "403.html", "404.html", "500.html":
             try:
-                content = render_to_string(error_page, {})
-                with open(join(settings.MEDIA_ROOT, error_page), 'w') as out:
-                    out.write(content)
-            except:
-                raise CommandError("user '%s' does not exist" % username)
+                path = settings.MEDIA_ROOT / error_page
+                content = render_to_string(error_page, context=sekizai())
+                path.write_text(content, encoding="utf-8")
 
+            except (IOError, TemplateDoesNotExist, TemplateSyntaxError) as err:
+                message = "Cannot generate {error_page}: {err!s}".format_map(locals())
+                raise CommandError from err
