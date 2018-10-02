@@ -25,6 +25,8 @@ REQUIRES = [
     "django-simple-captcha",
     "django-tagging",
     "flock",
+    "gunicorn",
+    "psycopg2",
     "py3dns",  # pylibravatar missing dependency workaround
     "pylibravatar",
     "python3-memcached",
@@ -32,8 +34,6 @@ REQUIRES = [
     "requests",
 ]
 
-# Extra dependencies for production
-PROD_REQUIRES = ["mod_wsgi", "psycopg2"]
 # Extra dependencies for testing
 TEST_REQUIRES = ["pytest", "pytest-django", "pyyaml"]
 
@@ -64,5 +64,4 @@ setup(
     setup_requires=["pytest-runner", "setuptools_scm"],
     install_requires=REQUIRES,
     tests_require=TEST_REQUIRES,
-    extras_require={"production": PROD_REQUIRES},
 )
