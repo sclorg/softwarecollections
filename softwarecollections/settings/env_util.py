@@ -6,6 +6,7 @@ from distutils.util import strtobool
 from urllib.parse import urlparse, uses_netloc
 from pathlib import Path
 from typing import Optional, Pattern, Sequence, Tuple
+from warnings import warn
 
 import dj_database_url
 from django.core.management.utils import get_random_secret_key
@@ -33,11 +34,14 @@ def load_boolean(envvar: str, default: bool = False) -> bool:
     return strtobool(value)
 
 
-def load_path(envvar: str, default: Path) -> Path:
+def load_path(envvar: str, default: Optional[Path] = None) -> Optional[Path]:
     """Load file system path from environment"""
 
-    path = Path(os.getenv(envvar, str(default)))
-    return path.resolve()
+    candidate = os.getenv(envvar, "")
+    if candidate:
+        return Path(candidate).resolve()
+    else:
+        return default
 
 
 def load_sequence(
@@ -81,8 +85,14 @@ def load_secret_key(
     if key is not None:
         return key
 
-    if keyfile is not None and keyfile.is_file():
-        return keyfile.read_text(encoding="utf-8").strip()
+    if keyfile is not None:
+        if keyfile.is_file():
+            return keyfile.read_text(encoding="utf-8").strip()
+        else:
+            warn(
+                "Secret key file specified but not found;"
+                " falling back to default secret."
+            )
 
     if default is not None:
         return default

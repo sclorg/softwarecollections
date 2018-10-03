@@ -23,7 +23,7 @@ BASE_DIR = env.load_path(envvar="SCL_BASE_DIR", default=Path(__file__).parents[2
 # SECURITY WARNING: keep the secret key used in production secret!
 # Priority: SCL_SECRET_KEY, SCL_SECRET_KEY_FILE, random string for each invocation
 SECRET_KEY = env.load_secret_key(
-    envvar="SCL_SECRET_KEY", keyfile=Path(os.getenv("SCL_SECRET_KEY_FILE", ""))
+    envvar="SCL_SECRET_KEY", keyfile=env.load_path(envvar="SCL_SECRET_KEY_FILE")
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
