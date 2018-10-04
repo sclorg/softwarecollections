@@ -32,6 +32,7 @@ REQUIRES = [
     "python3-memcached",
     "python3-openid",
     "requests",
+    "whitenoise",
 ]
 
 # Extra dependencies for testing

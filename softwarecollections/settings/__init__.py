@@ -97,6 +97,8 @@ STATIC_ROOT = BASE_DIR / "htdocs" / "static"
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = "/static/"
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+
 # Absolute path to the directory repos should be synced to.
 REPOS_ROOT = BASE_DIR / "htdocs" / "repos"
 
@@ -129,6 +131,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
