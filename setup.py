@@ -8,7 +8,6 @@ REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
 METADATA = {
     "name": "softwarecollections",
-    "version": "0.16",
     "author": "Jakub Dorňák",
     "author_email": "jakub.dornak@misli.cz",
     "maintainer": "Jan Staněk",
@@ -38,17 +37,30 @@ PROD_REQUIRES = ["mod_wsgi", "psycopg2"]
 TEST_REQUIRES = ["pytest", "pytest-django", "pyyaml"]
 
 
+def rpm_compat_version():
+    """Constructs RPM-compatible version identifier"""
+
+    def rpm_version_scheme(version):
+        if version.exact:
+            return version.format_with("{tag}")
+        else:
+            return version.format_with("{tag}.dev{distance}")
+
+    return {"version_scheme": rpm_version_scheme}
+
+
 with open(os.path.join(REPO_DIR, "README.md"), encoding="utf-8") as readme:
     long_description = readme.read()
 
 setup(
     **METADATA,
+    use_scm_version=rpm_compat_version,
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
     include_package_data=True,
     python_requires=">=3",
-    setup_requires=["pytest-runner"],
+    setup_requires=["pytest-runner", "setuptools_scm"],
     install_requires=REQUIRES,
     tests_require=TEST_REQUIRES,
     extras_require={"production": PROD_REQUIRES},

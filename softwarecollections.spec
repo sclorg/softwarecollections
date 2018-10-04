@@ -16,7 +16,7 @@ Summary:           Software Collections Management Website and Utils
 Group:             System Environment/Daemons
 License:           BSD
 URL:               http://softwarecollections.org/
-Source0:           https://github.srcurl.net/sclorg/%{name}/%{name}-%{version}-1/%{name}-%{version}.tar.gz
+Source0:           https://github.srcurl.net/sclorg/%{name}/v%{version}/%{name}-%{version}.tar.gz
 # Additional sources are not yet supported by tito
 # TODO: uncomment next line
 #Source1:          %#{guide_name}-%#{guide_version}.tar.gz
