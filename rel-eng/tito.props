@@ -1,5 +1,6 @@
 [buildconfig]
-builder = tito.builder.Builder
+lib_dir = rel-eng/lib
+builder = setup_builder.SetupBuilder
 tagger = tito.tagger.VersionTagger
 changelog_do_not_remove_cherrypick = 0
 changelog_format = %s (%ae)
