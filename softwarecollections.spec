@@ -26,6 +26,7 @@ BuildArch:         noarch
 BuildRequires:     publican
 BuildRequires:     python3-devel
 BuildRequires:     python3-setuptools
+BuildRequires:     python3-setuptools_scm
 BuildRequires:     python3-pytest-runner
 BuildRequires:     systemd
 
@@ -42,6 +43,7 @@ Requires:          postgresql-server
 Requires(pre):     postgresql-server
 Requires:          python3-defusedxml
 Requires:          python3-django >= 1.8
+Requires:          python3-django-database-url
 Requires:          python3-django-fas
 Requires:          python3-django-markdown2
 Requires:          python3-django-sekizai
@@ -55,6 +57,7 @@ Requires:          python3-pillow
 Requires:          python3-psycopg2
 Requires:          python3-pylibravatar
 Requires:          python3-requests
+Requires:          python3-whitenoise
 Requires:          rpm-build
 Requires:          rsync-daemon
 Requires:          yum-utils
@@ -77,10 +80,6 @@ Software Collections Management Website and Utils
 
 
 %build
-rm %{name}/localsettings-development.py
-mv %{name}/localsettings-production.py localsettings
-mv %{name}/wsgi.py htdocs/
-
 # Additional sources are not yet supported by tito
 # TODO: remove next line
 tar -xzf       %{guide_name}-%{guide_version}.tar.gz
@@ -93,12 +92,6 @@ tar -xzf       %{guide_name}-%{guide_version}.tar.gz
 %install
 # install python package
 %{__python3} setup.py install --skip-build --root %{buildroot}
-
-# install conf file as target of localsettings.py symlink
-install -p -D -m 0644 localsettings \
-    %{buildroot}%{scls_confdir}/localsettings
-ln -s %{scls_confdir}/localsettings \
-    %{buildroot}%{python3_sitelib}/%{name}/localsettings.py
 
 # install commandline interface
 install -p -D -m 0755 manage.py %{buildroot}%{_bindir}/%{name}
@@ -115,6 +108,12 @@ install -p -D -m 0644 conf/httpd/%{name}.conf \
     %{buildroot}%{httpd_confdir}/%{name}.conf
 install -p -D -m 0644 htdocs/wsgi.py \
     %{buildroot}%{scls_statedir}/htdocs/wsgi.py
+
+# install httpd service override and environment file
+install -p -D -m 0644 conf/httpd/environment.override.conf \
+    %{buildroot}%{_unitdir}/httpd.service.d/%{name}-environment.override.conf
+install -p -D -m 0644 conf/httpd/%{name}.env \
+    %{buildroot}%{_sysconfdir}/sysconfig/%{name}.env
 
 # install directories for static content and site media
 install -p -d -m 0775 htdocs/static \
@@ -219,8 +218,9 @@ service httpd condrestart
 %{python3_sitelib}/softwarecollections*
 %config(noreplace) %{cron_confdir}/%{name}
 %config(noreplace) %{httpd_confdir}/%{name}.conf
-%config(noreplace) %{scls_confdir}/localsettings
 %config(noreplace) %{scls_confdir}/rsyncd.conf
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}.env
+%{_unitdir}/httpd.service.d/%{name}-environment.override.conf
 %{_unitdir}/softwarecollections-rsyncd.service
 %{scls_statedir}/htdocs/wsgi.py*
 %attr(755,root,root) %dir %{scls_statedir}/htdocs/static
