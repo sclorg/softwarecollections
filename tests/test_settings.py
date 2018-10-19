@@ -4,6 +4,7 @@ import importlib
 from pathlib import Path
 
 import pytest
+from django.utils.encoding import force_text
 
 
 def env_fixture(envvar: str, *values):
@@ -14,7 +15,7 @@ def env_fixture(envvar: str, *values):
         if request.param is None:
             monkeypatch.delenv(envvar, raising=False)
         else:
-            monkeypatch.setenv(envvar, request.param)
+            monkeypatch.setenv(envvar, force_text(request.param))
         return request.param
 
     return _env_fixture
@@ -32,7 +33,7 @@ def scl_settings():
 
 
 SCL_BASE_DIR = env_fixture("SCL_BASE_DIR", None, "/var/scls")
-SCL_SECRET_KEY = env_fixture("SCL_SECRET_KEY", None, "abcdef" * 4)
+SCL_SECRET_KEY = env_fixture("SCL_SECRET_KEY", None, b"abcdef" * 4)
 SCL_DEBUG = env_fixture("SCL_DEBUG", None, "true", "false")
 SCL_DBDEBUG = env_fixture("SCL_DBDEBUG", None, "true", "false")
 SCL_ALLOWED_HOSTS = env_fixture("SCL_ALLOWED_HOSTS", None, "single", "one:two:three")
@@ -48,14 +49,14 @@ SCL_DATABASE_URL = env_fixture(
 SCL_CACHE_URL = env_fixture("SCL_CACHE_URL", None, "memcached://localhost:11211")
 
 
-@pytest.fixture(params=[None, "aa" * 8])
+@pytest.fixture(params=[None, b"aa" * 8])
 def SCL_SECRET_KEY_FILE(request, monkeypatch, tmpdir):
     if request.param is None:
         monkeypatch.delenv("SCL_SECRET_KEY_FILE", raising=False)
         return None
     else:
         path = tmpdir.mkdir("scls").join("secret_key")
-        path.write(request.param.encode("utf-8"))
+        path.write(request.param)
         monkeypatch.setenv("SCL_SECRET_KEY_FILE", str(path))
         return str(path)
 
@@ -79,10 +80,7 @@ def test_secret_key_is_loaded(SCL_SECRET_KEY, SCL_SECRET_KEY_FILE, scl_settings)
         return  # Ignore other relevant environment variables
 
     if SCL_SECRET_KEY_FILE is not None:
-        assert (
-            scl_settings.SECRET_KEY
-            == Path(SCL_SECRET_KEY_FILE).read_text(encoding="utf-8").strip()
-        )
+        assert scl_settings.SECRET_KEY == Path(SCL_SECRET_KEY_FILE).read_bytes()
         return  # Ignore default
 
     # if both envvars are not set, assert that it still has non-empty value

@@ -71,8 +71,8 @@ def load_email_sequence(
 
 
 def load_secret_key(
-    envvar: str, keyfile: Optional[Path] = None, default: Optional[str] = None
-) -> str:
+    envvar: str, keyfile: Optional[Path] = None, default: Optional[bytes] = None
+) -> bytes:
     """Load SECRET_KEY from environment or file.
 
     Priority:
@@ -83,11 +83,11 @@ def load_secret_key(
 
     key = os.getenv(envvar, None)
     if key is not None:
-        return key
+        return key.encode("utf-8")
 
     if keyfile is not None:
         if keyfile.is_file():
-            return keyfile.read_text(encoding="utf-8").strip()
+            return keyfile.read_bytes()
         else:
             warn(
                 "Secret key file specified but not found;"
@@ -97,7 +97,7 @@ def load_secret_key(
     if default is not None:
         return default
     else:
-        return get_random_secret_key()
+        return get_random_secret_key().encode("utf-8")
 
 
 def load_database_url(envvar: str, default: str = "sqlite://:memory:") -> dict:

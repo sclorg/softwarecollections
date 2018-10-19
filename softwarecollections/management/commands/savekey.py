@@ -7,6 +7,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.utils import get_random_secret_key
+from django.utils.encoding import force_bytes
 
 ENVVAR = "SCL_SECRET_KEY_FILE"
 COMMAND = Path(__file__).stem
@@ -29,5 +30,5 @@ class Command(BaseCommand):
             return
 
         key = settings.SECRET_KEY or get_random_secret_key()
-        path.write_text(key, encoding="utf-8")
+        path.write_bytes(force_bytes(key))
         self.log.debug("Written %s into %s", key, path)
