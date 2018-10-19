@@ -14,7 +14,12 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 from pathlib import Path
 
+from pkg_resources import get_distribution, parse_version
+
 from . import env_util as env
+
+# Compatibility detection for external dependencies
+whitenoise_version = get_distribution("whitenoise").parsed_version
 
 
 # Build paths inside the project like this: BASE_DIR / "subdir" / ...
@@ -97,7 +102,10 @@ STATIC_ROOT = BASE_DIR / "htdocs" / "static"
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = "/static/"
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+if whitenoise_version < parse_version("4.1"):
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Absolute path to the directory repos should be synced to.
 REPOS_ROOT = BASE_DIR / "htdocs" / "repos"
@@ -140,6 +148,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Older whitenoise does not support MIDDLEWARE setting
+if whitenoise_version < parse_version("3.2"):
+    MIDDLEWARE_CLASSES = MIDDLEWARE
+    del MIDDLEWARE
 
 ROOT_URLCONF = "softwarecollections.urls"
 
