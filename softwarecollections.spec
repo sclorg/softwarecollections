@@ -184,6 +184,7 @@ fi
 
 # set selinux context
 semanage fcontext -a -t httpd_sys_content_t  '%{scls_statedir}/htdocs(/.*)?'
+semanage fcontext -a -t httpd_var_run_t      '%{scls_statedir}/htdocs/wsgi.*'
 semanage fcontext -a -t httpd_sys_content_t  '%{scls_statedir}/secret_key'
 semanage fcontext -a -t postgresql_var_run_t '%{scls_statedir}/db(/\..*)?'
 restorecon -R                                '%{scls_statedir}'
@@ -191,6 +192,7 @@ setsebool -P httpd_can_network_connect on
 setsebool -P rsync_full_access on
 setsebool -P nis_enabled on
 setsebool -P httpd_unified on
+setsebool -P httpd_execmem on
 
 service httpd condrestart
 
