@@ -56,19 +56,44 @@ class TemporaryWorktree(TemporaryDirectory):
 class SetupBuilder(Builder):
     """Build tgz using setup.py sdist"""
 
+    @staticmethod
+    def _recreate_tgz(source, target):
+        """Recreate sdist-archive in a way that is expected by tito.
+
+        Keyword arguments:
+            source: Path to source archive.
+            target: Path to expected output archive.
+        """
+
+        def strip_ext(name, ext=".tar.gz"):
+            return name[: -len(ext)]
+
+        names = {
+            "source": source,
+            "target": target,
+            "source_root": strip_ext(source.name),
+            "target_root": strip_ext(target.name),
+        }
+
+        # Extract source
+        run_command("tar -xzf {source}".format_map(names))
+
+        # Rename root
+        if names["source_root"] != names["target_root"]:
+            run_command("mv {source_root} {target_root}".format_map(names))
+
+        # Compress converted archive
+        run_command("tar -czf {target} {target_root}".format_map(names))
+
     def _setup_sources(self):
         """Create .tar.gz for this package.
 
         Returns: absolute path to the archive.
         """
 
-        def strip_ext(name, ext=".tar.gz"):
-            return name[: -len(ext)]
-
         self._create_build_dirs()
 
         target_archive = Path(self.rpmbuild_sourcedir, self.tgz_filename)
-        target_root = strip_ext(target_archive.name)
 
         worktree = TemporaryWorktree(prefix="scl.org.build-", commit=self.git_commit_id)
 
@@ -81,18 +106,9 @@ class SetupBuilder(Builder):
             run_command("python3 ./setup.py sdist")
 
             source_archive, = workdir.joinpath("dist").glob("*.tar.gz")
-            source_root = strip_ext(source_archive.name)
 
             debug("Recreate sdist archive in {target}".format(target=target_archive))
-            recreate = [
-                "tar -xzf {archive}".format(archive=source_archive),
-                "mv {source} {target}".format(source=source_root, target=target_root),
-                "tar -czf {archive} {root}".format(
-                    archive=target_archive, root=target_root
-                ),
-            ]
-            for command in recreate:
-                run_command(command)
+            self._recreate_tgz(source_archive, target_archive)
 
         self.spec_file_name = find_spec_file(self.rpmbuild_gitcopy)
         self.spec_file = Path(self.rpmbuild_gitcopy, self.spec_file_name)
