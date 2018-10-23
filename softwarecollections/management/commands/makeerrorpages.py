@@ -1,8 +1,15 @@
+from pkg_resources import get_distribution, parse_version
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import render_to_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
-from sekizai.context import sekizai
+
+# Backward-compatible sekizai context
+if get_distribution("django-sekizai").parsed_version >= parse_version("0.10.0"):
+    from sekizai.context import sekizai
+else:
+    sekizai = dict
 
 
 class Command(BaseCommand):
@@ -10,8 +17,6 @@ class Command(BaseCommand):
 
     def handle(self, *_args, **_options):
         context = dict(sekizai(), ADMINS=settings.ADMINS)
-
-        print("ADMINS:", context["ADMINS"])
 
         for error_page in "400.html", "403.html", "404.html", "500.html":
             try:

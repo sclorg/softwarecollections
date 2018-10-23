@@ -35,6 +35,9 @@ SECRET_KEY = env.load_secret_key(
 DEBUG = env.load_boolean("SCL_DEBUG", default=True)
 DBDEBUG = env.load_boolean("SCL_DBDEBUG", default=False)
 
+if get_distribution("django-sekizai").parsed_version < parse_version("0.10.0"):
+    TEMPLATE_DEBUG = DEBUG
+
 ALLOWED_HOSTS = env.load_sequence("SCL_ALLOWED_HOSTS", default=["*"])
 
 # Emails
