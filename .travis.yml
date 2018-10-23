@@ -1,0 +1,12 @@
+---
+sudo: false
+language: python
+python:
+  - "3.6"
+  # - "3.7"  # currently unsupported (old OpenSSL)
+env:
+  - DJANGO="1.10"
+  - DJANGO="1.11"
+  - DJANGO="2.1"
+install: pip install tox-travis
+script: tox

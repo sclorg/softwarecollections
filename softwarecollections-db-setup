@@ -5,7 +5,8 @@ DATADIR=/var/lib/pgsql/$NAME
 SOCKETDIR=/var/scls/db
 PORT=5432
 SOCKET=$SOCKETDIR/.s.PGSQL.$PORT
-SERVICE=postgresql@${NAME}.service
+UNIT="postgresql@${NAME}"
+SERVICE="${UNIT}.service"
 
 log() {
     if [ -t 1 ]; then
@@ -15,10 +16,12 @@ log() {
     fi
 }
 
-if ! test -d $DATADIR; then
+if ! test -d /etc/systemd/system/$SERVICE.d; then
+    log "Create systemd unit"
+    postgresql-new-systemd-unit --unit "$UNIT" --datadir "$DATADIR"
+
     log "Create datadir"
-    postgresql-setup --initdb --unit postgresql@$NAME \
-        --new-systemd-unit --datadir $DATADIR --port $PORT
+    postgresql-setup --initdb --unit "$UNIT" --port $PORT
 
     log "Configure database"
     sed -r -i \
