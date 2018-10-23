@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.17
+Version:           0.18
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -233,6 +233,10 @@ service httpd condrestart
 
 
 %changelog
+* Tue Oct 23 2018 Jan Staněk <jstanek@redhat.com> 0.18-1
+- Load settings from environment (jstanek@redhat.com)
+- Expand manage.py with environment file loading (jstanek@redhat.com)
+
 * Tue Sep 25 2018 Jan Staněk <jstanek@redhat.com> 0.17-1
 - Make the codebase comaptible with Django 2.1
 - Add basic/sanity test suite
