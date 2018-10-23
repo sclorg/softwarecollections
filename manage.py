@@ -9,6 +9,7 @@ import os
 import pwd
 import sys
 from collections import deque
+from functools import partial
 from itertools import filterfalse
 from operator import methodcaller
 from pathlib import Path
@@ -108,7 +109,9 @@ def load_env_file(candidate_path_list=ENV_PATHS):
         return
 
     with configuration.open(encoding="utf-8") as file:
-        os.environ.update(parse_env_file(file))
+        items = parse_env_file(file).items()
+        encoded = map(partial(map, methodcaller("encode", "utf-8")), items)
+        os.environb.update(encoded)
 
 
 if __name__ == "__main__":
