@@ -26,4 +26,4 @@ class Command(BaseCommand):
 
             except (IOError, TemplateDoesNotExist, TemplateSyntaxError) as err:
                 message = "Cannot generate {error_page}: {err!s}".format_map(locals())
-                raise CommandError from err
+                raise CommandError(message) from err
