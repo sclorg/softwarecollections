@@ -140,7 +140,7 @@ class New(CreateView):
             initial['copr_username'] = Copr.objects.filter(
                 softwarecollection__maintainer=self.request.user
             ).order_by('-id')[0].username
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, IndexError):
             initial['copr_username'] = initial['maintainer'].get_username()
         return initial
 
