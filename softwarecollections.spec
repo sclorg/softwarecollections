@@ -9,7 +9,7 @@
 %global  guide_version 1
 
 Name:              softwarecollections
-Version:           0.18
+Version:           0.19
 Release:           1%{?dist}
 
 Summary:           Software Collections Management Website and Utils
@@ -233,6 +233,10 @@ service httpd condrestart
 
 
 %changelog
+* Tue Nov 27 2018 Jan Staněk <jstanek@redhat.com> 0.19-1
+- scls/views: Handle missing username of new scl maintainer (jstanek@redhat.com)
+- makeerrorpages: Actually show the exception message (jstanek@redhat.com)
+
 * Tue Oct 23 2018 Jan Staněk <jstanek@redhat.com> 0.18-1
 - Load settings from environment (jstanek@redhat.com)
 - Expand manage.py with environment file loading (jstanek@redhat.com)
