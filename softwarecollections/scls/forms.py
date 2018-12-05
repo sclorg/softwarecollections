@@ -39,9 +39,9 @@ class RadioSelectTable(forms.RadioSelect):
 class MaintainerWidget(forms.HiddenInput):
     ''' Renders Maintainer '''
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, *args, **kwargs):
         user = get_user_model().objects.get(id=value)
-        html = super(MaintainerWidget, self).render(name, value, attrs=None)
+        html = super(MaintainerWidget, self).render(name, value, *args, **kwargs)
         html += '\n<div class="form-control">{} ({})</div>'.format(user.get_full_name(), user.get_username())
         return mark_safe(html)
 
