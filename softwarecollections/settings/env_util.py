@@ -27,6 +27,12 @@ CACHE_BACKEND = {
 uses_netloc.extend(CACHE_BACKEND.keys())
 
 
+def load_string(envvar: str, default: str = "") -> str:
+    """Load simple string environment variable"""
+
+    return os.getenv(envvar, default)
+
+
 def load_boolean(envvar: str, default: bool = False) -> bool:
     """Load boolean environment variable"""
 

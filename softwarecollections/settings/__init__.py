@@ -64,9 +64,12 @@ DATABASES = {
         default="sqlite:///{!s}".format(BASE_DIR / "data" / "db.sqlite3"),
     )
 }
+# Overwrite/add password to the database credentials
+default_db_password = env.load_string("SCL_DATABASE_PASSWORD")
+if default_db_password:
+    DATABASES["default"]["PASSWORD"] = default_db_password
 
 # Session cache
-# FIXME: replace with library
 CACHES = {
     "default": dict(
         env.load_cache_url("SCL_CACHE_URL", default="locmem://scl-devel"),

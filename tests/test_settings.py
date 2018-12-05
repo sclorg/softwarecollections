@@ -44,8 +44,9 @@ SCL_ADMINS = env_fixture(
     "One <one@example.com>, Two <two@example.com>",
 )
 SCL_DATABASE_URL = env_fixture(
-    "SCL_DATABASE_URL", None, "postgres://%2fvar%2fscls:5432/scldb"
+    "SCL_DATABASE_URL", None, "postgres://user:password@%2fvar%2fscls:5432/scldb"
 )
+SCL_DATABASE_PASSWORD = env_fixture("SCL_DATABASE_PASSWORD", None, "overriden")
 SCL_CACHE_URL = env_fixture("SCL_CACHE_URL", None, "memcached://localhost:11211")
 
 
@@ -143,14 +144,29 @@ def test_database(SCL_DATABASE_URL, scl_settings):
         expected = {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
             "HOST": "/var/scls",
-            "USER": "",
-            "PASSWORD": "",
+            "USER": "user",
+            "PASSWORD": "password",
             "NAME": "scldb",
             "PORT": 5432,
             "CONN_MAX_AGE": 0,
         }
 
     assert scl_settings.DATABASES["default"] == expected
+
+
+def test_database_with_extra_password(
+    SCL_DATABASE_URL, SCL_DATABASE_PASSWORD, scl_settings
+):
+    """Database configuration expects explicit password settings"""
+
+    # if an URL is provided, the password should be taken from it first
+    expected_password = "" if SCL_DATABASE_URL is None else "password"
+
+    # explicit extra password overrides the one from URL
+    if SCL_DATABASE_PASSWORD is not None:
+        expected_password = SCL_DATABASE_PASSWORD
+
+    assert scl_settings.DATABASES["default"]["PASSWORD"] == expected_password
 
 
 def test_cache(SCL_CACHE_URL, scl_settings):
