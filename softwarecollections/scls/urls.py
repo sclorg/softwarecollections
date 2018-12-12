@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^(?P<slug>[^/]+/[^/]+)/complain/$',       views.complain,     name='complain'),
     url(r'^(?P<slug>[^/]+/[^/]+/[^/]+)/download/(.*\.rpm)?$',
                                                     views.download,     name='download'),
+    url(r'^health/?$',                              views.check_health, name='check_health'),
 ]

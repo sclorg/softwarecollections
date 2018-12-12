@@ -42,3 +42,12 @@ def test_scl_page_accessible(admin_client, url_tail):
     response = admin_client.get(url)
 
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_scl_health_check_is_never_cached(client):
+    """The health check indicator instructs clients to never cache the results"""
+
+    response = client.get("/scls/health", follow=True)
+    assert 200 <= response.status_code < 300
+    assert "no-cache" in response["Cache-Control"]

@@ -6,11 +6,13 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.mail import mail_managers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
+from django.db import DatabaseError
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, UpdateView
 from softwarecollections.copr import CoprProxy
@@ -359,3 +361,17 @@ def rate(request, slug):
         for message in form.errors.values():
             messages.error(request, message)
     return HttpResponseRedirect(scl.get_absolute_url())
+
+
+@never_cache
+def check_health(request):
+    """That application is running and can talk to database."""
+
+    try:
+        count = SoftwareCollection.objects.count()
+    except DatabaseError as e:
+        data = dict(status="Database query failed", cause=str(e))
+        return JsonResponse(data, status=500)
+
+    data = dict(status="OK", count=count)
+    return JsonResponse(data, status=200)
