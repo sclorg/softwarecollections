@@ -1,6 +1,8 @@
 """Tests for custom management commands"""
 
+import pytest
 from django.core.management import call_command
+from django.core.management.base import CommandError
 
 
 def test_makeerrorpages(tmpdir, settings):
@@ -58,3 +60,21 @@ def test_savekey_saves_key(tmpdir, monkeypatch):
     call_command("savekey")
 
     assert path.check(file=True) and path.size() > 0
+
+
+def test_makesuperuser_respects_username(django_user_model):
+    """makesuperuser respects specified username"""
+
+    user = django_user_model.objects.create(
+        username="will_be_superuser", password="password"
+    )
+
+    call_command("makesuperuser", user.username)
+    user.refresh_from_db()
+
+    assert user.is_superuser
+
+    # Ensure that no users are present in the database
+    django_user_model.objects.all().delete()
+    with pytest.raises(CommandError):
+        call_command("makesuperuser")
