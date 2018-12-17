@@ -1,0 +1,16 @@
+# Git is needed for version detection
+!.git/
+# RPM-only directories
+conf/
+data/
+htdocs/
+rel-eng/
+# Unneeded files
+.s2iignore
+Dockerfile
+example-data.yaml
+README.docker
+run-*
+softwarecollections-db-setup
+softwarecollections-services-setup
+softwarecollections.spec
