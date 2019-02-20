@@ -11,6 +11,8 @@ django-fas = {git = "https://github.com/khardix/django-fas"}
 pytest = "*"
 pytest-django = "*"
 pyyaml = "*"
+pytest-runner = "*"
+setuptools-scm = "*"
 
 [requires]
 python_version = "3.6"
