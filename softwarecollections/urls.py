@@ -25,6 +25,7 @@ from softwarecollections.pages.views import page
 admin.autodiscover()
 
 urlpatterns = i18n_patterns(
+    url(r'favicon\.ico$', RedirectView.as_view(url='/static/images/favicon.ico', permanent=True)),
     url(r'^admin/',     admin.site.urls),
     url(r'^captcha/',   include('captcha.urls')),
     url(r'^faq/$',      RedirectView.as_view(url='/en/docs/faq/', permanent=True)),
