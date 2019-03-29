@@ -1,5 +1,6 @@
 from django.conf.urls import url
 
+from . import checks
 from . import views
 
 # Explicitly namespace the URLs
@@ -24,5 +25,7 @@ urlpatterns = [
     url(r'^(?P<slug>[^/]+/[^/]+)/complain/$',       views.complain,     name='complain'),
     url(r'^(?P<slug>[^/]+/[^/]+/[^/]+)/download/(.*\.rpm)?$',
                                                     views.download,     name='download'),
-    url(r'^health/?$',                              views.check_health, name='check_health'),
+
+    url(r'^-/live/?$',                              checks.report_liveness, name='report_liveness'),
+    url(r'^-/ready/?$',                             checks.report_readiness, name='report_readiness'),
 ]

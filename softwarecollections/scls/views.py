@@ -361,17 +361,3 @@ def rate(request, slug):
         for message in form.errors.values():
             messages.error(request, message)
     return HttpResponseRedirect(scl.get_absolute_url())
-
-
-@never_cache
-def check_health(request):
-    """That application is running and can talk to database."""
-
-    try:
-        count = SoftwareCollection.objects.count()
-    except DatabaseError as e:
-        data = dict(status="Database query failed", cause=str(e))
-        return JsonResponse(data, status=500)
-
-    data = dict(status="OK", count=count)
-    return JsonResponse(data, status=200)
