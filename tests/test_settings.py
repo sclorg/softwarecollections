@@ -181,7 +181,7 @@ def test_cache(SCL_CACHE_URL, scl_settings):
     elif SCL_CACHE_URL.startswith("memcached"):
         expected = {
             "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-            "LOCATION": "localhost:11211",
+            "LOCATION": ["127.0.0.1:11211"],
             "KEY_PREFIX": "softwarecollections",
         }
 

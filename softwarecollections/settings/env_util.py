@@ -2,7 +2,9 @@
 
 import re
 import os
+import socket
 from distutils.util import strtobool
+from itertools import groupby
 from urllib.parse import urlparse, uses_netloc
 from pathlib import Path
 from typing import Optional, Pattern, Sequence, Tuple
@@ -123,8 +125,17 @@ def load_cache_url(envvar: str, default: str = "locmem://") -> dict:
     """
 
     parsed = urlparse(os.getenv(envvar, default=default))
+
+    if parsed.scheme == "locmem":
+        location = parsed.netloc
+    else:  # resolve hosts to their IP addresses
+        host, port = parsed.netloc.rsplit(":", 1)
+        addrinfo = socket.getaddrinfo(host, port, family=socket.AF_INET)
+        location = sorted(sockaddr for *__, sockaddr in addrinfo)
+        location = ["{}:{}".format(*addr) for addr, *__ in groupby(location)]
+
     try:
-        return {"BACKEND": CACHE_BACKEND[parsed.scheme], "LOCATION": parsed.netloc}
+        return {"BACKEND": CACHE_BACKEND[parsed.scheme], "LOCATION": location}
     except KeyError as err:
         message = "Unknown cache type: '{!s}'".format(err)
         raise ValueError(message) from err
