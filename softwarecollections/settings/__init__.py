@@ -70,8 +70,11 @@ DATABASES = {
         default="sqlite:///{!s}".format(BASE_DIR / "data" / "db.sqlite3"),
     )
 }
-for name, conf in DATABASES.items():
-    logger.info("Using database %s: %s", name, "{HOST}/{NAME}".format_map(conf))
+for db, conf in DATABASES.items():
+    logger.info(
+        "Using database %(db)s: %(host)s/%(name)s",
+        {"db": db, "host": conf.get("HOST", ""), "name": conf.get("NAME")},
+    )
 # Overwrite/add password to the database credentials
 default_db_password = env.load_string("SCL_DATABASE_PASSWORD")
 if default_db_password:
@@ -85,7 +88,7 @@ CACHES = {
     )
 }
 for name, conf in CACHES.items():
-    logger.info("Using cache %s: %s", name, conf["LOCATION"])
+    logger.info("Using cache %s: %s", name, conf.get("LOCATION"))
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
