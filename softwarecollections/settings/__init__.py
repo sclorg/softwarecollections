@@ -12,11 +12,17 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import logging
 from pathlib import Path
 
 from pkg_resources import get_distribution, parse_version
 
 from . import env_util as env
+
+logging.basicConfig(
+    level=logging.INFO, format="[%(asctime)s][%(name)s][%(levelname)s] %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 # Compatibility detection for external dependencies
 whitenoise_version = get_distribution("whitenoise").parsed_version
@@ -64,6 +70,8 @@ DATABASES = {
         default="sqlite:///{!s}".format(BASE_DIR / "data" / "db.sqlite3"),
     )
 }
+for name, conf in DATABASES.items():
+    logger.info("Using database %s: %s", name, "{HOST}/{NAME}".format_map(conf))
 # Overwrite/add password to the database credentials
 default_db_password = env.load_string("SCL_DATABASE_PASSWORD")
 if default_db_password:
@@ -76,6 +84,8 @@ CACHES = {
         KEY_PREFIX="softwarecollections",
     )
 }
+for name, conf in CACHES.items():
+    logger.info("Using cache %s: %s", name, conf["LOCATION"])
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
