@@ -37,6 +37,7 @@ SCL_SECRET_KEY = env_fixture("SCL_SECRET_KEY", None, b"abcdef" * 4)
 SCL_DEBUG = env_fixture("SCL_DEBUG", None, "true", "false")
 SCL_DBDEBUG = env_fixture("SCL_DBDEBUG", None, "true", "false")
 SCL_ALLOWED_HOSTS = env_fixture("SCL_ALLOWED_HOSTS", None, "single", "one:two:three")
+SCL_BEHIND_PROXY = env_fixture("SCL_BEHIND_PROXY", None, True)
 SCL_ADMINS = env_fixture(
     "SCL_ADMINS",
     None,
@@ -113,6 +114,15 @@ def test_allowed_hosts(SCL_ALLOWED_HOSTS, scl_settings):
         assert scl_settings.ALLOWED_HOSTS == ["*"]
     else:
         assert scl_settings.ALLOWED_HOSTS == SCL_ALLOWED_HOSTS.split(":")
+
+
+def test_proxy_host(SCL_BEHIND_PROXY, scl_settings):
+    """Reverse URLs are correctly constructed when behind a proxy"""
+
+    if SCL_BEHIND_PROXY:
+        assert scl_settings.USE_X_FORWARDED_HOST
+    else:
+        assert not scl_settings.USE_X_FORWARDED_HOST
 
 
 def test_admin_emails(SCL_ADMINS, scl_settings):

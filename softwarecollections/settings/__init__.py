@@ -11,11 +11,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
-import os
 import logging
+import os
 from pathlib import Path
 
-from pkg_resources import get_distribution, parse_version
+from pkg_resources import get_distribution
+from pkg_resources import parse_version
 
 from . import env_util as env
 
@@ -45,6 +46,7 @@ if get_distribution("django-sekizai").parsed_version < parse_version("0.10.0"):
     TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = env.load_sequence("SCL_ALLOWED_HOSTS", default=["*"])
+USE_X_FORWARDED_HOST = env.load_boolean("SCL_BEHIND_PROXY")
 
 # Emails
 # https://docs.djangoproject.com/en/1.9/ref/settings/#std:setting-ADMINS
