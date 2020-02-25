@@ -18,7 +18,7 @@ METADATA = {
 # Basic/common package dependencies
 REQUIRES = [
     "dj-database-url",
-    "django",
+    "django~=2.2.10",
     "django-fas",
     "django-markdown2",
     "django-sekizai",
