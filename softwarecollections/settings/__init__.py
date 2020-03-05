@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import logging
 import os
+import re
 from pathlib import Path
 
 from pkg_resources import get_distribution
@@ -46,7 +47,13 @@ if get_distribution("django-sekizai").parsed_version < parse_version("0.10.0"):
     TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = env.load_sequence("SCL_ALLOWED_HOSTS", default=["*"])
-USE_X_FORWARDED_HOST = env.load_boolean("SCL_BEHIND_PROXY")
+
+# If trusted proxies are provided, turn on HTTP Forwarded middleware
+HTTP_FORWARDED_TRUSTED_PROXY_SET = env.load_sequence(
+    "SCL_TRUSTED_PROXIES", separator=re.compile(r"\s*,\s*"),
+)
+if HTTP_FORWARDED_TRUSTED_PROXY_SET:
+    USE_HTTP_FORWARDED = True
 
 # Emails
 # https://docs.djangoproject.com/en/1.9/ref/settings/#std:setting-ADMINS
@@ -161,6 +168,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "softwarecollections.middleware.forwarded.HttpForwardedMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
