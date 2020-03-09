@@ -211,6 +211,12 @@ WSGI_APPLICATION = "softwarecollections.wsgi.application"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "forwarded": {
+            "format": "[%(asctime)s][%(name)s:%(levelname)s] <%(forwarded)s> %(message)s",  # noqa: B950
+            "style": "%",
+        },
+    },
     "handlers": {
         "console": {"level": "DEBUG", "class": "logging.StreamHandler"},
         "mail_admins": {
@@ -218,6 +224,11 @@ LOGGING = {
             "class": "django.utils.log.AdminEmailHandler",
         },
         "null": {"class": "logging.NullHandler"},
+        "forwarded": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "forwarded",
+        },
     },
     "loggers": {
         "": {
@@ -236,6 +247,11 @@ LOGGING = {
         },
         "django.security.DisallowedHost": {
             "handlers": [] if DEBUG else ["null"],
+            "propagate": False,
+        },
+        "softwarecollections.middleware.forwarded": {
+            "handlers": ["forwarded"],
+            "level": "DEBUG" if DEBUG else "INFO",
             "propagate": False,
         },
     },

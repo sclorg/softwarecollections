@@ -5,7 +5,9 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
 for details on this header.
 """
 
+import logging
 import re
+from functools import partial
 from ipaddress import IPv4Address
 from ipaddress import IPv6Address
 from ipaddress import ip_address
@@ -31,6 +33,10 @@ UNKNOWN_ID: str = "unknown"
 
 # Host identifier can optionally contain port number
 _PORT_PATTERN = re.compile(r":(?P<number>\d+)$")
+
+_log = logging.getLogger(__name__)
+_log_msg_will_modify = "Will modify request: {details}"
+_log_msg_wont_modify = "Won't modify request: {details}"
 
 
 def _is_ip_address(instance: Any) -> bool:
@@ -185,12 +191,22 @@ class HttpForwardedMiddleware:
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Modify request metadata according to the redirect information."""
 
+        forward_info = {"forwarded": request.META.get("HTTP_FORWARDED")}
+        debug = partial(_log.debug, extra=forward_info)
+
         if "HTTP_FORWARDED" not in request.META:
+            debug(_log_msg_wont_modify.format(details="No Forwarded header"))
             return self._get_response(request)
 
-        for redirect in reversed(list(_parse_header(request.META["HTTP_FORWARDED"]))):
-            # Bail out on first untrusted proxy
-            if not self.trusts(redirect.get("by", UNKNOWN_ID)):
+        redirect_chain = list(_parse_header(request.META["HTTP_FORWARDED"]))
+        if not redirect_chain:
+            debug(_log_msg_wont_modify.format(details="Forwarded header is empty"))
+
+        for redirect in reversed(redirect_chain):
+            # Bail out on first distrusted proxy
+            proxy = redirect.get("by", UNKNOWN_ID)
+            if not self.trusts(proxy):
+                debug("Ending request modification: [%s] is distrusted", proxy)
                 break
 
             host = redirect.get("host", request.META["HTTP_HOST"])
@@ -198,6 +214,11 @@ class HttpForwardedMiddleware:
             if not _is_ip_address(client):
                 client = request.META["REMOTE_ADDR"]
 
+            debug(
+                _log_msg_will_modify.format(details="Host: %s; Remote: %s"),
+                host,
+                client,
+            )
             request.META["HTTP_HOST"] = host
             request.META["REMOTE_ADDR"] = client
 
