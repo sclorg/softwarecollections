@@ -3,6 +3,7 @@
 import functools
 import socket
 from ipaddress import ip_address
+from itertools import accumulate
 from types import MappingProxyType
 from typing import Any
 from typing import Callable
@@ -77,7 +78,11 @@ class NetworkModel:
         except KeyError:
             raise socket.herror(1, "Unknown host")
 
-        return hostname, [], [addr]
+        # The FQDN might not be the primary host name
+        # Return short host name as the primary, with other variants as aliases
+        alias_iter = accumulate(hostname.split("."), lambda *sides: ".".join(sides))
+
+        return next(alias_iter), list(alias_iter), [addr]
 
 
 def format_forwarded(

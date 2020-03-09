@@ -185,8 +185,11 @@ class HttpForwardedMiddleware:
         if addr in self._trusted_addr_set:
             return True
 
-        fqdn, _alias_seq, _addr_seq = gethostbyaddr(str(addr))
-        return fqdn in self._trusted_fqdn_set
+        primary, alias_seq, _addr_seq = gethostbyaddr(str(addr))
+
+        return primary in self._trusted_fqdn_set or any(
+            alias in self._trusted_fqdn_set for alias in alias_seq
+        )
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Modify request metadata according to the redirect information."""
