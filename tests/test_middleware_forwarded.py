@@ -68,7 +68,7 @@ class NetworkModel:
             if candidate in self.by_host:
                 return candidate
         else:
-            return default
+            return name
 
     def gethostbyaddr(self, addr: str) -> Tuple[str, List[str], List[str]]:
         """Simulate socket.gethostbyaddr"""
@@ -86,7 +86,7 @@ class NetworkModel:
 
 
 def format_forwarded(
-    by: IPAddress,
+    by: Optional[IPAddress] = None,
     client: IPAddress = CLIENT_ADDR,
     host: str = PROXIED_DOMAIN,
     proto: str = "https",
@@ -97,13 +97,15 @@ def format_forwarded(
         return str(addr) if addr.version == 4 else '"[{!s}]"'.format(addr)
 
     field_map = {
-        "by": format_ip(by),
+        "by": format_ip(by) if by is not None else None,
         "for": format_ip(client),
         "host": host,
         "proto": proto,
     }
 
-    return ";".join("{0}={1}".format(*field) for field in field_map.items())
+    return ";".join(
+        "{0}={1}".format(key, value) for key, value in field_map.items() if value
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -259,6 +261,14 @@ def test_trust_proxy_by_fqdn(
     middleware = middleware_factory(trusted_proxy_set={TRUSTED_FQDN})
 
     assert middleware.trusts(mock_network.by_host[TRUSTED_FQDN])
+
+
+def test_unknown_proxy_can_be_trusted(middleware_factory: MiddlewareFactory):
+    """Middleware can trust unknown proxy."""
+
+    middleware = middleware_factory(trusted_proxy_set={forwarded.UNKNOWN_ID})
+
+    assert middleware.trusts(forwarded.UNKNOWN_ID)
 
 
 def test_trust_proxy_by_partial_hostname(

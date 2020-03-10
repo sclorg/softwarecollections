@@ -179,20 +179,20 @@ class HttpForwardedMiddleware:
         This accepts any host identifier from the Forwarded header,
         which includes obfuscated identifiers (i.e ``_hidden``, ``_secret``)
         and ``unknown`` identifier.
-        However, any obfuscated or unknown host is always distrusted.
         """
 
-        if not _is_ip_address(addr):  # unknown or obfuscated
-            return False
+        if _is_ip_address(addr):
+            if addr in self._trusted_addr_set:
+                return True
 
-        if addr in self._trusted_addr_set:
-            return True
+            primary, alias_seq, _addr_seq = gethostbyaddr(str(addr))
 
-        primary, alias_seq, _addr_seq = gethostbyaddr(str(addr))
+            return primary in self._trusted_fqdn_set or any(
+                alias in self._trusted_fqdn_set for alias in alias_seq
+            )
 
-        return primary in self._trusted_fqdn_set or any(
-            alias in self._trusted_fqdn_set for alias in alias_seq
-        )
+        else:
+            return addr in self._trusted_fqdn_set
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Modify request metadata according to the redirect information."""
