@@ -7,7 +7,6 @@ for details on this header.
 
 import logging
 import re
-from functools import partial
 from ipaddress import IPv4Address
 from ipaddress import IPv6Address
 from ipaddress import ip_address
@@ -146,6 +145,8 @@ class HttpForwardedMiddleware:
                 from the ``HTTP_FORWARDED_TRUSTED_PROXY_SET`` Django setting.
         """
 
+        log = logging.LoggerAdapter(_log, {"forwarded": None})
+
         if enabled is None:
             enabled = getattr(settings, "USE_HTTP_FORWARDED", False)
         if trusted_proxy_set is None:
@@ -167,7 +168,9 @@ class HttpForwardedMiddleware:
                 trusted_fqdn.add(getfqdn(host))
 
         self._get_response = get_response
+        log.debug("Trusting by address: %s", trusted_addr)
         self._trusted_addr_set = frozenset(trusted_addr)
+        log.debug("Trusting by name: %s", trusted_fqdn)
         self._trusted_fqdn_set = frozenset(trusted_fqdn)
 
     def trusts(self, addr: Union[str, IPAddress]) -> bool:
@@ -195,21 +198,21 @@ class HttpForwardedMiddleware:
         """Modify request metadata according to the redirect information."""
 
         forward_info = {"forwarded": request.META.get("HTTP_FORWARDED")}
-        debug = partial(_log.debug, extra=forward_info)
+        log = logging.LoggerAdapter(_log, forward_info)
 
         if "HTTP_FORWARDED" not in request.META:
-            debug(_log_msg_wont_modify.format(details="No Forwarded header"))
+            log.debug(_log_msg_wont_modify.format(details="No Forwarded header"))
             return self._get_response(request)
 
         redirect_chain = list(_parse_header(request.META["HTTP_FORWARDED"]))
         if not redirect_chain:
-            debug(_log_msg_wont_modify.format(details="Forwarded header is empty"))
+            log.debug(_log_msg_wont_modify.format(details="Forwarded header is empty"))
 
         for redirect in reversed(redirect_chain):
             # Bail out on first distrusted proxy
             proxy = redirect.get("by", UNKNOWN_ID)
             if not self.trusts(proxy):
-                debug("Ending request modification: [%s] is distrusted", proxy)
+                log.debug("Ending request modification: [%s] is distrusted", proxy)
                 break
 
             host = redirect.get("host", request.META["HTTP_HOST"])
@@ -217,7 +220,7 @@ class HttpForwardedMiddleware:
             if not _is_ip_address(client):
                 client = request.META["REMOTE_ADDR"]
 
-            debug(
+            log.debug(
                 _log_msg_will_modify.format(details="Host: %s; Remote: %s"),
                 host,
                 client,
