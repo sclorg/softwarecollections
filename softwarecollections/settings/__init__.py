@@ -40,7 +40,7 @@ SECRET_KEY = env.load_secret_key(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.load_boolean("SCL_DEBUG", default=True)
+DEBUG = env.load_boolean("SCL_DEBUG", default=False)
 DBDEBUG = env.load_boolean("SCL_DBDEBUG", default=False)
 
 if get_distribution("django-sekizai").parsed_version < parse_version("0.10.0"):

@@ -92,7 +92,7 @@ def test_secret_key_is_loaded(SCL_SECRET_KEY, SCL_SECRET_KEY_FILE, scl_settings)
 def test_debug(SCL_DEBUG, scl_settings):
     """Expected debug parameter is set"""
 
-    if SCL_DEBUG == "true" or SCL_DEBUG is None:
+    if SCL_DEBUG == "true":
         assert scl_settings.DEBUG
     else:
         assert not scl_settings.DEBUG
