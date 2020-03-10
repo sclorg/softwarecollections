@@ -89,7 +89,7 @@ def format_forwarded(
     by: Optional[IPAddress] = None,
     client: IPAddress = CLIENT_ADDR,
     host: str = PROXIED_DOMAIN,
-    proto: str = "https",
+    proto: str = "http",
 ):
     """Properly format HTTP Forwarded header."""
 
@@ -183,6 +183,18 @@ def request_from_distrusted(
 
     http_request.META["HTTP_FORWARDED"] = format_forwarded(
         by=mock_network.by_host[DISTRUSTED_FQDN]
+    )
+    return http_request
+
+
+@pytest.fixture
+def secure_request(
+    mock_network: NetworkModel, http_request: HttpRequest
+) -> HttpRequest:
+    """Request originally made with HTTPS"""
+
+    http_request.META["HTTP_FORWARDED"] = format_forwarded(
+        by=mock_network.by_host[TRUSTED_FQDN], proto="https",
     )
     return http_request
 
@@ -316,3 +328,24 @@ def test_furthest_trusted_proxy_from_chain_is_used(
 
     assert metadata["HTTP_HOST"] == PROXIED_DOMAIN
     assert metadata["REMOTE_ADDR"] == mock_network.by_host[DISTRUSTED_FQDN]
+
+
+def test_unsecure_request_stays_unsecure(
+    middleware: Middleware, request_from_trusted: HttpRequest
+):
+    """Request originally made via HTTP stays unsecure."""
+
+    request = middleware(request_from_trusted)
+
+    assert not request.is_secure()
+
+
+def test_secure_request_is_marked_as_secure(
+    middleware: Middleware, secure_request: HttpRequest
+):
+    """Request originally made on via HTTPS is marked as secure."""
+
+    request = middleware(secure_request)
+
+    assert request.is_secure()
+    assert request.build_absolute_uri("/").startswith("https://")

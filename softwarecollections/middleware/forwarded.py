@@ -23,6 +23,7 @@ from typing import Union
 
 from django.conf import settings
 from django.core.exceptions import MiddlewareNotUsed
+from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpRequest
 from django.http import HttpResponse
 
@@ -219,13 +220,19 @@ class HttpForwardedMiddleware:
             client = redirect.get("for", UNKNOWN_ID)
             if not _is_ip_address(client):
                 client = request.META["REMOTE_ADDR"]
+            scheme = redirect.get("proto")
 
             log.debug(
-                _log_msg_will_modify.format(details="Host: %s; Remote: %s"),
+                _log_msg_will_modify.format(details="Host: %s; Remote: %s; Scheme: %s"),
                 host,
                 client,
+                scheme,
             )
             request.META["HTTP_HOST"] = host
             request.META["REMOTE_ADDR"] = client
+            if isinstance(request, WSGIRequest):
+                request.environ["wsgi.url_scheme"] = scheme
+            else:
+                request._get_scheme = lambda: scheme
 
         return self._get_response(request)
