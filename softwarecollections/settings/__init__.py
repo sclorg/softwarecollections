@@ -147,6 +147,13 @@ YUM_CACHE_ROOT = Path("/tmp/softwarecollections-yum-cache")
 # Absolute path to the directory to be used as rpm _topdir
 RPMBUILD_TOPDIR = Path("/tmp/softwarecollections-rpmbuild")
 
+# Ensure that all specified directories exist
+for path in [MEDIA_ROOT, STATIC_ROOT, REPOS_ROOT]:
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+    except PermissionError as error:
+        logger.warn("Cannot ensure directory: %s (%s)", path, error)
+
 # Application definition
 
 INSTALLED_APPS = [
