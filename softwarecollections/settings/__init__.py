@@ -152,7 +152,7 @@ for path in [MEDIA_ROOT, STATIC_ROOT, REPOS_ROOT]:
     try:
         path.mkdir(parents=True, exist_ok=True)
     except PermissionError as error:
-        logger.warn("Cannot ensure directory: %s (%s)", path, error)
+        logger.warning("Cannot ensure directory: %s (%s)", path, error)
 
 # Application definition
 
