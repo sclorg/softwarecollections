@@ -27,7 +27,7 @@ REQUIRES = [
     "django-tagging",
     "flock",
     "gunicorn",
-    "psycopg2",
+    "psycopg2<2.9",  # https://code.djangoproject.com/ticket/32856
     "py3dns",  # pylibravatar missing dependency workaround
     "pylibravatar",
     "python3-memcached",
