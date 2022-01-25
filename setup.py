@@ -27,6 +27,7 @@ REQUIRES = [
     "django-tagging",
     "flock",
     "gunicorn[eventlet]",
+    "eventlet<0.30.3",  # https://github.com/benoitc/gunicorn/pull/2581
     "psycopg2<2.9",  # https://code.djangoproject.com/ticket/32856
     "py3dns",  # pylibravatar missing dependency workaround
     "pylibravatar",
