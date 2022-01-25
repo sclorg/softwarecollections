@@ -26,7 +26,7 @@ REQUIRES = [
     "django-simple-captcha",
     "django-tagging",
     "flock",
-    "gunicorn",
+    "gunicorn[eventlet]",
     "psycopg2<2.9",  # https://code.djangoproject.com/ticket/32856
     "py3dns",  # pylibravatar missing dependency workaround
     "pylibravatar",
