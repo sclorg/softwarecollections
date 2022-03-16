@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 softwarecollections = {editable = true, path = "."}
-django-fas = {git = "https://github.com/khardix/django-fas"}
 
 [dev-packages]
 pytest = "*"
